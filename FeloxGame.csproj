@@ -23,6 +23,9 @@
     <None Update="Resources\Shaders\TextureWithColor.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\Shaders\TextureWithColorAndTextureSlotAndUniforms.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\Shaders\TextureWithColorAndTextureSlot.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -7,7 +7,7 @@ namespace FeloxGame
     {
         static void Main(string[] args)
         {
-            Game game = new MyGame("Test", 800, 600);
+            Game1 game = new Game1(800, 600, "Does this work");
             game.Run();
         }
     }

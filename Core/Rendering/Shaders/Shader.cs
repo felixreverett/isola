@@ -1,5 +1,6 @@
 ﻿using FeloxGame.Core.Rendering.Shaders;
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 
 namespace FeloxGame.Core.Rendering
 {
@@ -76,6 +77,12 @@ namespace FeloxGame.Core.Rendering
         }
 
         public int GetUniformLocation(string uniformName) => _uniforms[uniformName];
+
+        public void SetMatrix4(string name, Matrix4 data)
+        {
+            GL.UseProgram(ProgramId);
+            GL.UniformMatrix4(_uniforms[name], true, ref data);
+        }
 
         public void Use()
         {
