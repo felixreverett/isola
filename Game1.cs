@@ -18,16 +18,45 @@ namespace FeloxGame
 
         private readonly float[] _vertices = {
             //Positions         //texCoords //texColor        //texunit
-             0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, //top right
-             0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, //bottom right
-            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, //bottom left
-            -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f  //top left
+             1.0f,  1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, //top right
+             1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, //bottom right
+            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, //bottom left
+            -1.0f,  1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f  //top left
         };
 
         private uint[] _indices =
         {
             0, 1, 3, // first triangle
             1, 2, 3  // second triangle
+        };
+
+        private readonly float[] _cubevertices =
+        {
+            //Positions         //texCoords //texColor        //texunit
+             0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, //top right front      0
+             0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, //bottom right front   1
+            -0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, //bottom left front    2
+            -0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, //top left front       3
+             0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, //top right back       4
+             0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, //bottom right back    5
+            -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, //bottom left back     6
+            -0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f  //top left back        7
+        };
+
+        private uint[] _cubeindices =
+        {
+            0, 1, 3,
+            1, 2, 3, // front
+            4, 5, 0,
+            5, 1, 0, // right
+            7, 6, 4,
+            6, 5, 4, // back
+            3, 2, 7,
+            2, 6, 7, // left
+            4, 0, 7,
+            0, 3, 7, // top
+            5, 1, 6,
+            1, 2, 6  // bottom
         };
 
         private VertexBuffer _vertexBuffer;
@@ -38,11 +67,16 @@ namespace FeloxGame
         // Added from OpenTK/Learn
         float speed = 2.5f;
         private Camera _camera;
+        private bool mouseEnabled = true;
         private bool _firstMove = true;
         private Vector2 _lastPos;
 
+        // world data
+        private Chunk _testChunk;
+
         protected override void OnLoad()
         {
+            GL.Enable(EnableCap.DepthTest);
             _shader = new(Shader.ParseShader("Resources/Shaders/TextureWithColorAndTextureSlotAndUniforms.glsl"));
             if (!_shader.CompileShader())
             {
@@ -73,6 +107,9 @@ namespace FeloxGame
             _camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
 
             CursorState = CursorState.Grabbed;
+
+            // World setup
+            _testChunk = Chunk.LoadChunk("Resources/World/worldTest.txt");
         }
 
         protected override void OnUpdateFrame(FrameEventArgs args)
@@ -123,24 +160,27 @@ namespace FeloxGame
                 _camera.Position -= _camera.Up * speed * (float)args.Time; //Down
             }
 
-            // Get the mouse state
-            var mouse = MouseState;
-
-            // Mouse movement
-
-            if (_firstMove)
+            if (mouseEnabled)
             {
-                _lastPos = new Vector2(mouse.X, mouse.Y);
-                _firstMove = false;
-            }
-            else
-            {
-                var deltaX = mouse.X - _lastPos.X;
-                var deltaY = mouse.Y - _lastPos.Y;
-                _lastPos = new Vector2(mouse.X, mouse.Y);
+                // Get the mouse state
+                var mouse = MouseState;
 
-                _camera.Yaw += deltaX * sensitivity;
-                _camera.Pitch -= deltaY * sensitivity;
+                // Mouse movement
+
+                if (_firstMove)
+                {
+                    _lastPos = new Vector2(mouse.X, mouse.Y);
+                    _firstMove = false;
+                }
+                else
+                {
+                    var deltaX = mouse.X - _lastPos.X;
+                    var deltaY = mouse.Y - _lastPos.Y;
+                    _lastPos = new Vector2(mouse.X, mouse.Y);
+
+                    _camera.Yaw += deltaX * sensitivity;
+                    _camera.Pitch -= deltaY * sensitivity;
+                }
             }
         }
 
@@ -148,11 +188,10 @@ namespace FeloxGame
         {
             base.OnRenderFrame(args);
             GL.ClearColor(Color4.CornflowerBlue);
-            GL.Clear(ClearBufferMask.ColorBufferBit);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             _shader.Use();
             _vertexArray.Bind();
             _indexBuffer.Bind();
-            GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0); // Used for drawing Elements
 
             // matrices for camera
             var model = Matrix4.Identity;// * Matrix4.CreateRotationY((float)MathHelper.DegreesToRadians(_time));
@@ -160,6 +199,22 @@ namespace FeloxGame
             _shader.SetMatrix4("model", model);
             _shader.SetMatrix4("view", _camera.GetViewMatrix());
             _shader.SetMatrix4("projection", _camera.GetProjectionMatrix());
+
+            for (int y = 0; y < _testChunk.Tiles.GetLength(1); y++)
+            {
+                for (int x = 0; x < _testChunk.Tiles.GetLength(0); x++)
+                {
+                    _vertices[0]  = x+1; _vertices[1]  = y+1; // top right (1, 1)
+                    _vertices[9]  = x+1; _vertices[10] = y; // bottom right (1, -1)
+                    _vertices[18] = x; _vertices[19] = y; // bottom left (-1, -1)
+                    _vertices[27] = x; _vertices[28] = y+1; // top left (-1, 1)
+                    //_vertexArray.AddBuffer(_vertexBuffer, layout);
+                    GL.BufferSubData(BufferTarget.ArrayBuffer, 0, sizeof(float) * _vertices.Length, _vertices);
+                    GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0); // Used for drawing Elements
+                }
+            }
+
+            //GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0); // Used for drawing Elements
 
             SwapBuffers();
         }

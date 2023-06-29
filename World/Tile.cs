@@ -8,5 +8,11 @@ namespace FeloxGame
 {
     public class Tile
     {
+        public Tile(string name)
+        {
+            Name = name;
+        }
+
+        public string Name { get; set; }
     }
 }

@@ -35,6 +35,13 @@
     <None Update="Resources\Textures\wall.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\World\worldTest.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\World\" />
   </ItemGroup>
 
 </Project>
