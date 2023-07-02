@@ -6,6 +6,7 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Mathematics;
+using FeloxGame.World;
 
 namespace FeloxGame
 {
@@ -16,12 +17,12 @@ namespace FeloxGame
         {
         }
 
-        private readonly float[] _vertices = {
-            //Positions         //texCoords //texColor        //texunit
-             1.0f,  1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, //top right
-             1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, //bottom right
-            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, //bottom left
-            -1.0f,  1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f  //top left
+        private readonly float[] _vertices =
+        {   //Vertices        //texCoords //texColors       //texUnit
+            1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, //top right (1,1)
+            1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, //bottom right (1, 0)
+            0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, //bottom left (0, 0)
+            0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f  //top left (0, 1)
         };
 
         private uint[] _indices =
@@ -67,7 +68,7 @@ namespace FeloxGame
         // Added from OpenTK/Learn
         float speed = 2.5f;
         private Camera _camera;
-        private bool mouseEnabled = true;
+        private bool mouseEnabled = false;
         private bool _firstMove = true;
         private Vector2 _lastPos;
 
@@ -100,7 +101,7 @@ namespace FeloxGame
             int[] samplers = new int[2] { 0, 1 };
             GL.Uniform1(textureSampleUniformLocation, 2, samplers);
 
-            ResourceManager.Instance.LoadTexture("Resources/Textures/wall.jpg");
+            ResourceManager.Instance.LoadTexture("Resources/Textures/grass.png");
             ResourceManager.Instance.LoadTexture("Resources/Textures/awesomeface.png");
 
             // Camera setup
@@ -109,7 +110,7 @@ namespace FeloxGame
             CursorState = CursorState.Grabbed;
 
             // World setup
-            _testChunk = Chunk.LoadChunk("Resources/World/worldTest.txt");
+            _testChunk = WorldGenerator.Instance.LoadChunk("Resources/World/worldTest.txt");
         }
 
         protected override void OnUpdateFrame(FrameEventArgs args)
@@ -205,9 +206,9 @@ namespace FeloxGame
                 for (int x = 0; x < _testChunk.Tiles.GetLength(0); x++)
                 {
                     _vertices[0]  = x+1; _vertices[1]  = y+1; // top right (1, 1)
-                    _vertices[9]  = x+1; _vertices[10] = y; // bottom right (1, -1)
-                    _vertices[18] = x; _vertices[19] = y; // bottom left (-1, -1)
-                    _vertices[27] = x; _vertices[28] = y+1; // top left (-1, 1)
+                    _vertices[9]  = x+1; _vertices[10] = y; // bottom right (1, 0)
+                    _vertices[18] = x; _vertices[19] = y; // bottom left (0, 0)
+                    _vertices[27] = x; _vertices[28] = y+1; // top left (0, 1)
                     //_vertexArray.AddBuffer(_vertexBuffer, layout);
                     GL.BufferSubData(BufferTarget.ArrayBuffer, 0, sizeof(float) * _vertices.Length, _vertices);
                     GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0); // Used for drawing Elements

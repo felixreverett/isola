@@ -9,7 +9,18 @@ namespace FeloxGame
 {
     public class Chunk
     {
+        public string ChunkName { get; private set; }
+        public int ChunkPosX { get; private set; }
+        public int ChunkPosY { get; private set; }
         public Tile[,] Tiles { get; set; } = new Tile[16, 16];
+        
+        public Chunk(int chunkPosX, int chunkPosY)
+        {
+            ChunkPosX = chunkPosX;
+            ChunkPosY = chunkPosY;
+            ChunkName = $"x{chunkPosX}y{chunkPosY}";
+        }
+
         //public List<Entity> Entities { get; set; }
 
         public Tile GetTile(int x, int y)
@@ -20,25 +31,6 @@ namespace FeloxGame
         public void SetTile()
         {
 
-        }
-
-        public static Chunk LoadChunk(string filePath)
-        {
-            string[] rows = File.ReadAllText(filePath).Trim()
-                .Replace("\r", "").Split("\n").ToArray();
-            Chunk newChunk = new();
-
-            for (int y = 0; y < rows.Length; y++)
-            {
-                string row = rows[y];
-                string[] cols = row.Split(" ");
-                for (int x = 0; x < cols.Length; x++)
-                {
-                    newChunk.Tiles[x, y] = new Tile(cols[x]);
-                }
-            }
-
-            return newChunk;
         }
     }
 }
