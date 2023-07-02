@@ -1,4 +1,6 @@
-﻿namespace FeloxGame.World
+﻿using System.Reflection.Metadata.Ecma335;
+
+namespace FeloxGame.World
 {
     public class WorldGenerator
     {
@@ -19,10 +21,27 @@
                 }
             }
         }
-        public Chunk LoadChunk(string filePath) //will replace with source later (world loaded into memory?)
+
+        /// <summary>
+        /// Loads chunk if found in directory, otherwise generates new chunk
+        /// </summary>
+        /// <returns></returns>
+        public Chunk LoadOrGenerateChunk(string filePath, int chunkPosX, int chunkPosY)
+        {
+            if (File.Exists(filePath))
+            {
+                return LoadChunk(filePath, chunkPosX, chunkPosY);
+            }
+            else
+            {
+                return GenerateChunk(chunkPosX, chunkPosY); //TODO: add chunk coords
+            }
+        }
+
+        public Chunk LoadChunk(string filePath, int chunkPosX, int chunkPosY) //will replace with source later (world loaded into memory?)
         {
             string[] rows = File.ReadAllText(filePath).Trim().Replace("\r", "").Split("\n").ToArray();
-            Chunk newChunk = new(0, 0);
+            Chunk newChunk = new(chunkPosX, chunkPosY);
 
             for (int y = 0; y < rows.Length; y++)
             {
@@ -38,13 +57,13 @@
         }
 
         /// <summary>
-        /// Run this code if existing chunk cannot be found on load
+        /// Generates a new chunk 
         /// </summary>
         /// <param name="seed"></param>
         /// <returns></returns>
-        public Chunk GenerateChunk(int seed)
+        public Chunk GenerateChunk(int chunkPosX, int chunkPosY, int seed = 0)
         {
-            return new Chunk(0, 0);
+            return LoadChunk("Resources/World/worldTest.txt", chunkPosX, chunkPosY); //currently just loads same chonk
         }
     }
 }

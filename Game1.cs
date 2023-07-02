@@ -31,42 +31,13 @@ namespace FeloxGame
             1, 2, 3  // second triangle
         };
 
-        private readonly float[] _cubevertices =
-        {
-            //Positions         //texCoords //texColor        //texunit
-             0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, //top right front      0
-             0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, //bottom right front   1
-            -0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, //bottom left front    2
-            -0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, //top left front       3
-             0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, //top right back       4
-             0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, //bottom right back    5
-            -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, //bottom left back     6
-            -0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f  //top left back        7
-        };
-
-        private uint[] _cubeindices =
-        {
-            0, 1, 3,
-            1, 2, 3, // front
-            4, 5, 0,
-            5, 1, 0, // right
-            7, 6, 4,
-            6, 5, 4, // back
-            3, 2, 7,
-            2, 6, 7, // left
-            4, 0, 7,
-            0, 3, 7, // top
-            5, 1, 6,
-            1, 2, 6  // bottom
-        };
-
         private VertexBuffer _vertexBuffer;
         private VertexArray _vertexArray;
         private IndexBuffer _indexBuffer;
         private Shader _shader;
 
         // Added from OpenTK/Learn
-        float speed = 2.5f;
+        float speed = 5.5f;
         private Camera _camera;
         private bool mouseEnabled = false;
         private bool _firstMove = true;
@@ -74,6 +45,11 @@ namespace FeloxGame
 
         // world data
         private Chunk _testChunk;
+        private Dictionary<string, Chunk> _loadedChunks;
+        private readonly string worldFolderPath = "Resources/World/WorldFiles";
+
+        // player data
+        private Entity _player = new Entity(0f, 0f);
 
         protected override void OnLoad()
         {
@@ -107,10 +83,11 @@ namespace FeloxGame
             // Camera setup
             _camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
 
-            CursorState = CursorState.Grabbed;
+            //CursorState = CursorState.Grabbed;
 
             // World setup
-            _testChunk = WorldGenerator.Instance.LoadChunk("Resources/World/worldTest.txt");
+            _testChunk = WorldGenerator.Instance.LoadChunk("Resources/World/worldTest.txt", 0, 0);
+            _loadedChunks = new Dictionary<string, Chunk>();
         }
 
         protected override void OnUpdateFrame(FrameEventArgs args)
@@ -120,9 +97,36 @@ namespace FeloxGame
                 return;
             }
 
-            const float sensitivity = 0.2f;
+            _player.PosX = _camera.Position.X;
+            _player.PosY = _camera.Position.Y;
+
+            int renderDistance = 2;
+
+            // load chunks around the player
+            for (int x = (int)_player.PosX / 16 - renderDistance; x <= (int)_player.PosX / 16 + renderDistance; x++)
+            {
+                for (int y = (int)_player.PosY / 16 - renderDistance; y <= (int)_player.PosY / 16 + renderDistance; y++)
+                {
+                    string chunkID = $"x{x}y{y}";
+                    if (!_loadedChunks.ContainsKey(chunkID))
+                    {
+                        Chunk newChunk = WorldGenerator.Instance.LoadOrGenerateChunk($"{worldFolderPath}/{chunkID}.txt", x, y); // load the chunk
+                        _loadedChunks.Add(chunkID, newChunk);
+                    }
+                }
+            }
+
+            // unload chunks around the player
+            foreach (Chunk chunk in _loadedChunks.Values)
+            {
+                if (Math.Abs(chunk.ChunkPosX - (int)_player.PosX / 16) > renderDistance || Math.Abs(chunk.ChunkPosY - (int)_player.PosY / 16) > renderDistance)
+                {
+                    _loadedChunks.Remove($"x{chunk.ChunkPosX}y{chunk.ChunkPosY}");
+                }
+            } 
 
             // Keyboard movement
+            const float sensitivity = 0.2f;
 
             KeyboardState input = KeyboardState;
 
@@ -141,22 +145,22 @@ namespace FeloxGame
                 _camera.Position -= _camera.Front * speed * (float)args.Time; //Backwards
             }
 
-            if (input.IsKeyDown(Keys.A))
+            if (input.IsKeyDown(Keys.A) | input.IsKeyDown(Keys.Left))
             {
                 _camera.Position -= _camera.Right * speed * (float)args.Time; //Left
             }
 
-            if (input.IsKeyDown(Keys.D))
+            if (input.IsKeyDown(Keys.D) | input.IsKeyDown(Keys.Right))
             {
                 _camera.Position += _camera.Right * speed * (float)args.Time; //Right
             }
 
-            if (input.IsKeyDown(Keys.Space))
+            if (input.IsKeyDown(Keys.Space) | input.IsKeyDown(Keys.Up))
             {
                 _camera.Position += _camera.Up * speed * (float)args.Time; //Up 
             }
 
-            if (input.IsKeyDown(Keys.LeftShift))
+            if (input.IsKeyDown(Keys.LeftShift) | input.IsKeyDown(Keys.Down))
             {
                 _camera.Position -= _camera.Up * speed * (float)args.Time; //Down
             }
@@ -195,27 +199,28 @@ namespace FeloxGame
             _indexBuffer.Bind();
 
             // matrices for camera
-            var model = Matrix4.Identity;// * Matrix4.CreateRotationY((float)MathHelper.DegreesToRadians(_time));
+            var model = Matrix4.Identity;
 
             _shader.SetMatrix4("model", model);
             _shader.SetMatrix4("view", _camera.GetViewMatrix());
             _shader.SetMatrix4("projection", _camera.GetProjectionMatrix());
 
-            for (int y = 0; y < _testChunk.Tiles.GetLength(1); y++)
+            foreach (Chunk loadedChunk in _loadedChunks.Values)
             {
-                for (int x = 0; x < _testChunk.Tiles.GetLength(0); x++)
+                for (int y = 0; y < loadedChunk.Tiles.GetLength(1); y++)
                 {
-                    _vertices[0]  = x+1; _vertices[1]  = y+1; // top right (1, 1)
-                    _vertices[9]  = x+1; _vertices[10] = y; // bottom right (1, 0)
-                    _vertices[18] = x; _vertices[19] = y; // bottom left (0, 0)
-                    _vertices[27] = x; _vertices[28] = y+1; // top left (0, 1)
-                    //_vertexArray.AddBuffer(_vertexBuffer, layout);
-                    GL.BufferSubData(BufferTarget.ArrayBuffer, 0, sizeof(float) * _vertices.Length, _vertices);
-                    GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0); // Used for drawing Elements
+                    for (int x = 0; x < loadedChunk.Tiles.GetLength(0); x++)
+                    {
+                        _vertices[0]  = loadedChunk.ChunkPosX * 16 + x+1; _vertices[1]  = loadedChunk.ChunkPosY * 16 + y + 1; // top right (1, 1)
+                        _vertices[9]  = loadedChunk.ChunkPosX * 16 + x+1; _vertices[10] = loadedChunk.ChunkPosY * 16 + y; // bottom right (1, 0)
+                        _vertices[18] = loadedChunk.ChunkPosX * 16 + x;   _vertices[19] = loadedChunk.ChunkPosY * 16 + y; // bottom left (0, 0)
+                        _vertices[27] = loadedChunk.ChunkPosX * 16 + x;   _vertices[28] = loadedChunk.ChunkPosY * 16 + y + 1; // top left (0, 1)
+                        //_vertexArray.AddBuffer(_vertexBuffer, layout);
+                        GL.BufferSubData(BufferTarget.ArrayBuffer, 0, sizeof(float) * _vertices.Length, _vertices);
+                        GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0); // Used for drawing Elements
+                    }
                 }
             }
-
-            //GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0); // Used for drawing Elements
 
             SwapBuffers();
         }

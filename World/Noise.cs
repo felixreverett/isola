@@ -6,7 +6,7 @@ namespace FeloxGame.World
     {
         public static float[] GenerateNoiseMap(int mapWidth,  int mapHeight, int seed, float scale, int octaves, float persistance, float lacunarity, Vector2 offset)
         {
-            return null;
+            return null; //it does nothing wait gimme 1 min I'll reconnect with my headphones for mic audio
         }
     }
 }

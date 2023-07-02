@@ -9,7 +9,7 @@ namespace FeloxGame
 {
     public class Chunk
     {
-        public string ChunkName { get; private set; }
+        public string ChunkID { get; private set; }
         public int ChunkPosX { get; private set; }
         public int ChunkPosY { get; private set; }
         public Tile[,] Tiles { get; set; } = new Tile[16, 16];
@@ -18,7 +18,7 @@ namespace FeloxGame
         {
             ChunkPosX = chunkPosX;
             ChunkPosY = chunkPosY;
-            ChunkName = $"x{chunkPosX}y{chunkPosY}";
+            ChunkID = $"x{chunkPosX}y{chunkPosY}";
         }
 
         //public List<Entity> Entities { get; set; }
