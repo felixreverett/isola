@@ -12,7 +12,7 @@ namespace FeloxGame
         public string ChunkID { get; private set; }
         public int ChunkPosX { get; private set; }
         public int ChunkPosY { get; private set; }
-        public Tile[,] Tiles { get; set; } = new Tile[16, 16];
+        public string[,] Tiles { get; set; } = new string[16, 16];
         
         public Chunk(int chunkPosX, int chunkPosY)
         {
@@ -23,7 +23,7 @@ namespace FeloxGame
 
         //public List<Entity> Entities { get; set; }
 
-        public Tile GetTile(int x, int y)
+        public string GetTile(int x, int y)
         {
             return Tiles[x, y];
         }

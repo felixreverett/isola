@@ -46,7 +46,9 @@ namespace FeloxGame
         // world data
         private Chunk _testChunk;
         private Dictionary<string, Chunk> _loadedChunks;
-        private readonly string worldFolderPath = "Resources/World/WorldFiles";
+        private readonly string worldFolderPath = @"../../../Resources/World/WorldFiles";
+        private readonly string tileListFolderPath = @"../../../Resources/Tiles";
+        private List<Tile> _tileList; // will contain all tiles
 
         // player data
         private Entity _player = new Entity(0f, 0f);
@@ -78,14 +80,17 @@ namespace FeloxGame
             GL.Uniform1(textureSampleUniformLocation, 2, samplers);
 
             ResourceManager.Instance.LoadTexture("Resources/Textures/grass.png");
-            ResourceManager.Instance.LoadTexture("Resources/Textures/awesomeface.png");
+            ResourceManager.Instance.LoadTexture("Resources/Textures/water.png");
 
             // Camera setup
             _camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
 
             //CursorState = CursorState.Grabbed;
 
-            // World setup
+            // Resource loading
+            _tileList = Loading.LoadAllObjects<Tile>(tileListFolderPath);
+
+            // World loading
             _testChunk = WorldGenerator.Instance.LoadChunk("Resources/World/worldTest.txt", 0, 0);
             _loadedChunks = new Dictionary<string, Chunk>();
         }

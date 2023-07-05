@@ -38,12 +38,16 @@
     <None Update="Resources\Textures\wall.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\Textures\water.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\World\worldTest.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Resources\Tiles\" />
     <Folder Include="Resources\World\WorldFiles\" />
   </ItemGroup>
 

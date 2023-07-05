@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FeloxGame
+﻿namespace FeloxGame
 {
     public class Tile
     {
-        public Tile(string name)
+        public string Name { get; set; }
+        public string TextureLocation { get; set; }
+
+        public Tile(string name, string textureLocation)
         {
             Name = name;
+            TextureLocation = textureLocation;
         }
 
-        public string Name { get; set; }
     }
 }
