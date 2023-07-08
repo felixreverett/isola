@@ -56,7 +56,7 @@ namespace FeloxGame
         protected override void OnLoad()
         {
             GL.Enable(EnableCap.DepthTest);
-            _shader = new(Shader.ParseShader("Resources/Shaders/TextureWithColorAndTextureSlotAndUniforms.glsl"));
+            _shader = new(Shader.ParseShader(@"../../../Resources/Shaders/TextureWithColorAndTextureSlotAndUniforms.glsl"));
             if (!_shader.CompileShader())
             {
                 Console.WriteLine("Failed to compile shader.");
@@ -91,7 +91,7 @@ namespace FeloxGame
             _tileList = Loading.LoadAllObjects<Tile>(tileListFolderPath);
 
             // World loading
-            _testChunk = WorldManager.Instance.LoadChunk("Resources/World/worldTest.txt", 0, 0);
+            _testChunk = WorldManager.Instance.LoadChunk(@"../../../Resources/World/worldTest.txt", 0, 0);
             _loadedChunks = new Dictionary<string, Chunk>();
         }
 
