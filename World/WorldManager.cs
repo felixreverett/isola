@@ -1,4 +1,4 @@
-﻿using System.Reflection.Metadata.Ecma335;
+﻿using FeloxGame.Core.Management;
 
 namespace FeloxGame.World
 {
@@ -56,44 +56,24 @@ namespace FeloxGame.World
             return newChunk;
         }
 
-        public float[] GetSubTextureCoordinates(int textureIndex)
+        public TexCoords GetSubTextureCoordinates(int textureIndex)
         {
+            TexCoords texCoords = new TexCoords();
             int superTexSize = 1024;
             float subTexSize = 32f / superTexSize;
 
-            int col = textureIndex % 32; // 32 = WorldTextures.Width (1024) / Texture.Width (32) (make dynamic?)
-            float texCoordXMin = col * subTexSize; // normalise it
+            int col = textureIndex % 32;
+            texCoords.MinX = col * subTexSize; // normalise it
 
             int row = textureIndex / 32;
-            float texCoordYMin = 1.0f - ((row + 1) * subTexSize ); // normalise, offset, and "flip" it
+            texCoords.MinY = 1.0f - ((row + 1) * subTexSize ); // normalise, offset, and "flip" it
 
-            float texCoordXMax = texCoordXMin + subTexSize;
-            float texCoordYMax = texCoordYMin + subTexSize;
+            texCoords.MaxX = texCoords.MinX + subTexSize;
+            texCoords.MaxY = texCoords.MinY + subTexSize;
 
-            float[] texCoords = { texCoordXMin, texCoordYMin, texCoordXMax, texCoordYMax };
             return texCoords;
         }
-
-        /*
-        public Chunk LoadChunk(string filePath, int chunkPosX, int chunkPosY) //will replace with source later (world loaded into memory?)
-        {
-            string[] rows = File.ReadAllText(filePath).Trim().Replace("\r", "").Split("\n").ToArray();
-            Chunk newChunk = new(chunkPosX, chunkPosY);
-
-            for (int y = 0; y < rows.Length; y++)
-            {
-                string row = rows[y];
-                string[] cols = row.Split(" ");
-                for (int x = 0; x < cols.Length; x++)
-                {
-                    newChunk.Tiles[x, y] = new Tile(cols[x]);
-                }
-            }
-
-            return newChunk;
-        }
-        */
-
+        
         /// <summary>
         /// Generates a new chunk 
         /// </summary>

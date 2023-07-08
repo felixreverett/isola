@@ -13,7 +13,7 @@ namespace FeloxGame
     public class Game1 : GameWindow
     {
         public Game1(int width, int height, string title)
-            : base(GameWindowSettings.Default, new NativeWindowSettings() { Size = (width, height), Title = title })
+            : base(GameWindowSettings.Default, new NativeWindowSettings() { Size = (width, height), Title = title, NumberOfSamples = 24 })
         {
         }
 
@@ -81,8 +81,6 @@ namespace FeloxGame
 
             // Load all textures (TODO: actually load them all not manually)
             ResourceManager.Instance.LoadTexture(@"../../../Resources/Textures/WorldTextures.png");
-            //ResourceManager.Instance.LoadTexture("Resources/Textures/grass.png");
-            //ResourceManager.Instance.LoadTexture("Resources/Textures/water.png");
 
             // Camera setup
             _camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
@@ -224,18 +222,14 @@ namespace FeloxGame
                         _vertices[27] = loadedChunk.ChunkPosX * 16 + x; _vertices[28] = loadedChunk.ChunkPosY * 16 + y + 1; // top left (0, 1)
                         string textureName = loadedChunk.Tiles[x, y];
                         int textureIndex = _tileList.Where(t => t.Name.ToLower() == textureName.ToLower()).FirstOrDefault().TextureIndex;
-                        float[] texCoords = WorldManager.Instance.GetSubTextureCoordinates(textureIndex);
-                        _vertices[3] = texCoords[2]; _vertices[4] = texCoords[3];   // top right (1, 1)
-                        _vertices[12] = texCoords[0]; _vertices[13] = texCoords[3]; // bottom right (1, 0)
-                        _vertices[21] = texCoords[0]; _vertices[22] = texCoords[1]; // bottom left (0, 0)
-                        _vertices[30] = texCoords[2]; _vertices[31] = texCoords[1]; // top left (0, 1)
+                        TexCoords texCoords = WorldManager.Instance.GetSubTextureCoordinates(textureIndex);
+                        _vertices[3] = texCoords.MaxX; _vertices[4] = texCoords.MaxY;
+                        _vertices[12] = texCoords.MinX; _vertices[13] = texCoords.MaxY;
+                        _vertices[21] = texCoords.MinX; _vertices[22] = texCoords.MinY;
+                        _vertices[30] = texCoords.MaxX; _vertices[31] = texCoords.MinY;
                         //_vertexArray.AddBuffer(_vertexBuffer, layout);
                         GL.BufferSubData(BufferTarget.ArrayBuffer, 0, sizeof(float) * _vertices.Length, _vertices);
                         GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0); // Used for drawing Elements
-                        // 2 3
-                        // 0 3
-                        // 0 1
-                        // 2 1
                     }
                 }
             }
