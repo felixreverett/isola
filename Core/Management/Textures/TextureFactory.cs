@@ -23,7 +23,7 @@ namespace FeloxGame.Core.Management
             GL.BindTexture(TextureTarget.Texture2D, handle); // Bind our texture
             using var image = Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(textureName);
 
-            image.Mutate(i => i.RotateFlip(RotateMode.Rotate90, FlipMode.None));
+            image.Mutate(i => i.RotateFlip(RotateMode.Rotate180, FlipMode.Horizontal));
 
             var data = image.DangerousTryGetSinglePixelMemory(out Memory<Rgba32> memory);
 

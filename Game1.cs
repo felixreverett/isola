@@ -79,8 +79,10 @@ namespace FeloxGame
             int[] samplers = new int[2] { 0, 1 };
             GL.Uniform1(textureSampleUniformLocation, 2, samplers);
 
-            ResourceManager.Instance.LoadTexture("Resources/Textures/grass.png");
-            ResourceManager.Instance.LoadTexture("Resources/Textures/water.png");
+            // Load all textures (TODO: actually load them all not manually)
+            ResourceManager.Instance.LoadTexture(@"../../../Resources/Textures/WorldTextures.png");
+            //ResourceManager.Instance.LoadTexture("Resources/Textures/grass.png");
+            //ResourceManager.Instance.LoadTexture("Resources/Textures/water.png");
 
             // Camera setup
             _camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
@@ -91,7 +93,7 @@ namespace FeloxGame
             _tileList = Loading.LoadAllObjects<Tile>(tileListFolderPath);
 
             // World loading
-            _testChunk = WorldGenerator.Instance.LoadChunk("Resources/World/worldTest.txt", 0, 0);
+            _testChunk = WorldManager.Instance.LoadChunk("Resources/World/worldTest.txt", 0, 0);
             _loadedChunks = new Dictionary<string, Chunk>();
         }
 
@@ -115,7 +117,7 @@ namespace FeloxGame
                     string chunkID = $"x{x}y{y}";
                     if (!_loadedChunks.ContainsKey(chunkID))
                     {
-                        Chunk newChunk = WorldGenerator.Instance.LoadOrGenerateChunk($"{worldFolderPath}/{chunkID}.txt", x, y); // load the chunk
+                        Chunk newChunk = WorldManager.Instance.LoadOrGenerateChunk($"{worldFolderPath}/{chunkID}.txt", x, y); // load the chunk
                         _loadedChunks.Add(chunkID, newChunk);
                     }
                 }
@@ -216,13 +218,24 @@ namespace FeloxGame
                 {
                     for (int x = 0; x < loadedChunk.Tiles.GetLength(0); x++)
                     {
-                        _vertices[0]  = loadedChunk.ChunkPosX * 16 + x+1; _vertices[1]  = loadedChunk.ChunkPosY * 16 + y + 1; // top right (1, 1)
-                        _vertices[9]  = loadedChunk.ChunkPosX * 16 + x+1; _vertices[10] = loadedChunk.ChunkPosY * 16 + y; // bottom right (1, 0)
-                        _vertices[18] = loadedChunk.ChunkPosX * 16 + x;   _vertices[19] = loadedChunk.ChunkPosY * 16 + y; // bottom left (0, 0)
-                        _vertices[27] = loadedChunk.ChunkPosX * 16 + x;   _vertices[28] = loadedChunk.ChunkPosY * 16 + y + 1; // top left (0, 1)
+                        _vertices[0] = loadedChunk.ChunkPosX * 16 + x + 1; _vertices[1] = loadedChunk.ChunkPosY * 16 + y + 1; // top right (1, 1)
+                        _vertices[9] = loadedChunk.ChunkPosX * 16 + x + 1; _vertices[10] = loadedChunk.ChunkPosY * 16 + y; // bottom right (1, 0)
+                        _vertices[18] = loadedChunk.ChunkPosX * 16 + x; _vertices[19] = loadedChunk.ChunkPosY * 16 + y; // bottom left (0, 0)
+                        _vertices[27] = loadedChunk.ChunkPosX * 16 + x; _vertices[28] = loadedChunk.ChunkPosY * 16 + y + 1; // top left (0, 1)
+                        string textureName = loadedChunk.Tiles[x, y];
+                        int textureIndex = _tileList.Where(t => t.Name.ToLower() == textureName.ToLower()).FirstOrDefault().TextureIndex;
+                        float[] texCoords = WorldManager.Instance.GetSubTextureCoordinates(textureIndex);
+                        _vertices[3] = texCoords[2]; _vertices[4] = texCoords[3];   // top right (1, 1)
+                        _vertices[12] = texCoords[0]; _vertices[13] = texCoords[3]; // bottom right (1, 0)
+                        _vertices[21] = texCoords[0]; _vertices[22] = texCoords[1]; // bottom left (0, 0)
+                        _vertices[30] = texCoords[2]; _vertices[31] = texCoords[1]; // top left (0, 1)
                         //_vertexArray.AddBuffer(_vertexBuffer, layout);
                         GL.BufferSubData(BufferTarget.ArrayBuffer, 0, sizeof(float) * _vertices.Length, _vertices);
                         GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0); // Used for drawing Elements
+                        // 2 3
+                        // 0 3
+                        // 0 1
+                        // 2 1
                     }
                 }
             }

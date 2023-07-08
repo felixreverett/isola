@@ -41,6 +41,9 @@
     <None Update="Resources\Textures\water.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\Textures\WorldTextures.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\World\worldTest.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

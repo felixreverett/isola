@@ -2,12 +2,12 @@
 
 namespace FeloxGame.World
 {
-    public class WorldGenerator
+    public class WorldManager
     {
-        private static WorldGenerator _instance = null;
+        private static WorldManager _instance = null;
         private static readonly object _loc = new();
 
-        public static WorldGenerator Instance
+        public static WorldManager Instance
         {
             get
             {
@@ -15,7 +15,7 @@ namespace FeloxGame.World
                 {
                     if (_instance == null)
                     {
-                        _instance = new WorldGenerator();
+                        _instance = new WorldManager();
                     }
                     return _instance;
                 }
@@ -54,6 +54,24 @@ namespace FeloxGame.World
             }
 
             return newChunk;
+        }
+
+        public float[] GetSubTextureCoordinates(int textureIndex)
+        {
+            int superTexSize = 1024;
+            float subTexSize = 32f / superTexSize;
+
+            int col = textureIndex % 32; // 32 = WorldTextures.Width (1024) / Texture.Width (32) (make dynamic?)
+            float texCoordXMin = col * subTexSize; // normalise it
+
+            int row = textureIndex / 32;
+            float texCoordYMin = 1.0f - ((row + 1) * subTexSize ); // normalise, offset, and "flip" it
+
+            float texCoordXMax = texCoordXMin + subTexSize;
+            float texCoordYMax = texCoordYMin + subTexSize;
+
+            float[] texCoords = { texCoordXMin, texCoordYMin, texCoordXMax, texCoordYMax };
+            return texCoords;
         }
 
         /*
