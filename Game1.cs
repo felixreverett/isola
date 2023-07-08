@@ -241,6 +241,7 @@ namespace FeloxGame
         {
             base.OnResize(e);
             GL.Viewport(0, 0, e.Width, e.Height);
+            _camera.AspectRatio = (float)e.Width / (float)e.Height;
         }
 
         protected override void OnUnload()
