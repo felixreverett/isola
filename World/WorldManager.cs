@@ -64,16 +64,16 @@ namespace FeloxGame.World
             float normalPadding = (float)padding / superTexSize;
             int rowColLength = 1024 / (32 + padding); // how many textures per row/col
             float subTexSize = 32f / superTexSize;
-            float hackyOffset = 0.00001f;
+            float pixelOffset = 0.00001f;
 
             int col = textureIndex % rowColLength;
-            texCoords.MinX = col * (subTexSize + normalPadding) + hackyOffset; // normalise it
+            texCoords.MinX = col * (subTexSize + normalPadding) + pixelOffset; // normalise it
 
             int row = textureIndex / rowColLength;
-            texCoords.MinY = 1.0f - ((row + 1) * (subTexSize + normalPadding)) + hackyOffset; // normalise, offset, and "flip" it
+            texCoords.MinY = 1.0f - ((row + 1) * (subTexSize + normalPadding)) + pixelOffset; // normalise, offset, and "flip" it
 
-            texCoords.MaxX = texCoords.MinX + subTexSize - (2 * hackyOffset);
-            texCoords.MaxY = texCoords.MinY + subTexSize - (2 * hackyOffset);
+            texCoords.MaxX = texCoords.MinX + subTexSize - (2 * pixelOffset);
+            texCoords.MaxY = texCoords.MinY + subTexSize - (2 * pixelOffset);
 
             return texCoords;
         }

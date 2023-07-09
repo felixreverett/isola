@@ -14,6 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Resources\Textures\Entities\Player.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\Shaders\Default.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

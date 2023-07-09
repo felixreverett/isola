@@ -92,7 +92,7 @@ namespace FeloxGame.Core.Rendering
             }
             else
             {
-                Console.WriteLine("Shader has not been compiled!");
+                throw new Exception("Shader has not been compiled!");
             }
         }
 

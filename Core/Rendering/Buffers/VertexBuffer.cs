@@ -10,7 +10,7 @@ namespace FeloxGame.Core.Rendering
         {
             BufferId = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, BufferId);
-            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw); // Give data
+            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.DynamicDraw); // Give data
 
         }
 

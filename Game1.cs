@@ -51,17 +51,29 @@ namespace FeloxGame
         private List<Tile> _tileList; // will contain all tiles
 
         // player data
-        private Entity _player = new Entity(0f, 0f);
+        private Player _player;
+
+        // Textures
+        private Texture2D WorldTexture { get; set; }
 
         protected override void OnLoad()
         {
             GL.Enable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             _shader = new(Shader.ParseShader(@"../../../Resources/Shaders/TextureWithColorAndTextureSlotAndUniforms.glsl"));
             if (!_shader.CompileShader())
             {
                 Console.WriteLine("Failed to compile shader.");
                 return;
             }
+
+            // Load all textures (TODO: actually load them all not manually)
+            WorldTexture = ResourceManager.Instance.LoadTexture(@"../../../Resources/Textures/WorldTextures.png");
+            //ResourceManager.Instance.LoadTexture(@"../../../Resources/Textures/Entities/Player.png");
+
+            // Player
+            _player = new Player(new Vector2(0, 0), new Vector2(1, 2));
 
             _vertexArray = new();
             _vertexBuffer = new VertexBuffer(_vertices);
@@ -75,15 +87,13 @@ namespace FeloxGame
             _vertexArray.AddBuffer(_vertexBuffer, layout);
             _shader.Use();
             _indexBuffer = new IndexBuffer(_indices);
-            var textureSampleUniformLocation = _shader.GetUniformLocation("u_Texture[0]");
-            int[] samplers = new int[2] { 0, 1 };
-            GL.Uniform1(textureSampleUniformLocation, 2, samplers);
+            var textureSampleUniformLocation = _shader.GetUniformLocation("u_Texture[0]"); // ??
+            int[] samplers = new int[2] { 0, 1 }; // ??
+            GL.Uniform1(textureSampleUniformLocation, 2, samplers); // ??
 
-            // Load all textures (TODO: actually load them all not manually)
-            ResourceManager.Instance.LoadTexture(@"../../../Resources/Textures/WorldTextures.png");
 
-            // Camera setup
-            _camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
+            // Camera setup (zoom, aspect ratio)
+            _camera = new Camera(Vector3.UnitZ * 10, Size.X / (float)Size.Y);
 
             //CursorState = CursorState.Grabbed;
 
@@ -93,6 +103,7 @@ namespace FeloxGame
             // World loading
             _testChunk = WorldManager.Instance.LoadChunk(@"../../../Resources/World/worldTest.txt", 0, 0);
             _loadedChunks = new Dictionary<string, Chunk>();
+
         }
 
         protected override void OnUpdateFrame(FrameEventArgs args)
@@ -102,15 +113,14 @@ namespace FeloxGame
                 return;
             }
 
-            _player.PosX = _camera.Position.X;
-            _player.PosY = _camera.Position.Y;
+            _player.Update(args);
 
             int renderDistance = 2;
 
             // load chunks around the player
-            for (int x = (int)_player.PosX / 16 - renderDistance; x <= (int)_player.PosX / 16 + renderDistance; x++)
+            for (int x = (int)_player.Position.X / 16 - renderDistance; x <= (int)_player.Position.X / 16 + renderDistance; x++)
             {
-                for (int y = (int)_player.PosY / 16 - renderDistance; y <= (int)_player.PosY / 16 + renderDistance; y++)
+                for (int y = (int)_player.Position.Y / 16 - renderDistance; y <= (int)_player.Position.Y / 16 + renderDistance; y++)
                 {
                     string chunkID = $"x{x}y{y}";
                     if (!_loadedChunks.ContainsKey(chunkID))
@@ -124,7 +134,7 @@ namespace FeloxGame
             // unload chunks around the player
             foreach (Chunk chunk in _loadedChunks.Values)
             {
-                if (Math.Abs(chunk.ChunkPosX - (int)_player.PosX / 16) > renderDistance || Math.Abs(chunk.ChunkPosY - (int)_player.PosY / 16) > renderDistance)
+                if (Math.Abs(chunk.ChunkPosX - (int)_player.Position.X / 16) > renderDistance || Math.Abs(chunk.ChunkPosY - (int)_player.Position.Y / 16) > renderDistance)
                 {
                     _loadedChunks.Remove($"x{chunk.ChunkPosX}y{chunk.ChunkPosY}");
                 }
@@ -152,22 +162,22 @@ namespace FeloxGame
 
             if (input.IsKeyDown(Keys.A) | input.IsKeyDown(Keys.Left))
             {
-                _camera.Position -= _camera.Right * speed * (float)args.Time; //Left
+                _player.Position -= new Vector2(speed * (float)args.Time, 0);
             }
 
             if (input.IsKeyDown(Keys.D) | input.IsKeyDown(Keys.Right))
             {
-                _camera.Position += _camera.Right * speed * (float)args.Time; //Right
+                _player.Position += new Vector2(speed * (float)args.Time, 0);
             }
 
             if (input.IsKeyDown(Keys.Space) | input.IsKeyDown(Keys.Up))
             {
-                _camera.Position += _camera.Up * speed * (float)args.Time; //Up 
+                _player.Position += new Vector2(0, speed * (float)args.Time);
             }
 
             if (input.IsKeyDown(Keys.LeftShift) | input.IsKeyDown(Keys.Down))
             {
-                _camera.Position -= _camera.Up * speed * (float)args.Time; //Down
+                _player.Position -= new Vector2(0, speed * (float)args.Time);
             }
 
             if (mouseEnabled)
@@ -192,6 +202,9 @@ namespace FeloxGame
                     _camera.Pitch -= deltaY * sensitivity;
                 }
             }
+
+            Vector3 cameraMoveDirection = new Vector3(_player.Position.X - _camera.Position.X, _player.Position.Y - _camera.Position.Y, 0f);
+            _camera.Position += cameraMoveDirection * 0.05f;
         }
 
         protected override void OnRenderFrame(FrameEventArgs args)
@@ -200,8 +213,6 @@ namespace FeloxGame
             GL.ClearColor(Color4.CornflowerBlue);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             _shader.Use();
-            _vertexArray.Bind();
-            _indexBuffer.Bind();
 
             // matrices for camera
             var model = Matrix4.Identity;
@@ -209,6 +220,13 @@ namespace FeloxGame
             _shader.SetMatrix4("model", model);
             _shader.SetMatrix4("view", _camera.GetViewMatrix());
             _shader.SetMatrix4("projection", _camera.GetProjectionMatrix());
+
+
+            // This will become World.Draw()
+            WorldTexture.Use();
+            _vertexArray.Bind();
+            _vertexBuffer.Bind();
+            _indexBuffer.Bind();
 
             foreach (Chunk loadedChunk in _loadedChunks.Values)
             {
@@ -233,6 +251,8 @@ namespace FeloxGame
                     }
                 }
             }
+
+            _player.Draw();
 
             SwapBuffers();
         }

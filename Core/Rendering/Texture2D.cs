@@ -10,33 +10,23 @@ namespace FeloxGame.Core.Rendering
         public int Height { get; set; }
         public TextureUnit TextureSlot { get; set; } = TextureUnit.Texture0;
 
-        public Texture2D(int handle)
-        {
-            Handle = handle;
-        }
-
-        public Texture2D(int handle, int width, int height) : this(handle)
-        {
-            Width = width;
-            Height = height;
-        }
-
-        public Texture2D(int handle, int width, int height, TextureUnit textureSlot) : this(handle, width, height)
+        public Texture2D(int handle, int width, int height, TextureUnit textureSlot)
         {
             TextureSlot = textureSlot;
-        }
-        
+            Width = width;
+            Height = height;
+            Handle = handle;
+        }        
 
         ~Texture2D()
         {
             Dispose(false);
         }
-
-
+        
         public void Use()
         {
-            GL.ActiveTexture(TextureUnit.Texture0);
-            GL.BindTexture(TextureTarget.Texture1D, Handle);
+            GL.ActiveTexture(TextureSlot);
+            GL.BindTexture(TextureTarget.Texture2D, Handle);
         }
 
         public void Dispose(bool disposing)
