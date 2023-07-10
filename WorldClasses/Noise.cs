@@ -1,6 +1,6 @@
 ﻿using OpenTK.Mathematics;
 
-namespace FeloxGame.World
+namespace FeloxGame.WorldClasses
 {
     public class Noise
     {

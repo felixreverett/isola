@@ -1,8 +1,4 @@
-﻿using FeloxGame.Core;
-using FeloxGame.World;
-using System;
-
-namespace FeloxGame
+﻿namespace FeloxGame
 {
     internal class Program
     {

@@ -17,6 +17,7 @@ namespace FeloxGame
         public Vector2 Position { get; set; }
         private Vector2 Size;
         private Texture2D playerSprite;
+        public int RenderDistance { get; set; } = 2;
         public RectangleF ColRec
         {
             get
@@ -66,7 +67,6 @@ namespace FeloxGame
             HandleInput(args);
 
             ResolveCollision();
-                
         }
 
         public void HandleInput(FrameEventArgs args) 
@@ -87,7 +87,6 @@ namespace FeloxGame
             layout.Add<float>(1); // Texture Slot
 
             _vertexArray.AddBuffer(_vertexBuffer, layout);
-
             _indexBuffer = new IndexBuffer(_indices);
         }
 

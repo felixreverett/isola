@@ -1,6 +1,6 @@
 ﻿using FeloxGame.Core.Management;
 
-namespace FeloxGame.World
+namespace FeloxGame.WorldClasses
 {
     public class WorldManager
     {
