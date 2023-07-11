@@ -102,6 +102,8 @@ namespace FeloxGame.WorldClasses
         public Chunk GenerateChunk(int chunkPosX, int chunkPosY, int seed = 0)
         {
             return LoadChunk("Resources/World/worldTest.txt", chunkPosX, chunkPosY); //currently just loads same chonk
+
+            Chunk newChunk = new(chunkPosX, chunkPosY);
         }
     }
 }

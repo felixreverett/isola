@@ -1,18 +1,13 @@
-﻿using OpenTK;
-using System.Drawing;
-using OpenTK.Input;
-using OpenTK.Mathematics;
+﻿using OpenTK.Mathematics;
 using FeloxGame.Core.Rendering;
 using RectangleF = System.Drawing.RectangleF;
 using FeloxGame.Core.Management;
 using OpenTK.Graphics.OpenGL4;
-using FeloxGame.Core;
-using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Windowing.Common;
 
 namespace FeloxGame
 {
-    public class Player
+    public class Player //: Entity // ICollidable, 
     {
         public Vector2 Position { get; set; }
         private Vector2 Size;
