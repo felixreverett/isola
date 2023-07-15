@@ -7,6 +7,8 @@ using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Mathematics;
 using FeloxGame.WorldClasses;
+using OpenTK.Input;
+using OpenTK.Windowing.Common.Input;
 
 namespace FeloxGame
 {
@@ -34,6 +36,9 @@ namespace FeloxGame
 
         // player data
         private Player _player;
+
+        // Mouse data
+        private Vector2 _mouseCoords;
 
         protected override void OnLoad()
         {
@@ -176,7 +181,26 @@ namespace FeloxGame
         {
             base.OnResize(e);
             GL.Viewport(0, 0, e.Width, e.Height);
-            _camera.AspectRatio = (float)e.Width / (float)e.Height;
+            _camera.AspectRatio = (float)e.Width / e.Height;
+            _camera.UpdateCameraDimensions();
+        }
+
+        protected override void OnMouseMove(MouseMoveEventArgs e)
+        {
+            base.OnMouseMove(e);
+
+            float ndcX = (2.0f * MousePosition.X) / Size.X - 1.0f;
+            float ndcY = 1.0f - (2.0f * MousePosition.Y) / Size.Y;
+            Vector2 ndcCursorPos = new Vector2(ndcX, ndcY);
+
+            _mouseCoords.X = _camera.Position.X + (ndcCursorPos.X * _camera.Width / 2.0f);
+            _mouseCoords.Y = _camera.Position.Y + (ndcCursorPos.Y * _camera.Height / 2.0f);
+        }
+
+        protected override void OnMouseDown(MouseButtonEventArgs e)
+        {
+            base.OnMouseDown(e);
+            Console.WriteLine($"{(int)_mouseCoords.X} {(int)_mouseCoords.Y}");
         }
 
         protected override void OnUnload()

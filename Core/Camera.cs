@@ -1,5 +1,4 @@
-﻿using System;
-using OpenTK.Mathematics;
+﻿using OpenTK.Mathematics;
 
 namespace FeloxGame.Core
 {
@@ -10,15 +9,22 @@ namespace FeloxGame.Core
         private Vector3 _right = Vector3.UnitX;
 
         private float _pitch;
-
         private float _yaw = -MathHelper.PiOver2;
-        
         private float _fov = MathHelper.PiOver2;
+
+        // window dimensions
+        private float left;
+        private float right;
+        private float top;
+        private float bottom;
+        public float Width { get; private set; }
+        public float Height { get; private set; }
 
         public Camera(Vector3 position, float aspectRatio)
         {
             Position = position;
             AspectRatio = aspectRatio;
+            UpdateCameraDimensions();
         }
 
         /// Properties
@@ -60,15 +66,23 @@ namespace FeloxGame.Core
         }
 
         /// Methods
-
         public Matrix4 GetViewMatrix()
         {
             return Matrix4.LookAt(Position, Position + _front, _up);
         }
 
         public Matrix4 GetProjectionMatrix()
+        {   
+            return Matrix4.CreateOrthographicOffCenter(left, right, bottom, top, 0.01f, 100f);
+        }
+
+        public void UpdateCameraDimensions()
         {
-            return Matrix4.CreatePerspectiveFieldOfView(_fov, AspectRatio, 0.01f, 100f);
+            Width = AspectRatio * 20; Height = 20f;
+            left = -Width / 2.0f;
+            right = Width / 2.0f;
+            bottom = -Height / 2.0f;
+            top = Height / 2.0f;
         }
 
         private void UpdateVectors()
