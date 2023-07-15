@@ -1,5 +1,4 @@
 ﻿using FeloxGame.Core.Rendering;
-using FeloxGame.Core.Management;
 using FeloxGame.Core;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
@@ -7,8 +6,6 @@ using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Mathematics;
 using FeloxGame.WorldClasses;
-using OpenTK.Input;
-using OpenTK.Windowing.Common.Input;
 
 namespace FeloxGame
 {
@@ -84,6 +81,8 @@ namespace FeloxGame
             // Keyboard movement
             KeyboardState input = KeyboardState;
 
+            Vector2 movement = Vector2.Zero;
+
             if (input.IsKeyDown(Keys.Escape))
             {
                 Close();
@@ -91,23 +90,27 @@ namespace FeloxGame
 
             if (input.IsKeyDown(Keys.A) | input.IsKeyDown(Keys.Left))
             {
-                _player.Position -= new Vector2(speed * (float)args.Time, 0);
+                movement.X -= 1.0f;
             }
 
             if (input.IsKeyDown(Keys.D) | input.IsKeyDown(Keys.Right))
             {
-                _player.Position += new Vector2(speed * (float)args.Time, 0);
+                movement.X += 1.0f;
             }
 
             if (input.IsKeyDown(Keys.W) | input.IsKeyDown(Keys.Up))
             {
-                _player.Position += new Vector2(0, speed * (float)args.Time);
+                movement.Y += 1.0f;
             }
 
             if (input.IsKeyDown(Keys.S) | input.IsKeyDown(Keys.Down))
             {
-                _player.Position -= new Vector2(0, speed * (float)args.Time);
+                movement.Y -= 1.0f;
             }
+
+            if (movement.LengthSquared > 1.0f) { movement.Normalize(); }
+
+            _player.Position += movement * (speed * (float)args.Time);
 
             // Track player with camera
             Vector3 cameraMoveDirection = new Vector3(_player.Position.X - _camera.Position.X, _player.Position.Y - _camera.Position.Y, 0f);
@@ -148,18 +151,16 @@ namespace FeloxGame
         {
             base.OnMouseMove(e);
 
-            float ndcX = (2.0f * MousePosition.X) / Size.X - 1.0f;
-            float ndcY = 1.0f - (2.0f * MousePosition.Y) / Size.Y;
-            Vector2 ndcCursorPos = new Vector2(ndcX, ndcY);
-
-            _cursor.Position = (
-                _camera.Position.X + (ndcCursorPos.X * _camera.Width / 2.0f),
-                _camera.Position.Y + (ndcCursorPos.Y * _camera.Height / 2.0f));
+            _cursor.UpdatePosition(MousePosition, _camera.Position, Size, _camera.Width, _camera.Height);
+            
         }
 
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
             base.OnMouseDown(e);
+            _cursor.UpdatePosition(MousePosition, _camera.Position, Size, _camera.Width, _camera.Height);
+
+            // debug
             Console.WriteLine($"{_cursor.Position.X} => {_cursor.Rounded(_cursor.Position.X)}, {_cursor.Position.Y} => {_cursor.Rounded(_cursor.Position.Y)}");
         }
 
