@@ -19,9 +19,9 @@ namespace FeloxGame.WorldClasses // rename this later?
         private readonly float[] _vertices =
         {   //Vertices        //texCoords //texColors       //texUnit
             1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, //top right (1,1)
-            1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, //bottom right (1, 0)
+            1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, //bottom right (1, 0)
             0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, //bottom left (0, 0)
-            0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f  //top left (0, 1)
+            0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f  //top left (0, 1)
         };
 
         private uint[] _indices =
@@ -104,11 +104,10 @@ namespace FeloxGame.WorldClasses // rename this later?
                         string textureName = loadedChunk.Tiles[x, y];
                         int textureIndex = _tileList.Where(t => t.Name.ToLower() == textureName.ToLower()).FirstOrDefault().TextureIndex;
                         TexCoords texCoords = WorldManager.Instance.GetSubTextureCoordinates(textureIndex);
-                        _vertices[3] = texCoords.MaxX; _vertices[4] = texCoords.MaxY;
-                        _vertices[12] = texCoords.MinX; _vertices[13] = texCoords.MaxY;
-                        _vertices[21] = texCoords.MinX; _vertices[22] = texCoords.MinY;
-                        _vertices[30] = texCoords.MaxX; _vertices[31] = texCoords.MinY;
-                        //_vertexArray.AddBuffer(_vertexBuffer, layout);
+                        _vertices[3] = texCoords.MaxX; _vertices[4] = texCoords.MaxY;   // (1, 1)
+                        _vertices[12] = texCoords.MaxX; _vertices[13] = texCoords.MinY; // (1, 0)
+                        _vertices[21] = texCoords.MinX; _vertices[22] = texCoords.MinY; // (0, 0)
+                        _vertices[30] = texCoords.MinX; _vertices[31] = texCoords.MaxY; // (0, 1)
                         GL.BufferSubData(BufferTarget.ArrayBuffer, 0, sizeof(float) * _vertices.Length, _vertices);
                         GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0); // Used for drawing Elements
                     }

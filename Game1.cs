@@ -18,27 +18,23 @@ namespace FeloxGame
             : base(GameWindowSettings.Default, new NativeWindowSettings() { Size = (width, height), Title = title, NumberOfSamples = 24 })
         {
         }
-
+        
         private Shader _shader;
-
-        // Added from OpenTK/Learn
+        
+        // Camera
         float speed = 5.5f;
         private Camera _camera;
-        private bool mouseEnabled = false;
-        private bool _firstMove = true;
-        private Vector2 _lastPos;
 
         // world data
         private World _world;
-        private Chunk _testChunk;
         private readonly string tileListFolderPath = @"../../../Resources/Tiles";
         private List<Tile> _tileList; // will contain all tiles
 
         // player data
         private Player _player;
 
-        // Mouse data
-        private Vector2 _mouseCoords;
+        // Cursor data
+        private GameCursor _cursor;
 
         protected override void OnLoad()
         {
@@ -67,15 +63,13 @@ namespace FeloxGame
             // Camera
             _camera = new Camera(Vector3.UnitZ * 10, Size.X / (float)Size.Y);
 
-            //CursorState = CursorState.Grabbed;
+            //GameCursor
+            _cursor = new GameCursor();
 
             // Resource loading
             _tileList = Loading.LoadAllObjects<Tile>(tileListFolderPath);
-
-            // World data loading
-            _testChunk = WorldManager.Instance.LoadChunk(@"../../../Resources/World/worldTest.txt", 0, 0);
         }
-
+        
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
             if (!IsFocused) // check to see if the window is focused
@@ -88,24 +82,11 @@ namespace FeloxGame
             _world.Update(_player);
 
             // Keyboard movement
-            const float sensitivity = 0.2f;
-
             KeyboardState input = KeyboardState;
 
             if (input.IsKeyDown(Keys.Escape))
             {
                 Close();
-            }
-
-            // Zoom for debug
-            if (input.IsKeyDown(Keys.Space))
-            {
-                _camera.Position += _camera.Front * speed * (float)args.Time; //Forward 
-            }
-
-            if (input.IsKeyDown(Keys.LeftShift))
-            {
-                _camera.Position -= _camera.Front * speed * (float)args.Time; //Backwards
             }
 
             if (input.IsKeyDown(Keys.A) | input.IsKeyDown(Keys.Left))
@@ -128,29 +109,7 @@ namespace FeloxGame
                 _player.Position -= new Vector2(0, speed * (float)args.Time);
             }
 
-            if (mouseEnabled)
-            {
-                // Get the mouse state
-                var mouse = MouseState;
-
-                // Mouse movement
-
-                if (_firstMove)
-                {
-                    _lastPos = new Vector2(mouse.X, mouse.Y);
-                    _firstMove = false;
-                }
-                else
-                {
-                    var deltaX = mouse.X - _lastPos.X;
-                    var deltaY = mouse.Y - _lastPos.Y;
-                    _lastPos = new Vector2(mouse.X, mouse.Y);
-
-                    _camera.Yaw += deltaX * sensitivity;
-                    _camera.Pitch -= deltaY * sensitivity;
-                }
-            }
-
+            // Track player with camera
             Vector3 cameraMoveDirection = new Vector3(_player.Position.X - _camera.Position.X, _player.Position.Y - _camera.Position.Y, 0f);
             _camera.Position += cameraMoveDirection * 0.05f;
         }
@@ -193,14 +152,15 @@ namespace FeloxGame
             float ndcY = 1.0f - (2.0f * MousePosition.Y) / Size.Y;
             Vector2 ndcCursorPos = new Vector2(ndcX, ndcY);
 
-            _mouseCoords.X = _camera.Position.X + (ndcCursorPos.X * _camera.Width / 2.0f);
-            _mouseCoords.Y = _camera.Position.Y + (ndcCursorPos.Y * _camera.Height / 2.0f);
+            _cursor.Position = (
+                _camera.Position.X + (ndcCursorPos.X * _camera.Width / 2.0f),
+                _camera.Position.Y + (ndcCursorPos.Y * _camera.Height / 2.0f));
         }
 
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
             base.OnMouseDown(e);
-            Console.WriteLine($"{(int)_mouseCoords.X} {(int)_mouseCoords.Y}");
+            Console.WriteLine($"{_cursor.Position.X} => {_cursor.Rounded(_cursor.Position.X)}, {_cursor.Position.Y} => {_cursor.Rounded(_cursor.Position.Y)}");
         }
 
         protected override void OnUnload()
