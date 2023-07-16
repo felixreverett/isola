@@ -21,9 +21,9 @@
             return Tiles[x, y];
         }
 
-        public void SetTile()
+        public void SetTile(int x, int y, string tileId)
         {
-
+            Tiles[x, y] = tileId;
         }
     }
 }

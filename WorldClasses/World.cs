@@ -2,6 +2,7 @@
 using FeloxGame.Core.Rendering;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
+using SharpNoise;
 
 namespace FeloxGame.WorldClasses // rename this later?
 {
@@ -11,9 +12,10 @@ namespace FeloxGame.WorldClasses // rename this later?
     /// </summary>
     public class World
     {
-        //public Player Player { get; private set; }
         public Dictionary<string, Chunk> LoadedChunks { get; private set; }
         private string _worldFolderPath = @"../../../Resources/World/WorldFiles";
+        public int Seed { get; private set; }
+        private Noise _noise;
 
         // Rendering
         private readonly float[] _vertices =
@@ -35,9 +37,12 @@ namespace FeloxGame.WorldClasses // rename this later?
         private IndexBuffer _indexBuffer;
         private Texture2D WorldTexture { get; set; }
 
-        public World()
+        public World(int seed = 1)
         {
             LoadedChunks = new Dictionary<string, Chunk>();
+            Seed = seed;
+            _noise = new Noise(seed, 4);
+            GenerateOctaveOffsets();
             OnLoad();
         }
 
@@ -68,7 +73,7 @@ namespace FeloxGame.WorldClasses // rename this later?
                     string chunkID = $"x{x}y{y}";
                     if (!LoadedChunks.ContainsKey(chunkID))
                     {
-                        Chunk newChunk = WorldManager.Instance.LoadOrGenerateChunk($"{_worldFolderPath}/{chunkID}.txt", x, y); // load the chunk
+                        Chunk newChunk = LoadOrGenerateChunk($"{_worldFolderPath}/{chunkID}.txt", x, y); // load the chunk
                         LoadedChunks.Add(chunkID, newChunk);
                     }
                 }
@@ -114,5 +119,111 @@ namespace FeloxGame.WorldClasses // rename this later?
                 }
             }
         }
+
+        // Terrain Generation code
+        public void GenerateOctaveOffsets(int seed = 1)
+        {
+            // Generate octave offsets
+            int octaves = 4; // Number of octaves
+            Vector2[] octaveOffsets = new Vector2[octaves];
+            var random = new Random(seed);
+            for (int i = 0; i < octaves; i++)
+            {
+                float offsetX = random.Next(-100000, 100000);
+                float offsetY = random.Next(-100000, 100000);
+                octaveOffsets[i] = new Vector2(offsetX, offsetY);
+            }
+        }
+
+        public Chunk LoadOrGenerateChunk(string filePath, int chunkPosX, int chunkPosY)
+        {
+            if (File.Exists(filePath))
+            {
+                return LoadChunk(filePath, chunkPosX, chunkPosY);
+            }
+            else
+            {
+                return GenerateChunk(chunkPosX, chunkPosY);
+            }
+        }
+        public Chunk LoadChunk(string filePath, int chunkPosX, int chunkPosY)
+        {
+            string[] rows = File.ReadAllText(filePath).Trim().Replace("\r", "").Split("\n").ToArray();
+            Chunk newChunk = new(chunkPosX, chunkPosY);
+
+            for (int y = 0; y < rows.Length; y++)
+            {
+                string row = rows[y];
+                string[] cols = row.Split(" ");
+                for (int x = 0; x < cols.Length; x++)
+                {
+                    newChunk.Tiles[x, y] = cols[x];
+                }
+            }
+
+            return newChunk;
+        }
+
+        public Chunk GenerateChunk(int chunkPosX, int chunkPosY, int seed = 1)
+        {
+            //float[,] noiseMap = _noise.GenerateNoiseMap(chunkPosX, chunkPosY, 16, 16, seed, 1000, 4, 2, 3);
+            //Chunk newChunk = ApplyNoiseMapToChunk(noiseMap, new Chunk(chunkPosX, chunkPosY));
+            NoiseMap noiseMap2 = NoiseGenerator.GenerateNoiseMap(chunkPosX, chunkPosY, 16, 3, 100f, 9);
+            Chunk newChunk = ApplyNoiseMapToChunk2(noiseMap2, new Chunk(chunkPosX, chunkPosY));
+
+            return newChunk;
+        }
+
+        public Chunk ApplyNoiseMapToChunk(float[,] noiseMap, Chunk chunk)
+        {
+            for (int x = 0; x < 16; x++)
+            {
+                for (int y = 0; y < 16; y++)
+                {
+                    float noiseValue = noiseMap[x, y];
+                    if (noiseValue < 0.4f)
+                    {
+                        chunk.SetTile(x, y, "Water");
+                    }
+                    else if (noiseValue < 0.5f)
+                    {
+                        chunk.SetTile(x, y, "Sand");
+                    }
+                    else
+                    {
+                        chunk.SetTile(x, y, "Grass");
+                    }
+                }
+            }
+
+            return chunk;
+        }
+
+        public Chunk ApplyNoiseMapToChunk2(NoiseMap noiseMap2, Chunk chunk)
+        {
+            for (int x = 0; x < 16; x++)
+            {
+                for (int y = 0; y < 16; y++)
+                {
+                    float noiseValue = noiseMap2.GetValue(x, y);
+                    if (noiseValue < -0.4f)
+                    {
+                        chunk.SetTile(x, y, "Water");
+                    }
+                    else if (noiseValue < 0.0f)
+                    {
+                        chunk.SetTile(x, y, "Sand");
+                    }
+                    else
+                    {
+                        chunk.SetTile(x, y, "Grass");
+                    }
+                }
+            }
+
+            return chunk;
+        }
+
+
     }
 }

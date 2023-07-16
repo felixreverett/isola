@@ -11,6 +11,7 @@
     <PackageReference Include="LibNoise" Version="0.2.0" />
     <PackageReference Include="OpenTK" Version="4.7.7" />
     <PackageReference Include="OpenTK.Mathematics" Version="4.7.7" />
+    <PackageReference Include="SharpNoise" Version="0.12.1.1" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
   </ItemGroup>
 

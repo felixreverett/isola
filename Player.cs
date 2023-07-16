@@ -12,7 +12,7 @@ namespace FeloxGame
         public Vector2 Position { get; set; }
         private Vector2 Size;
         private Texture2D playerSprite;
-        public int RenderDistance { get; set; } = 2;
+        public int RenderDistance { get; set; } = 3;
         public RectangleF ColRec
         {
             get
