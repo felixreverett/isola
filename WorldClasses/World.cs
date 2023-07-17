@@ -61,10 +61,14 @@ namespace FeloxGame.WorldClasses // rename this later?
 
         public void Update(Player player)
         {
+            int worldX = (int)Math.Floor(player.Position.X);
+            int worldY = (int)Math.Floor(player.Position.Y);
+            int chunkX = worldX >= 0 ? worldX / 16 : worldX / 16 - 1;
+            int chunkY = worldY >= 0 ? worldY / 16 : worldY / 16 - 1;
             // load chunks around the player
-            for (int x = (int)player.Position.X / 16 - player.RenderDistance; x <= (int)player.Position.X / 16 + player.RenderDistance; x++)
+            for (int x = chunkX - player.RenderDistance; x <= chunkX + player.RenderDistance; x++)
             {
-                for (int y = (int)player.Position.Y / 16 - player.RenderDistance; y <= (int)player.Position.Y / 16 + player.RenderDistance; y++)
+                for (int y = chunkY - player.RenderDistance; y <= chunkY + player.RenderDistance; y++)
                 {
                     string chunkID = $"x{x}y{y}";
                     if (!LoadedChunks.ContainsKey(chunkID))

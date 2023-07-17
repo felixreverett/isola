@@ -78,7 +78,7 @@ namespace FeloxGame.Core
 
         public void UpdateCameraDimensions()
         {
-            Width = AspectRatio * 20; Height = 20f;
+            Width = AspectRatio * 50; Height = 50f;
             left = -Width / 2.0f;
             right = Width / 2.0f;
             bottom = -Height / 2.0f;
