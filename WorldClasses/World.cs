@@ -78,7 +78,7 @@ namespace FeloxGame.WorldClasses // rename this later?
             // unload chunks around the player
             foreach (Chunk chunk in LoadedChunks.Values)
             {
-                if (Math.Abs(chunk.ChunkPosX - (int)player.Position.X / 16) > player.RenderDistance || Math.Abs(chunk.ChunkPosY - (int)player.Position.Y / 16) > player.RenderDistance)
+                if (Math.Abs(chunk.ChunkPosX - chunkX) > player.RenderDistance || Math.Abs(chunk.ChunkPosY - chunkY) > player.RenderDistance)
                 {
                     LoadedChunks.Remove($"x{chunk.ChunkPosX}y{chunk.ChunkPosY}");
                 }
