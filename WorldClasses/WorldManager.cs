@@ -30,7 +30,7 @@ namespace FeloxGame.WorldClasses
             float normalPadding = (float)padding / superTexSize;
             int rowColLength = 1024 / (32 + padding); // how many textures per row/col
             float subTexSize = 32f / superTexSize;
-            float pixelOffset = 0.00001f;
+            float pixelOffset = 1f / (1024 * 2);
 
             int col = textureIndex % rowColLength;
             texCoords.MinX = col * (subTexSize + normalPadding) + pixelOffset; // normalise it

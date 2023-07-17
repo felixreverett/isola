@@ -159,9 +159,11 @@ namespace FeloxGame
         {
             base.OnMouseDown(e);
             _cursor.UpdatePosition(MousePosition, _camera.Position, Size, _camera.Width, _camera.Height);
-
+            float distanceFromPlayer = Vector2.Distance(_player.Position, _cursor.Position);
             // debug
             Console.WriteLine($"{_cursor.Position.X} => {_cursor.Rounded(_cursor.Position.X)}, {_cursor.Position.Y} => {_cursor.Rounded(_cursor.Position.Y)}");
+            Console.WriteLine($"The cursor is {distanceFromPlayer} units from the player.");
+            _world.UpdateTile(_cursor.Rounded(_cursor.Position.X), _cursor.Rounded(_cursor.Position.Y));
         }
 
         protected override void OnUnload()

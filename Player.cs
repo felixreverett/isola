@@ -12,7 +12,7 @@ namespace FeloxGame
         public Vector2 Position { get; set; }
         private Vector2 Size;
         private Texture2D playerSprite;
-        public int RenderDistance { get; set; } = 3;
+        public int RenderDistance { get; set; } = 1;
         public RectangleF ColRec
         {
             get
@@ -48,12 +48,14 @@ namespace FeloxGame
         private VertexBuffer _vertexBuffer;
         private VertexArray _vertexArray;
         private IndexBuffer _indexBuffer;
+        public float Reach { get; set; }
 
         public Player(Vector2 startPos, Vector2 size)
         {
             this.Position = startPos;
             this.Size = size;
             this.playerSprite = ResourceManager.Instance.LoadTexture(@"../../../Resources/Textures/Entities/Player.png");
+            Reach = 5f;
             OnLoad();
         }
 
@@ -106,6 +108,9 @@ namespace FeloxGame
             }*/
         }
 
+        public void GetChunkPos()
+        {
 
+        }
     }
 }
