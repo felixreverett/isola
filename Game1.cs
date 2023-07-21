@@ -33,6 +33,9 @@ namespace FeloxGame
         // Cursor data
         private GameCursor _cursor;
 
+        // Gamestate data
+        private bool toggleInventory = false;
+
         protected override void OnLoad()
         {
             GL.Enable(EnableCap.DepthTest);
@@ -88,6 +91,11 @@ namespace FeloxGame
                 Close();
             }
 
+            if (input.IsKeyReleased(Keys.E))
+            {
+                toggleInventory = !toggleInventory;
+            }
+
             if (input.IsKeyDown(Keys.A) | input.IsKeyDown(Keys.Left))
             {
                 movement.X -= 1.0f;
@@ -135,6 +143,11 @@ namespace FeloxGame
             _world.Draw(_tileList);
 
             _player.Draw();
+
+            if (toggleInventory)
+            {
+                _player.inventory.Draw();
+            }
 
             SwapBuffers();
         }

@@ -44,6 +44,24 @@ namespace FeloxGame.WorldClasses
             return texCoords;
         }
 
+        public TexCoords GetTexCoordFromAtlas(float x, float y, float textureWidth, float textureHeight, float atlasWidth, float atlasHeight)
+        {
+            /*if (x < 0 || x > textureWidth || y < 0 || y > textureHeight)
+            {
+                throw new Exception("Values outside of acceptable range.");
+            }*/
+            TexCoords texCoords = new TexCoords();
+            texCoords.MinX = x / atlasWidth;
+            texCoords.MinY = y / atlasHeight;
+            texCoords.MaxX = (x + textureWidth) / atlasWidth;
+            texCoords.MaxY = (y + textureHeight) / atlasHeight;
+
+            return texCoords;
+        }
+
+
+        // Old stuff I don't yet have the heart to delete
+
         public TexCoords GetSubTextureCoordinatesOLD(int textureIndex)
         {
             TexCoords texCoords = new TexCoords();

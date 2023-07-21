@@ -12,7 +12,8 @@ namespace FeloxGame
         public Vector2 Position { get; set; }
         private Vector2 Size;
         private Texture2D playerSprite;
-        public int RenderDistance { get; set; } = 1;
+        public Inventory inventory;
+        public int RenderDistance { get; set; } = 2;
         public RectangleF ColRec
         {
             get
@@ -31,6 +32,7 @@ namespace FeloxGame
             }
         }// draw rectangle
 
+        // Rendering
         private float[] vertices =
         {
             //Vertices        //texCoords //texColors       //texUnit
@@ -48,13 +50,18 @@ namespace FeloxGame
         private VertexBuffer _vertexBuffer;
         private VertexArray _vertexArray;
         private IndexBuffer _indexBuffer;
+
+        // Properties
         public float Reach { get; set; }
+
+
 
         public Player(Vector2 startPos, Vector2 size)
         {
             this.Position = startPos;
             this.Size = size;
             this.playerSprite = ResourceManager.Instance.LoadTexture(@"../../../Resources/Textures/Entities/Player.png");
+            this.inventory = new Inventory();
             Reach = 5f;
             OnLoad();
         }
