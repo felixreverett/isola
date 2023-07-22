@@ -35,11 +35,11 @@ namespace FeloxGame
         // Rendering
         private float[] vertices =
         {
-            //Vertices        //texCoords //texColors       //texUnit
-            1.0f, 2.0f, 0.001f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.5f, //top right (1,1)
-            1.0f, 0.0f, 0.001f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.5f, //bottom right (1, 0)
-            0.0f, 0.0f, 0.001f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.5f, //bottom left (0, 0)
-            0.0f, 2.0f, 0.001f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.5f  //top left (0, 1)
+            //Vertices          //texCoords //texColors       
+            1.0f, 2.0f, 0.001f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, //top right (1,1)
+            1.0f, 0.0f, 0.001f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, //bottom right (1, 0)
+            0.0f, 0.0f, 0.001f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, //bottom left (0, 0)
+            0.0f, 2.0f, 0.001f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f  //top left (0, 1)
         };
 
         private uint[] _indices =
@@ -88,7 +88,6 @@ namespace FeloxGame
             layout.Add<float>(3); // Positions
             layout.Add<float>(2); // Texture Coords
             layout.Add<float>(3); // Texture Color
-            layout.Add<float>(1); // Texture Slot
 
             _vertexArray.AddBuffer(_vertexBuffer, layout);
             _indexBuffer = new IndexBuffer(_indices);
@@ -101,9 +100,9 @@ namespace FeloxGame
             _indexBuffer.Bind();
 
             vertices[0] = Position.X + Size.X;  vertices[1] = Position.Y + Size.Y;
-            vertices[9] = Position.X + Size.X;  vertices[10] = Position.Y;
-            vertices[18] = Position.X;          vertices[19] = Position.Y;
-            vertices[27] = Position.X;          vertices[28] = Position.Y + Size.Y;
+            vertices[8] = Position.X + Size.X;  vertices[9] = Position.Y;
+            vertices[16] = Position.X;          vertices[17] = Position.Y;
+            vertices[24] = Position.X;          vertices[25] = Position.Y + Size.Y;
 
             playerSprite.Use(); //GL.ActiveTexture() and GL.BindTexture()
             

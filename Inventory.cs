@@ -14,11 +14,11 @@ namespace FeloxGame
 
         private float[] vertices =
         {
-            //Vertices          //texCoords //texColors       //texUnit
-            1.0f, 2.0f, 0.003f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 2.5f, //top right (1,1)
-            1.0f, 0.0f, 0.003f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 2.5f, //bottom right (1, 0)
-            0.0f, 0.0f, 0.003f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 2.5f, //bottom left (0, 0)
-            0.0f, 2.0f, 0.003f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 2.5f  //top left (0, 1)
+            //Vertices          //texCoords //texColors       
+            1.0f, 2.0f, 0.003f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, //top right (1,1)
+            1.0f, 0.0f, 0.003f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, //bottom right (1, 0)
+            0.0f, 0.0f, 0.003f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, //bottom left (0, 0)
+            0.0f, 2.0f, 0.003f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f  //top left (0, 1)
         };
 
         private uint[] _indices =
@@ -52,7 +52,6 @@ namespace FeloxGame
             layout.Add<float>(3); // Positions
             layout.Add<float>(2); // Texture Coords
             layout.Add<float>(3); // Texture Color
-            layout.Add<float>(1); // Texture Slot
 
             _vertexArray.AddBuffer(_vertexBuffer, layout);
             _indexBuffer = new IndexBuffer(_indices);
@@ -61,9 +60,9 @@ namespace FeloxGame
         public void UpdateTextureCoords()
         {
             vertices[3] = inventoryCoords.MaxX; vertices[4] = inventoryCoords.MaxY;   // (1, 1)
-            vertices[12] = inventoryCoords.MaxX; vertices[13] = inventoryCoords.MinY; // (1, 0)
-            vertices[21] = inventoryCoords.MinX; vertices[22] = inventoryCoords.MinY; // (0, 0)
-            vertices[30] = inventoryCoords.MinX; vertices[31] = inventoryCoords.MaxY; // (0, 1)
+            vertices[11] = inventoryCoords.MaxX; vertices[12] = inventoryCoords.MinY; // (1, 0)
+            vertices[19] = inventoryCoords.MinX; vertices[20] = inventoryCoords.MinY; // (0, 0)
+            vertices[27] = inventoryCoords.MinX; vertices[28] = inventoryCoords.MaxY; // (0, 1)
         }
 
         public void Draw()

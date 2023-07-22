@@ -17,11 +17,11 @@ namespace FeloxGame.WorldClasses // rename this later?
 
         // Rendering
         private readonly float[] _vertices =
-        {   //Vertices        //texCoords //texColors       //texUnit
-            1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, //top right (1,1)
-            1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, //bottom right (1, 0)
-            0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, //bottom left (0, 0)
-            0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f  //top left (0, 1)
+        {   //Vertices        //texCoords //texColors
+            1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, //top right (1,1)
+            1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, //bottom right (1, 0)
+            0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, //bottom left (0, 0)
+            0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f  //top left (0, 1)
         };
 
         private uint[] _indices =
@@ -53,7 +53,7 @@ namespace FeloxGame.WorldClasses // rename this later?
             layout.Add<float>(3); // Positions
             layout.Add<float>(2); // Texture Coords
             layout.Add<float>(3); // Texture Color
-            layout.Add<float>(1); // Texture Slot
+            //layout.Add<float>(1); // Texture Slot
 
             _vertexArray.AddBuffer(_vertexBuffer, layout);
             _indexBuffer = new IndexBuffer(_indices);
@@ -103,16 +103,16 @@ namespace FeloxGame.WorldClasses // rename this later?
                     for (int x = 0; x < loadedChunk.Tiles.GetLength(0); x++)
                     {
                         _vertices[0] = loadedChunk.ChunkPosX * 16 + x + 1; _vertices[1] = loadedChunk.ChunkPosY * 16 + y + 1; // top right (1, 1)
-                        _vertices[9] = loadedChunk.ChunkPosX * 16 + x + 1; _vertices[10] = loadedChunk.ChunkPosY * 16 + y; // bottom right (1, 0)
-                        _vertices[18] = loadedChunk.ChunkPosX * 16 + x; _vertices[19] = loadedChunk.ChunkPosY * 16 + y; // bottom left (0, 0)
-                        _vertices[27] = loadedChunk.ChunkPosX * 16 + x; _vertices[28] = loadedChunk.ChunkPosY * 16 + y + 1; // top left (0, 1)
+                        _vertices[8] = loadedChunk.ChunkPosX * 16 + x + 1; _vertices[9] = loadedChunk.ChunkPosY * 16 + y; // bottom right (1, 0)
+                        _vertices[16] = loadedChunk.ChunkPosX * 16 + x; _vertices[17] = loadedChunk.ChunkPosY * 16 + y; // bottom left (0, 0)
+                        _vertices[24] = loadedChunk.ChunkPosX * 16 + x; _vertices[25] = loadedChunk.ChunkPosY * 16 + y + 1; // top left (0, 1)
                         string textureName = loadedChunk.Tiles[x, y];
                         int textureIndex = _tileList.Where(t => t.Name.ToLower() == textureName.ToLower()).FirstOrDefault().TextureIndex;
                         TexCoords texCoords = WorldManager.Instance.GetSubTextureCoordinates(textureIndex);
                         _vertices[3] = texCoords.MaxX; _vertices[4] = texCoords.MaxY;   // (1, 1)
-                        _vertices[12] = texCoords.MaxX; _vertices[13] = texCoords.MinY; // (1, 0)
-                        _vertices[21] = texCoords.MinX; _vertices[22] = texCoords.MinY; // (0, 0)
-                        _vertices[30] = texCoords.MinX; _vertices[31] = texCoords.MaxY; // (0, 1)
+                        _vertices[11] = texCoords.MaxX; _vertices[12] = texCoords.MinY; // (1, 0)
+                        _vertices[19] = texCoords.MinX; _vertices[20] = texCoords.MinY; // (0, 0)
+                        _vertices[27] = texCoords.MinX; _vertices[28] = texCoords.MaxY; // (0, 1)
                         GL.BufferSubData(BufferTarget.ArrayBuffer, 0, sizeof(float) * _vertices.Length, _vertices);
                         GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0); // Used for drawing Elements
                     }
