@@ -60,7 +60,7 @@ namespace FeloxGame
         {
             this.Position = startPos;
             this.Size = size;
-            this.playerSprite = ResourceManager.Instance.LoadTexture(@"../../../Resources/Textures/Entities/Player.png");
+            this.playerSprite = ResourceManager.Instance.LoadTexture(@"../../../Resources/Textures/Entities/Player.png", 1);
             this.inventory = new Inventory();
             Reach = 5f;
             OnLoad();
@@ -106,6 +106,7 @@ namespace FeloxGame
             vertices[27] = Position.X;          vertices[28] = Position.Y + Size.Y;
 
             playerSprite.Use(); //GL.ActiveTexture() and GL.BindTexture()
+            
             GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * vertices.Length, vertices, BufferUsageHint.DynamicDraw);
             GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0); // Used for drawing Elements
 

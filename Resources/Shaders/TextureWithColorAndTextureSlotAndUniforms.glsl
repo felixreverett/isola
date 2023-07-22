@@ -27,10 +27,11 @@ out vec4 outputColor;
 in vec2 texCoord;
 in vec4 color;
 in float texIndex;
-uniform sampler2D u_Texture[2];
+uniform sampler2D u_Texture[3];
+uniform float myTextureUnit;
 
 void main() 
 {
-	int index = int(texIndex);
+	int index = int(myTextureUnit);
 	outputColor = texture(u_Texture[index], texCoord) * color;
 }

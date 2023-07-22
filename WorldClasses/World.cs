@@ -44,7 +44,7 @@ namespace FeloxGame.WorldClasses // rename this later?
 
         public void OnLoad()
         {
-            WorldTexture = ResourceManager.Instance.LoadTexture(@"../../../Resources/Textures/WorldTextures.png");
+            WorldTexture = ResourceManager.Instance.LoadTexture(@"../../../Resources/Textures/WorldTextures.png", 0);
 
             _vertexArray = new();
             _vertexBuffer = new VertexBuffer(_vertices);

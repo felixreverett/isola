@@ -6,6 +6,7 @@ using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Mathematics;
 using FeloxGame.WorldClasses;
+using FeloxGame.Core.Management;
 
 namespace FeloxGame
 {
@@ -36,6 +37,11 @@ namespace FeloxGame
         // Gamestate data
         private bool toggleInventory = false;
 
+        // Textures
+        Texture2D tileAtlas;
+        Texture2D playerSprites;
+        Texture2D inventoryAtlas;
+
         protected override void OnLoad()
         {
             GL.Enable(EnableCap.DepthTest);
@@ -54,11 +60,16 @@ namespace FeloxGame
             // Player
             _player = new Player(new Vector2(0, 0), new Vector2(1, 2));
 
+            // Textures
             _shader.Use();
 
-            var textureSampleUniformLocation = _shader.GetUniformLocation("u_Texture[0]"); // ??
-            int[] samplers = new int[2] { 0, 1 }; // ??
-            GL.Uniform1(textureSampleUniformLocation, 2, samplers); // ??
+            tileAtlas = ResourceManager.Instance.LoadTexture(@"../../../Resources/Textures/WorldTextures.png", 0);
+            playerSprites = ResourceManager.Instance.LoadTexture(@"../../../Resources/Textures/Entities/Player.png", 1); ;
+            inventoryAtlas = ResourceManager.Instance.LoadTexture(@"../../../Resources/Textures/Inventories/Inventory Atlas.png", 2);
+
+            //var textureSampleUniformLocation = _shader.GetUniformLocation("u_Texture[0]"); // ??
+            //int[] samplers = new int[3] { 0, 1, 2 }; // ??
+            //GL.Uniform1(textureSampleUniformLocation, 2, samplers); // ??
 
             // Camera
             _camera = new Camera(Vector3.UnitZ * 10, Size.X / (float)Size.Y);
@@ -68,6 +79,8 @@ namespace FeloxGame
 
             // Resource loading
             _tileList = Loading.LoadAllObjects<Tile>(tileListFolderPath);
+
+            //_shader.Debug();
         }
         
         protected override void OnUpdateFrame(FrameEventArgs args)
@@ -132,7 +145,6 @@ namespace FeloxGame
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             _shader.Use();
-
             // matrices for camera
             var model = Matrix4.Identity;
 
@@ -140,12 +152,15 @@ namespace FeloxGame
             _shader.SetMatrix4("view", _camera.GetViewMatrix());
             _shader.SetMatrix4("projection", _camera.GetProjectionMatrix());
 
+            _shader.SetInt("myTextureUnit", 0);
             _world.Draw(_tileList);
 
+            _shader.SetInt("myTextureUnit", 1);
             _player.Draw();
 
             if (toggleInventory)
             {
+                _shader.SetInt("myTextureUnit", 2);
                 _player.inventory.Draw();
             }
 

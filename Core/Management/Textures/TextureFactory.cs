@@ -7,21 +7,19 @@ namespace FeloxGame.Core.Management
 {
     public static class TextureFactory
     {
-        private static int _textureCursor = 0;
-
-        public static Texture2D Load(string textureName)
+        public static Texture2D Load(string textureName, int texUnit)
         {
             int handle = GL.GenTexture();
-            Enum.TryParse(typeof(TextureUnit), $"Texture{_textureCursor}", out var result);
-            if (result == null)
+
+            if (texUnit > GL.GetInteger(GetPName.MaxTextureImageUnits))
             {
-                throw new Exception($"Exceeded maximum texture slots OpenGL can natively support. Count {_textureCursor}");
+                throw new Exception($"Exceeded maximum texture slots OpenGL can natively support. Count {texUnit}");
             }
-            TextureUnit textureUnit = ((TextureUnit)result);
+            TextureUnit textureUnit = ((TextureUnit)texUnit);
 
             GL.ActiveTexture(textureUnit); // Set the texture units
             GL.BindTexture(TextureTarget.Texture2D, handle); // Bind our texture
-            using var image = Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(textureName);
+            using var image = Image.Load<Rgba32>(textureName);
 
             image.Mutate(i => i.RotateFlip(RotateMode.Rotate180, FlipMode.Horizontal));
 
@@ -39,9 +37,6 @@ namespace FeloxGame.Core.Management
 
             // Auto-Generate Mipmaps (probably won't need for 2D game)
             //GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-
-            // Increment cursor
-            _textureCursor++;
 
             return new Texture2D(handle, image.Width, image.Height, textureUnit);
         }

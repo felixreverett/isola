@@ -84,6 +84,21 @@ namespace FeloxGame.Core.Rendering
             GL.UniformMatrix4(_uniforms[name], true, ref data);
         }
 
+        public void SetInt(string uniformName, int value)
+        {
+            GL.UseProgram(ProgramId);
+            int location = GetUniformLocation(uniformName);
+            GL.Uniform1(location, value);
+        }
+
+        public void Debug()
+        {
+            foreach (KeyValuePair<string, int> s in _uniforms)
+            {
+                Console.WriteLine($"Uniform: {s.Key}. Value: {s.Value}");
+            }
+        }
+
         public void Use()
         {
             if (Compiled)
