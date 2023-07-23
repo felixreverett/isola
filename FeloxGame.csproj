@@ -16,6 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Resources\Shaders\UIShader.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\Textures\Entities\Player.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

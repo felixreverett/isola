@@ -17,7 +17,9 @@ namespace FeloxGame
         {
         }
         
+        // Shaders
         private Shader _shader;
+        private Shader _UIShader;
         
         // Camera
         float speed = 5.5f;
@@ -47,8 +49,16 @@ namespace FeloxGame
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+
             _shader = new(Shader.ParseShader(@"../../../Resources/Shaders/TextureWithColorAndTextureSlotAndUniforms.glsl"));
             if (!_shader.CompileShader())
+            {
+                Console.WriteLine("Failed to compile shader.");
+                return;
+            }
+
+            _UIShader = new(Shader.ParseShader(@"../../../Resources/Shaders/UIShader.glsl"));
+            if (!_UIShader.CompileShader())
             {
                 Console.WriteLine("Failed to compile shader.");
                 return;
@@ -144,6 +154,7 @@ namespace FeloxGame
             GL.ClearColor(Color4.CornflowerBlue);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
+            
             _shader.Use();
             // matrices for camera
             var model = Matrix4.Identity;
@@ -152,15 +163,21 @@ namespace FeloxGame
             _shader.SetMatrix4("view", _camera.GetViewMatrix());
             _shader.SetMatrix4("projection", _camera.GetProjectionMatrix());
 
-            _shader.SetInt("myTextureUnit", 0);
+            //_shader.SetInt("myTextureUnit", 0);
             _world.Draw(_tileList);
 
-            _shader.SetInt("myTextureUnit", 1);
+            //_shader.SetInt("myTextureUnit", 1);
             _player.Draw();
+            
 
             if (toggleInventory)
             {
-                _shader.SetInt("myTextureUnit", 2);
+                GL.Disable(EnableCap.DepthTest);
+                _UIShader.Use();
+                _UIShader.SetMatrix4("model", model);
+                _UIShader.SetMatrix4("view", Matrix4.Identity);
+                _UIShader.SetMatrix4("projection", Matrix4.Identity);
+                //_shader.SetInt("myTextureUnit", 2);
                 _player.inventory.Draw();
             }
 

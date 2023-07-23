@@ -51,12 +51,12 @@ namespace FeloxGame.WorldClasses
                 throw new Exception("Values outside of acceptable range.");
             }*/
             TexCoords texCoords = new TexCoords();
-            float pixelOffsetX = 1f / atlasWidth * 2;
-            float pixelOffsetY = 1f / atlasHeight * 2;
-            texCoords.MinX = x / atlasWidth + pixelOffsetX;
-            texCoords.MinY = y / atlasHeight + pixelOffsetY;
-            texCoords.MaxX = (x + textureWidth) / atlasWidth - pixelOffsetX;
-            texCoords.MaxY = (y + textureHeight) / atlasHeight - pixelOffsetY;
+            float pixelOffsetX = 1f / (atlasWidth * 2);
+            float pixelOffsetY = 1f / (atlasHeight * 2);
+            texCoords.MinX = x / atlasWidth;// + pixelOffsetX;
+            texCoords.MinY = y / atlasHeight;// + pixelOffsetY;
+            texCoords.MaxX = (x + textureWidth) / atlasWidth;// - pixelOffsetX;
+            texCoords.MaxY = (y + textureHeight) / atlasHeight;// - pixelOffsetY;
 
             return texCoords;
         }

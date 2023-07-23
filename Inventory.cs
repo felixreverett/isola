@@ -14,11 +14,11 @@ namespace FeloxGame
 
         private float[] vertices =
         {
-            //Vertices          //texCoords //texColors       
-            1.0f, 2.0f, 0.003f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, //top right (1,1)
-            1.0f, 0.0f, 0.003f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, //bottom right (1, 0)
-            0.0f, 0.0f, 0.003f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, //bottom left (0, 0)
-            0.0f, 2.0f, 0.003f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f  //top left (0, 1)
+            //Vertices        //texCoords //texColors       
+            1.0f, 1.0f, 0.3f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, //top right (1,1)
+            1.0f, 0.0f, 0.3f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, //bottom right (1, 0)
+            0.0f, 0.0f, 0.3f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, //bottom left (0, 0)
+            0.0f, 1.0f, 0.3f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f  //top left (0, 1)
         };
 
         private uint[] _indices =
@@ -38,6 +38,7 @@ namespace FeloxGame
             this.inventoryAtlas = ResourceManager.Instance.LoadTexture(@"../../../Resources/Textures/Inventories/Inventory Atlas.png", 2);
             this.inventoryCoords = WorldManager.Instance.GetTexCoordFromAtlas(4, 840, 346, 180, 1024, 1024);
             UpdateTextureCoords();
+            UpdateScreenCoords(346, 180);
             OnLoad();
         }
 
@@ -59,19 +60,45 @@ namespace FeloxGame
 
         public void UpdateTextureCoords()
         {
+            // Set texCoords of atlas
             vertices[3] = inventoryCoords.MaxX; vertices[4] = inventoryCoords.MaxY;   // (1, 1)
             vertices[11] = inventoryCoords.MaxX; vertices[12] = inventoryCoords.MinY; // (1, 0)
             vertices[19] = inventoryCoords.MinX; vertices[20] = inventoryCoords.MinY; // (0, 0)
             vertices[27] = inventoryCoords.MinX; vertices[28] = inventoryCoords.MaxY; // (0, 1)
         }
 
+        public void UpdateScreenCoords(int width, int height)
+        {
+            float screenPercentage = 1f;
+            //int grande = Math.Max(width, height);
+            //int pequeño = Math.Min(width, height);
+            TexCoords screenCoords = new TexCoords();
+            float maxX = ((float)width / width) * screenPercentage;
+            float maxY = ((float)height / width) * screenPercentage;
+            Console.WriteLine(maxY);
+            screenCoords.MaxX = maxX; screenCoords.MinX = -maxX;
+            screenCoords.MaxY = maxY; screenCoords.MinY = -maxY;
+            Console.WriteLine($"{screenCoords.MaxX}");
+            Console.WriteLine($"{screenCoords.MinX}");
+            Console.WriteLine(screenCoords.MaxY);
+            Console.WriteLine(screenCoords.MinY);
+
+            // Set screen position
+            vertices[0] = screenCoords.MaxX; vertices[1] = screenCoords.MaxY;   // (1, 1)
+            vertices[8] = screenCoords.MaxX; vertices[9] = screenCoords.MinY;   // (1, 0)
+            vertices[16] = screenCoords.MinX; vertices[17] = screenCoords.MinY; // (0, 0)
+            vertices[24] = screenCoords.MinX; vertices[25] = screenCoords.MaxY; // (0, 1)
+
+        }
+
         public void Draw()
         {
+            inventoryAtlas.Use(); //GL.ActiveTexture() and GL.BindTexture()
+
             _vertexArray.Bind();
             _vertexBuffer.Bind();
             _indexBuffer.Bind();
 
-            inventoryAtlas.Use(); //GL.ActiveTexture() and GL.BindTexture()
             GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * vertices.Length, vertices, BufferUsageHint.DynamicDraw);
             GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0); // Used for drawing Elements
 
