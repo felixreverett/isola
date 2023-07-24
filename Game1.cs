@@ -172,7 +172,7 @@ namespace FeloxGame
 
             if (toggleInventory)
             {
-                GL.Disable(EnableCap.DepthTest);
+                GL.Disable(EnableCap.DepthTest); // this is the main fix.
                 _UIShader.Use();
                 _UIShader.SetMatrix4("model", model);
                 _UIShader.SetMatrix4("view", Matrix4.Identity);
@@ -190,6 +190,7 @@ namespace FeloxGame
             GL.Viewport(0, 0, e.Width, e.Height);
             _camera.AspectRatio = (float)e.Width / e.Height;
             _camera.UpdateCameraDimensions();
+            _player.inventory.UpdateScreenCoords(Size.X, Size.Y);
         }
 
         protected override void OnMouseMove(MouseMoveEventArgs e)

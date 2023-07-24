@@ -67,28 +67,40 @@ namespace FeloxGame
             vertices[27] = inventoryCoords.MinX; vertices[28] = inventoryCoords.MaxY; // (0, 1)
         }
 
-        public void UpdateScreenCoords(int width, int height)
+        public void UpdateScreenCoords(int windowWidth, int windowHeight)
         {
-            float screenPercentage = 1f;
-            //int grande = Math.Max(width, height);
-            //int pequeño = Math.Min(width, height);
+            int uiWidth = 346; int uiHeight = 180; float percentage = 0.5f;
+            float uiAspectRatio = (float)uiWidth / uiHeight;
+
+            float limitingDimension = windowWidth > windowHeight ? windowHeight * percentage : windowWidth * percentage;
+
+            float desiredWidth, desiredHeight;
+
+            if (windowWidth > windowHeight)
+            {
+                desiredWidth = limitingDimension;
+                desiredHeight = limitingDimension / uiAspectRatio;
+            }
+            else
+            {
+                desiredHeight = limitingDimension;
+                desiredWidth = limitingDimension * uiAspectRatio;
+            }
+
+            // Calculate the NDC width and height based on the desired size
+            float ndcWidth = (desiredWidth / windowWidth) * 2.0f;
+            float ndcHeight = (desiredHeight / windowHeight) * 2.0f;
+
             TexCoords screenCoords = new TexCoords();
-            float maxX = ((float)width / width) * screenPercentage;
-            float maxY = ((float)height / width) * screenPercentage;
-            Console.WriteLine(maxY);
-            screenCoords.MaxX = maxX; screenCoords.MinX = -maxX;
-            screenCoords.MaxY = maxY; screenCoords.MinY = -maxY;
-            Console.WriteLine($"{screenCoords.MaxX}");
-            Console.WriteLine($"{screenCoords.MinX}");
-            Console.WriteLine(screenCoords.MaxY);
-            Console.WriteLine(screenCoords.MinY);
+            
+            screenCoords.MaxX = ndcWidth; screenCoords.MinX = -ndcWidth;
+            screenCoords.MaxY = ndcHeight; screenCoords.MinY = -ndcHeight;
 
             // Set screen position
             vertices[0] = screenCoords.MaxX; vertices[1] = screenCoords.MaxY;   // (1, 1)
             vertices[8] = screenCoords.MaxX; vertices[9] = screenCoords.MinY;   // (1, 0)
             vertices[16] = screenCoords.MinX; vertices[17] = screenCoords.MinY; // (0, 0)
             vertices[24] = screenCoords.MinX; vertices[25] = screenCoords.MaxY; // (0, 1)
-
         }
 
         public void Draw()
