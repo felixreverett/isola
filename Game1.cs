@@ -151,6 +151,7 @@ namespace FeloxGame
         protected override void OnRenderFrame(FrameEventArgs args)
         {
             base.OnRenderFrame(args);
+            GL.Enable(EnableCap.DepthTest);
             GL.ClearColor(Color4.CornflowerBlue);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
@@ -174,9 +175,6 @@ namespace FeloxGame
             {
                 GL.Disable(EnableCap.DepthTest); // this is the main fix.
                 _UIShader.Use();
-                _UIShader.SetMatrix4("model", model);
-                _UIShader.SetMatrix4("view", Matrix4.Identity);
-                _UIShader.SetMatrix4("projection", Matrix4.Identity);
                 //_shader.SetInt("myTextureUnit", 2);
                 _player.inventory.Draw();
             }

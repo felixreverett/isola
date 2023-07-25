@@ -61,7 +61,7 @@ namespace FeloxGame
             this.Position = startPos;
             this.Size = size;
             this.playerSprite = ResourceManager.Instance.LoadTexture(@"../../../Resources/Textures/Entities/Player.png", 1);
-            this.inventory = new Inventory();
+            this.inventory = new Inventory(346, 180, GUI.eAnchor.Middle, 0.5f);
             Reach = 5f;
             OnLoad();
         }
