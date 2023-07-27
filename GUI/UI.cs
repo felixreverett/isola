@@ -8,10 +8,8 @@ namespace FeloxGame.GUI
         protected eAnchor Anchor { get; set; }
         protected float KoWidth { get; set; }
         protected float KoHeight { get; set; }
-        protected float AspectRatio
-        {
-            get => KoWidth / KoHeight;
-        }
+        protected float AspectRatio { get; set; } //removed the getter
+
         // You are literally the only field in anything I code.
         // I hope you are proud of yourself.
         protected float _scale;
@@ -41,6 +39,7 @@ namespace FeloxGame.GUI
         {
             this.KoWidth = koWidth;
             this.KoHeight = koHeight;
+            this.AspectRatio = koWidth / koHeight;
             this.Anchor = anchor;
             this.Scale = scale;
         }
@@ -49,8 +48,9 @@ namespace FeloxGame.GUI
         public Vector2 GetRelativeDimensions(float OyaWidth, float OyaHeight)
         {
             Vector2 relativeDimensions = new();
+            float OyaAspectRatio = OyaWidth / OyaHeight;
 
-            float limitingDimension = OyaWidth > OyaHeight ? OyaWidth * Scale : OyaHeight * Scale;
+            /*float limitingDimension = OyaWidth > OyaHeight ? OyaWidth * Scale : OyaHeight * Scale;
             
             if (OyaWidth > OyaHeight)
             {
@@ -61,9 +61,32 @@ namespace FeloxGame.GUI
             {
                 relativeDimensions.Y = limitingDimension;
                 relativeDimensions.X = limitingDimension / AspectRatio;
+            }*/
+
+            if (OyaAspectRatio > AspectRatio) //koHeight is constrain
+            {
+                relativeDimensions.Y = OyaHeight * Scale;
+                relativeDimensions.X = relativeDimensions.Y * AspectRatio;
+            }
+            else //koWidth is constrain
+            {
+                relativeDimensions.X = OyaWidth * Scale;
+                relativeDimensions.Y = relativeDimensions.X / AspectRatio;
             }
             
             return relativeDimensions;
+
+            /// Pseudocode solution:
+            /// if OyaAspect (W/H) > KoAspect (W/H), then:
+            ///   Oya is wider than Ko, so Ko's Height is the constraining dimension
+            ///   All other calculations to follow Ko's height
+            /// if KoHeight constraining dimension:
+            ///   rel.Y = OyaHeight * scale (0 to 1f)
+            ///   rel.X = rel.Y * (old) AspectRatio (change AspectRatio to be set once?)
+            /// else (KoWidth constraining dimension):
+            ///   rel.X = OyaWidth * scale (0 to 1f)
+            ///   rel.Y = rel.X / AspectRatio (should it be "/" ?)
+
         }
 
 
