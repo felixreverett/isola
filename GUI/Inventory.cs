@@ -79,42 +79,6 @@ namespace FeloxGame
             vertices[24] = screenCoords.MinX; vertices[25] = screenCoords.MaxY; // (0, 1)
         }
 
-        public void UpdateScreenCoords(int windowWidth, int windowHeight)
-        {
-            int uiWidth = 346; int uiHeight = 180; float percentage = 0.5f;
-            float uiAspectRatio = (float)uiWidth / uiHeight;
-
-            float limitingDimension = windowWidth > windowHeight ? windowHeight * percentage : windowWidth * percentage;
-
-            float desiredWidth, desiredHeight;
-
-            if (windowWidth > windowHeight)
-            {
-                desiredWidth = limitingDimension;
-                desiredHeight = limitingDimension / uiAspectRatio;
-            }
-            else
-            {
-                desiredHeight = limitingDimension;
-                desiredWidth = limitingDimension * uiAspectRatio;
-            }
-
-            // Calculate the NDC width and height based on the desired size
-            float ndcWidth = (desiredWidth / windowWidth) * 2.0f;
-            float ndcHeight = (desiredHeight / windowHeight) * 2.0f;
-
-            TexCoords screenCoords = new TexCoords();
-            
-            screenCoords.MaxX = ndcWidth; screenCoords.MinX = -ndcWidth;
-            screenCoords.MaxY = ndcHeight; screenCoords.MinY = -ndcHeight;
-
-            // Set screen position
-            vertices[0] = screenCoords.MaxX; vertices[1] = screenCoords.MaxY;   // (1, 1)
-            vertices[8] = screenCoords.MaxX; vertices[9] = screenCoords.MinY;   // (1, 0)
-            vertices[16] = screenCoords.MinX; vertices[17] = screenCoords.MinY; // (0, 0)
-            vertices[24] = screenCoords.MinX; vertices[25] = screenCoords.MaxY; // (0, 1)
-        }
-
         public void Draw()
         {
             inventoryAtlas.Use(); //GL.ActiveTexture() and GL.BindTexture()

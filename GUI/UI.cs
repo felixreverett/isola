@@ -1,4 +1,5 @@
-﻿using OpenTK.Mathematics;
+﻿using FeloxGame.Core.Management;
+using OpenTK.Mathematics;
 
 namespace FeloxGame.GUI
 {
@@ -9,15 +10,11 @@ namespace FeloxGame.GUI
         protected float KoWidth { get; set; }
         protected float KoHeight { get; set; }
         protected float AspectRatio { get; set; } //removed the getter
+        protected float Scale { get; set; }
+        protected TexCoords KoNDCs { get; set; }
 
-        // You are literally the only field in anything I code.
-        // I hope you are proud of yourself.
-        protected float _scale;
-        protected float Scale
-        {
-            get => _scale;
-            set => _scale = Math.Clamp(value, 0.0f, 1.0f);
-        }
+        // Kodomo
+        protected List<UI> Kodomo { get; set; }
 
         // Rendering
         protected float[] Vertices =
@@ -41,54 +38,96 @@ namespace FeloxGame.GUI
             this.KoHeight = koHeight;
             this.AspectRatio = koWidth / koHeight;
             this.Anchor = anchor;
-            this.Scale = scale;
+            this.Scale = Math.Clamp(scale, 0.0f, 1.0f);
+            this.KoNDCs = new();
+            this.Kodomo = new List<UI>();
         }
 
+
+
         // Methods
+        // Todo: rename this to something more appropriate
+        public void SetNDCs(float oyaWidth, float oyaHeight, TexCoords oyaNDCs)
+        {
+            Vector2 anchoredDimensions = GetAnchoredDimensions(oyaWidth, oyaHeight);
+            KoNDCs.MaxX = anchoredDimensions.X / oyaWidth * oyaNDCs.MaxX;
+            KoNDCs.MinX = oyaNDCs.MaxX - KoNDCs.MaxX;
+            KoNDCs.MaxY = anchoredDimensions.Y / oyaHeight * oyaNDCs.MaxY;
+            KoNDCs.MinY = oyaNDCs.MaxY - KoNDCs.MaxY;
+
+            // Set screen position
+            Vertices[0]  = KoNDCs.MaxX; Vertices[1]  = KoNDCs.MaxY; // (1, 1)
+            Vertices[8]  = KoNDCs.MaxX; Vertices[9]  = KoNDCs.MinY; // (1, 0)
+            Vertices[16] = KoNDCs.MinX; Vertices[17] = KoNDCs.MinY; // (0, 0)
+            Vertices[24] = KoNDCs.MinX; Vertices[25] = KoNDCs.MaxY; // (0, 1)
+        }
+
         public Vector2 GetRelativeDimensions(float OyaWidth, float OyaHeight)
         {
             Vector2 relativeDimensions = new();
             float OyaAspectRatio = OyaWidth / OyaHeight;
-
-            /*float limitingDimension = OyaWidth > OyaHeight ? OyaWidth * Scale : OyaHeight * Scale;
-            
-            if (OyaWidth > OyaHeight)
-            {
-                relativeDimensions.X = limitingDimension;
-                relativeDimensions.Y = limitingDimension / AspectRatio;
-            }
-            else
-            {
-                relativeDimensions.Y = limitingDimension;
-                relativeDimensions.X = limitingDimension / AspectRatio;
-            }*/
-
-            if (OyaAspectRatio > AspectRatio) //koHeight is constrain
+                        
+            if (OyaAspectRatio > AspectRatio) //koHeight is constraint
             {
                 relativeDimensions.Y = OyaHeight * Scale;
                 relativeDimensions.X = relativeDimensions.Y * AspectRatio;
             }
-            else //koWidth is constrain
+            else //koWidth is constraint
             {
                 relativeDimensions.X = OyaWidth * Scale;
                 relativeDimensions.Y = relativeDimensions.X / AspectRatio;
             }
             
             return relativeDimensions;
-
-            /// Pseudocode solution:
-            /// if OyaAspect (W/H) > KoAspect (W/H), then:
-            ///   Oya is wider than Ko, so Ko's Height is the constraining dimension
-            ///   All other calculations to follow Ko's height
-            /// if KoHeight constraining dimension:
-            ///   rel.Y = OyaHeight * scale (0 to 1f)
-            ///   rel.X = rel.Y * (old) AspectRatio (change AspectRatio to be set once?)
-            /// else (KoWidth constraining dimension):
-            ///   rel.X = OyaWidth * scale (0 to 1f)
-            ///   rel.Y = rel.X / AspectRatio (should it be "/" ?)
-
         }
 
+        public Vector2 GetAnchoredDimensions(float OyaWidth, float OyaHeight)
+        {
+            Vector2 relativeDimensions = GetRelativeDimensions(OyaWidth, OyaHeight);
+            Vector2 anchoredDimensions = new();
+            switch (this.Anchor)
+            {
+                case eAnchor.Middle:
+                    anchoredDimensions.X = (OyaWidth + relativeDimensions.X) / 2f;
+                    anchoredDimensions.Y = (OyaHeight + relativeDimensions.Y) / 2f;
+                    break;
+                case eAnchor.Left:
+                    anchoredDimensions.X = relativeDimensions.X;
+                    anchoredDimensions.Y = (OyaHeight + relativeDimensions.Y) / 2f;
+                    break;
+                case eAnchor.Top:
+                    anchoredDimensions.X = (OyaWidth + relativeDimensions.X) / 2f;
+                    anchoredDimensions.Y = OyaHeight;
+                    break;
+                case eAnchor.Right:
+                    anchoredDimensions.X = OyaWidth;
+                    anchoredDimensions.Y = (OyaHeight + relativeDimensions.Y) / 2f;
+                    break;
+                case eAnchor.Bottom:
+                    anchoredDimensions.X = (OyaWidth + relativeDimensions.X) / 2f;
+                    anchoredDimensions.Y = relativeDimensions.Y;
+                    break;
+                case eAnchor.TopLeft:
+                    anchoredDimensions.X = relativeDimensions.X;
+                    anchoredDimensions.Y = OyaHeight;
+                    break;
+                case eAnchor.TopRight:
+                    anchoredDimensions.X = OyaWidth;
+                    anchoredDimensions.Y = OyaHeight;
+                    break;
+                case eAnchor.BottomRight:
+                    anchoredDimensions.X = OyaWidth;
+                    anchoredDimensions.Y = relativeDimensions.Y;
+                    break;
+                case eAnchor.BottomLeft:
+                    anchoredDimensions.X = relativeDimensions.X;
+                    anchoredDimensions.Y = relativeDimensions.Y;
+                    break;
+                default:
+                    break;
+            }
+            return anchoredDimensions;
+        }
 
     }
 }

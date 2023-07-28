@@ -2,6 +2,6 @@
 {
     public enum eAnchor
     {
-        Left, Top, Right, Bottom, TopLeft, TopRight, BottomRight, BottomLeft, Middle
+        Middle, Left, Top, Right, Bottom, TopLeft, TopRight, BottomRight, BottomLeft
     }
 }
