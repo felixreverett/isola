@@ -110,13 +110,13 @@ namespace FeloxGame.GUI
         public void OnResize(float oyaWidth, float oyaHeight, TexCoords oyaNDCs)
         {
             SetNDCs(oyaWidth, oyaHeight, oyaNDCs);
-            if (Kodomo.Count > 0)
+            /*if (Kodomo.Count > 0)
             {
                 foreach (UI ui in Kodomo.Values)
                 {
                     ui.OnResize(oyaWidth, oyaHeight, oyaNDCs);
                 }
-            }
+            }*/
         }
 
         // Todo: rename this to something more appropriate
@@ -135,6 +135,14 @@ namespace FeloxGame.GUI
             Vertices[8]  = KoNDCs.MaxX; Vertices[9]  = KoNDCs.MinY; // ( 1, -1)
             Vertices[16] = KoNDCs.MinX; Vertices[17] = KoNDCs.MinY; // (-1, -1)
             Vertices[24] = KoNDCs.MinX; Vertices[25] = KoNDCs.MaxY; // (-1,  1)
+
+            if (Kodomo.Count > 0)
+            {
+                foreach (UI ui in Kodomo.Values)
+                {
+                    ui.SetNDCs(KoWidth, KoHeight, KoNDCs);
+                }
+            }
         }
 
         /// <summary>
