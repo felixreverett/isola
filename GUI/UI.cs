@@ -130,13 +130,6 @@ namespace FeloxGame.GUI
             KoNDCs.MaxY = ((anchoredDimensions.MaxY / oyaHeight) * (oyaNDCs.MaxY - oyaNDCs.MinY) + oyaNDCs.MinY);
             KoNDCs.MinY = ((anchoredDimensions.MinY / oyaHeight) * (oyaNDCs.MaxY - oyaNDCs.MinY) + oyaNDCs.MinY);
 
-            /*
-            KoNDCs.MaxX = anchoredDimensions.MaxX / oyaWidth * oyaNDCs.MaxX;
-            KoNDCs.MinX = oyaNDCs.MinX + (anchoredDimensions.MinX / oyaWidth);//oyaNDCs.MaxX - KoNDCs.MaxX;
-            KoNDCs.MaxY = anchoredDimensions.MaxY / oyaHeight * oyaNDCs.MaxY;
-            KoNDCs.MinY = oyaNDCs.MinY + (anchoredDimensions.MinY / oyaHeight);//oyaNDCs.MaxY - KoNDCs.MaxY;
-            */
-
             // Set screen position
             Vertices[0]  = KoNDCs.MaxX; Vertices[1]  = KoNDCs.MaxY; // ( 1,  1)
             Vertices[8]  = KoNDCs.MaxX; Vertices[9]  = KoNDCs.MinY; // ( 1, -1)
@@ -144,6 +137,12 @@ namespace FeloxGame.GUI
             Vertices[24] = KoNDCs.MinX; Vertices[25] = KoNDCs.MaxY; // (-1,  1)
         }
 
+        /// <summary>
+        /// Returns coordinates (0,0) to (1,1) relative to the parent container.
+        /// </summary>
+        /// <param name="OyaWidth"></param>
+        /// <param name="OyaHeight"></param>
+        /// <returns></returns>
         public Vector2 GetRelativeDimensions(float OyaWidth, float OyaHeight)
         {
             Vector2 relativeDimensions = new();
@@ -163,6 +162,12 @@ namespace FeloxGame.GUI
             return relativeDimensions;
         }
 
+        /// <summary>
+        /// Returns coordinates (0, 0) to (1,1) anchored within the parent container.
+        /// </summary>
+        /// <param name="OyaWidth"></param>
+        /// <param name="OyaHeight"></param>
+        /// <returns></returns>
         public TexCoords GetAnchoredDimensions(float OyaWidth, float OyaHeight)
         {
             Vector2 relativeDimensions = GetRelativeDimensions(OyaWidth, OyaHeight);
@@ -178,34 +183,50 @@ namespace FeloxGame.GUI
                 case eAnchor.Left:
                     anchoredDimensions.MaxX = relativeDimensions.X;
                     anchoredDimensions.MaxY = (OyaHeight + relativeDimensions.Y) / 2f;
+                    anchoredDimensions.MinX = anchoredDimensions.MaxX - relativeDimensions.X;
+                    anchoredDimensions.MinY = anchoredDimensions.MaxY - relativeDimensions.Y;
                     break;
                 case eAnchor.Top:
                     anchoredDimensions.MaxX = (OyaWidth + relativeDimensions.X) / 2f;
                     anchoredDimensions.MaxY = OyaHeight;
+                    anchoredDimensions.MinX = anchoredDimensions.MaxX - relativeDimensions.X;
+                    anchoredDimensions.MinY = anchoredDimensions.MaxY - relativeDimensions.Y;
                     break;
                 case eAnchor.Right:
                     anchoredDimensions.MaxX = OyaWidth;
                     anchoredDimensions.MaxY = (OyaHeight + relativeDimensions.Y) / 2f;
+                    anchoredDimensions.MinX = anchoredDimensions.MaxX - relativeDimensions.X;
+                    anchoredDimensions.MinY = anchoredDimensions.MaxY - relativeDimensions.Y;
                     break;
                 case eAnchor.Bottom:
                     anchoredDimensions.MaxX = (OyaWidth + relativeDimensions.X) / 2f;
                     anchoredDimensions.MaxY = relativeDimensions.Y;
+                    anchoredDimensions.MinX = anchoredDimensions.MaxX - relativeDimensions.X;
+                    anchoredDimensions.MinY = anchoredDimensions.MaxY - relativeDimensions.Y;
                     break;
                 case eAnchor.TopLeft:
                     anchoredDimensions.MaxX = relativeDimensions.X;
                     anchoredDimensions.MaxY = OyaHeight;
+                    anchoredDimensions.MinX = anchoredDimensions.MaxX - relativeDimensions.X;
+                    anchoredDimensions.MinY = anchoredDimensions.MaxY - relativeDimensions.Y;
                     break;
                 case eAnchor.TopRight:
                     anchoredDimensions.MaxX = OyaWidth;
                     anchoredDimensions.MaxY = OyaHeight;
+                    anchoredDimensions.MinX = anchoredDimensions.MaxX - relativeDimensions.X;
+                    anchoredDimensions.MinY = anchoredDimensions.MaxY - relativeDimensions.Y;
                     break;
                 case eAnchor.BottomRight:
                     anchoredDimensions.MaxX = OyaWidth;
                     anchoredDimensions.MaxY = relativeDimensions.Y;
+                    anchoredDimensions.MinX = anchoredDimensions.MaxX - relativeDimensions.X;
+                    anchoredDimensions.MinY = anchoredDimensions.MaxY - relativeDimensions.Y;
                     break;
                 case eAnchor.BottomLeft:
                     anchoredDimensions.MaxX = relativeDimensions.X;
                     anchoredDimensions.MaxY = relativeDimensions.Y;
+                    anchoredDimensions.MinX = 0f;
+                    anchoredDimensions.MinY = 0f;
                     break;
                 default:
                     break;
