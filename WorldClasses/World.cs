@@ -202,8 +202,6 @@ namespace FeloxGame.WorldClasses // rename this later?
         public void SaveChunk(string folder, Chunk chunk)
         { }
 
-
-
         // Updates (code for world interaction)
         public void UpdateTile(int worldX, int worldY) //Todo: add error checking
         {

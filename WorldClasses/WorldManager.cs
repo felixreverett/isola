@@ -46,10 +46,7 @@ namespace FeloxGame.WorldClasses
 
         public TexCoords GetTexCoordFromAtlas(float x, float y, float textureWidth, float textureHeight, float atlasWidth, float atlasHeight)
         {
-            /*if (x < 0 || x > textureWidth || y < 0 || y > textureHeight)
-            {
-                throw new Exception("Values outside of acceptable range.");
-            }*/
+            //todo: add bounds error checking
             TexCoords texCoords = new TexCoords();
             float pixelOffsetX = 1f / (atlasWidth * 2);
             float pixelOffsetY = 1f / (atlasHeight * 2);

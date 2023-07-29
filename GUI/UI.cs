@@ -1,5 +1,9 @@
 ﻿using FeloxGame.Core.Management;
+using FeloxGame.Core.Rendering;
+using FeloxGame.WorldClasses;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FeloxGame.GUI
 {
@@ -14,25 +18,30 @@ namespace FeloxGame.GUI
         protected TexCoords KoNDCs { get; set; }
 
         // Kodomo
-        protected List<UI> Kodomo { get; set; }
+        public Dictionary<string, UI> Kodomo { get; set; }
 
         // Rendering
         protected float[] Vertices =
         {
-            //Vertices        //texCoords //texColors       
-            1.0f, 1.0f, 0.3f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, //top right (1,1)
-            1.0f, 0.0f, 0.3f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, //bottom right (1, 0)
-            0.0f, 0.0f, 0.3f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, //bottom left (0, 0)
-            0.0f, 1.0f, 0.3f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f  //top left (0, 1)
+            //Vertices          //texCoords //texColors       
+             1.0f,  1.0f, 0.3f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, //top right (1,1)
+             1.0f, -1.0f, 0.3f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, //bottom right (1, 0)
+            -1.0f, -1.0f, 0.3f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, //bottom left (0, 0)
+            -1.0f,  1.0f, 0.3f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f  //top left (0, 1)
         };
         protected uint[] Indices =
         {
             0, 1, 3, // first triangle
             1, 2, 3  // second triangle
         };
+        private bool Drawable { get; set; }
+        private VertexBuffer _vertexBuffer;
+        private VertexArray _vertexArray;
+        private IndexBuffer _indexBuffer;
+        private Texture2D inventoryAtlas;
 
         // Constructor
-        public UI(float koWidth, float koHeight, eAnchor anchor, float scale)
+        public UI(float koWidth, float koHeight, eAnchor anchor, float scale, bool drawable = false)
         {
             this.KoWidth = koWidth;
             this.KoHeight = koHeight;
@@ -40,26 +49,99 @@ namespace FeloxGame.GUI
             this.Anchor = anchor;
             this.Scale = Math.Clamp(scale, 0.0f, 1.0f);
             this.KoNDCs = new();
-            this.Kodomo = new List<UI>();
+            this.Kodomo = new Dictionary<string, UI>();
+            this.Drawable = drawable;
+            OnLoad();
         }
 
+        public void OnLoad()
+        {
+            if (Drawable)
+            {
+                this.inventoryAtlas = ResourceManager.Instance.LoadTexture(@"../../../Resources/Textures/Inventories/Inventory Atlas.png", 2);
 
+                _vertexArray = new();
+                _vertexBuffer = new VertexBuffer(Vertices);
 
-        // Methods
+                BufferLayout layout = new();
+                layout.Add<float>(3); // Positions
+                layout.Add<float>(2); // Texture Coords
+                layout.Add<float>(3); // Texture Color
+
+                _vertexArray.AddBuffer(_vertexBuffer, layout);
+                _indexBuffer = new IndexBuffer(Indices);
+            }
+        }
+
+        public void Draw()
+        {
+            if (Drawable)
+            {
+                inventoryAtlas.Use();
+
+                _vertexArray.Bind();
+                _vertexBuffer.Bind();
+                _indexBuffer.Bind();
+
+                GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * Vertices.Length, Vertices, BufferUsageHint.DynamicDraw);
+                GL.DrawElements(PrimitiveType.Triangles, Indices.Length, DrawElementsType.UnsignedInt, 0); // Used for drawing Elements
+            }
+            
+            if (Kodomo.Count != 0)
+            {
+                foreach (UI ui in Kodomo.Values)
+                {
+                    ui.Draw();
+                }
+            }
+        }
+
+        public void SetTextureCoords(float x, float y, float textureWidth, float textureHeight, float atlasWidth, float atlasHeight)
+        {
+            TexCoords inventoryCoords = WorldManager.Instance.GetTexCoordFromAtlas(x, y, textureWidth, textureHeight, atlasWidth, atlasHeight);
+
+            // Set texCoords of atlas
+            Vertices[3]  = inventoryCoords.MaxX; Vertices[4]  = inventoryCoords.MaxY; // (1, 1)
+            Vertices[11] = inventoryCoords.MaxX; Vertices[12] = inventoryCoords.MinY; // (1, 0)
+            Vertices[19] = inventoryCoords.MinX; Vertices[20] = inventoryCoords.MinY; // (0, 0)
+            Vertices[27] = inventoryCoords.MinX; Vertices[28] = inventoryCoords.MaxY; // (0, 1)
+        }
+
+        public void OnResize(float oyaWidth, float oyaHeight, TexCoords oyaNDCs)
+        {
+            SetNDCs(oyaWidth, oyaHeight, oyaNDCs);
+            if (Kodomo.Count > 0)
+            {
+                foreach (UI ui in Kodomo.Values)
+                {
+                    ui.OnResize(oyaWidth, oyaHeight, oyaNDCs);
+                }
+            }
+        }
+
         // Todo: rename this to something more appropriate
         public void SetNDCs(float oyaWidth, float oyaHeight, TexCoords oyaNDCs)
         {
-            Vector2 anchoredDimensions = GetAnchoredDimensions(oyaWidth, oyaHeight);
-            KoNDCs.MaxX = anchoredDimensions.X / oyaWidth * oyaNDCs.MaxX;
-            KoNDCs.MinX = oyaNDCs.MaxX - KoNDCs.MaxX;
-            KoNDCs.MaxY = anchoredDimensions.Y / oyaHeight * oyaNDCs.MaxY;
-            KoNDCs.MinY = oyaNDCs.MaxY - KoNDCs.MaxY;
+            TexCoords anchoredDimensions = GetAnchoredDimensions(oyaWidth, oyaHeight);
+
+            // map anchored coordinates
+            KoNDCs.MaxX = ((anchoredDimensions.MaxX / oyaWidth) * (oyaNDCs.MaxX - oyaNDCs.MinX) + oyaNDCs.MinX);
+            KoNDCs.MinX = ((anchoredDimensions.MinX / oyaWidth) * (oyaNDCs.MaxX - oyaNDCs.MinX) + oyaNDCs.MinX);
+            KoNDCs.MaxY = ((anchoredDimensions.MaxY / oyaHeight) * (oyaNDCs.MaxY - oyaNDCs.MinY) + oyaNDCs.MinY);
+            KoNDCs.MinY = ((anchoredDimensions.MinY / oyaHeight) * (oyaNDCs.MaxY - oyaNDCs.MinY) + oyaNDCs.MinY);
+
+            /*
+            KoNDCs.MaxX = anchoredDimensions.MaxX / oyaWidth * oyaNDCs.MaxX;
+            KoNDCs.MinX = oyaNDCs.MinX + (anchoredDimensions.MinX / oyaWidth);//oyaNDCs.MaxX - KoNDCs.MaxX;
+            KoNDCs.MaxY = anchoredDimensions.MaxY / oyaHeight * oyaNDCs.MaxY;
+            KoNDCs.MinY = oyaNDCs.MinY + (anchoredDimensions.MinY / oyaHeight);//oyaNDCs.MaxY - KoNDCs.MaxY;
+            */
 
             // Set screen position
-            Vertices[0]  = KoNDCs.MaxX; Vertices[1]  = KoNDCs.MaxY; // (1, 1)
-            Vertices[8]  = KoNDCs.MaxX; Vertices[9]  = KoNDCs.MinY; // (1, 0)
-            Vertices[16] = KoNDCs.MinX; Vertices[17] = KoNDCs.MinY; // (0, 0)
-            Vertices[24] = KoNDCs.MinX; Vertices[25] = KoNDCs.MaxY; // (0, 1)
+            Vertices[0]  = KoNDCs.MaxX; Vertices[1]  = KoNDCs.MaxY; // ( 1,  1)
+            Vertices[8]  = KoNDCs.MaxX; Vertices[9]  = KoNDCs.MinY; // ( 1, -1)
+            Vertices[16] = KoNDCs.MinX; Vertices[17] = KoNDCs.MinY; // (-1, -1)
+            Vertices[24] = KoNDCs.MinX; Vertices[25] = KoNDCs.MaxY; // (-1,  1)
         }
 
         public Vector2 GetRelativeDimensions(float OyaWidth, float OyaHeight)
@@ -81,47 +163,49 @@ namespace FeloxGame.GUI
             return relativeDimensions;
         }
 
-        public Vector2 GetAnchoredDimensions(float OyaWidth, float OyaHeight)
+        public TexCoords GetAnchoredDimensions(float OyaWidth, float OyaHeight)
         {
             Vector2 relativeDimensions = GetRelativeDimensions(OyaWidth, OyaHeight);
-            Vector2 anchoredDimensions = new();
+            TexCoords anchoredDimensions = new();
             switch (this.Anchor)
             {
                 case eAnchor.Middle:
-                    anchoredDimensions.X = (OyaWidth + relativeDimensions.X) / 2f;
-                    anchoredDimensions.Y = (OyaHeight + relativeDimensions.Y) / 2f;
+                    anchoredDimensions.MaxX = (OyaWidth + relativeDimensions.X) / 2f;
+                    anchoredDimensions.MaxY = (OyaHeight + relativeDimensions.Y) / 2f;
+                    anchoredDimensions.MinX = anchoredDimensions.MaxX - relativeDimensions.X;
+                    anchoredDimensions.MinY = anchoredDimensions.MaxY - relativeDimensions.Y;
                     break;
                 case eAnchor.Left:
-                    anchoredDimensions.X = relativeDimensions.X;
-                    anchoredDimensions.Y = (OyaHeight + relativeDimensions.Y) / 2f;
+                    anchoredDimensions.MaxX = relativeDimensions.X;
+                    anchoredDimensions.MaxY = (OyaHeight + relativeDimensions.Y) / 2f;
                     break;
                 case eAnchor.Top:
-                    anchoredDimensions.X = (OyaWidth + relativeDimensions.X) / 2f;
-                    anchoredDimensions.Y = OyaHeight;
+                    anchoredDimensions.MaxX = (OyaWidth + relativeDimensions.X) / 2f;
+                    anchoredDimensions.MaxY = OyaHeight;
                     break;
                 case eAnchor.Right:
-                    anchoredDimensions.X = OyaWidth;
-                    anchoredDimensions.Y = (OyaHeight + relativeDimensions.Y) / 2f;
+                    anchoredDimensions.MaxX = OyaWidth;
+                    anchoredDimensions.MaxY = (OyaHeight + relativeDimensions.Y) / 2f;
                     break;
                 case eAnchor.Bottom:
-                    anchoredDimensions.X = (OyaWidth + relativeDimensions.X) / 2f;
-                    anchoredDimensions.Y = relativeDimensions.Y;
+                    anchoredDimensions.MaxX = (OyaWidth + relativeDimensions.X) / 2f;
+                    anchoredDimensions.MaxY = relativeDimensions.Y;
                     break;
                 case eAnchor.TopLeft:
-                    anchoredDimensions.X = relativeDimensions.X;
-                    anchoredDimensions.Y = OyaHeight;
+                    anchoredDimensions.MaxX = relativeDimensions.X;
+                    anchoredDimensions.MaxY = OyaHeight;
                     break;
                 case eAnchor.TopRight:
-                    anchoredDimensions.X = OyaWidth;
-                    anchoredDimensions.Y = OyaHeight;
+                    anchoredDimensions.MaxX = OyaWidth;
+                    anchoredDimensions.MaxY = OyaHeight;
                     break;
                 case eAnchor.BottomRight:
-                    anchoredDimensions.X = OyaWidth;
-                    anchoredDimensions.Y = relativeDimensions.Y;
+                    anchoredDimensions.MaxX = OyaWidth;
+                    anchoredDimensions.MaxY = relativeDimensions.Y;
                     break;
                 case eAnchor.BottomLeft:
-                    anchoredDimensions.X = relativeDimensions.X;
-                    anchoredDimensions.Y = relativeDimensions.Y;
+                    anchoredDimensions.MaxX = relativeDimensions.X;
+                    anchoredDimensions.MaxY = relativeDimensions.Y;
                     break;
                 default:
                     break;

@@ -4,6 +4,8 @@ using RectangleF = System.Drawing.RectangleF;
 using FeloxGame.Core.Management;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
+using FeloxGame.GUI;
+using OpenTK.Windowing.Desktop;
 
 namespace FeloxGame
 {
@@ -54,14 +56,12 @@ namespace FeloxGame
         // Properties
         public float Reach { get; set; }
 
-
-
         public Player(Vector2 startPos, Vector2 size)
         {
             this.Position = startPos;
             this.Size = size;
             this.playerSprite = ResourceManager.Instance.LoadTexture(@"../../../Resources/Textures/Entities/Player.png", 1);
-            this.inventory = new Inventory(346, 180, GUI.eAnchor.Middle, 0.5f);
+            this.inventory = new Inventory(346, 180, eAnchor.Middle, 0.5f);
             Reach = 5f;
             OnLoad();
         }

@@ -7,6 +7,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Mathematics;
 using FeloxGame.WorldClasses;
 using FeloxGame.Core.Management;
+using FeloxGame.GUI;
 
 namespace FeloxGame
 {
@@ -39,6 +40,9 @@ namespace FeloxGame
         // Gamestate data
         private bool toggleInventory = false;
 
+        // UISystem
+        private UI MasterUI { get; set; }
+
         // Textures
         Texture2D tileAtlas;
         Texture2D playerSprites;
@@ -69,6 +73,11 @@ namespace FeloxGame
 
             // Player
             _player = new Player(new Vector2(0, 0), new Vector2(1, 2));
+
+            // UI systems
+            MasterUI = new(Size.X, Size.Y, eAnchor.Middle, 1.0f);
+                MasterUI.Kodomo.Add("Inventory", new UI(346f, 180f, eAnchor.Middle, 0.5f, true));
+                MasterUI.Kodomo["Inventory"].SetTextureCoords(4, 840, 346, 180, 1024, 1024);
 
             // Textures
             _shader.Use();
@@ -169,7 +178,11 @@ namespace FeloxGame
 
             //_shader.SetInt("myTextureUnit", 1);
             _player.Draw();
-            
+
+            // UI
+            GL.Disable(EnableCap.DepthTest);
+            _UIShader.Use();
+            MasterUI.Draw();
 
             if (toggleInventory)
             {
@@ -189,6 +202,7 @@ namespace FeloxGame
             _camera.AspectRatio = (float)e.Width / e.Height;
             _camera.UpdateCameraDimensions();
             _player.inventory.UpdateScreenCoordsNew(Size.X, Size.Y);
+            MasterUI.OnResize(e.Width, e.Height, new TexCoords(-1f, -1f, 1f, 1f));
         }
 
         protected override void OnMouseMove(MouseMoveEventArgs e)
