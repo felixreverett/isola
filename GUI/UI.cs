@@ -10,10 +10,10 @@ namespace FeloxGame.GUI
     public class UI
     {
         // Position
-        protected eAnchor Anchor { get; set; }
+        public eAnchor Anchor { get; set; }
         protected float KoWidth { get; set; }
         protected float KoHeight { get; set; }
-        protected float AspectRatio { get; set; } //removed the getter
+        protected float AspectRatio { get; set; }
         protected float Scale { get; set; }
         protected TexCoords KoNDCs { get; set; }
 
@@ -110,16 +110,8 @@ namespace FeloxGame.GUI
         public void OnResize(float oyaWidth, float oyaHeight, TexCoords oyaNDCs)
         {
             SetNDCs(oyaWidth, oyaHeight, oyaNDCs);
-            /*if (Kodomo.Count > 0)
-            {
-                foreach (UI ui in Kodomo.Values)
-                {
-                    ui.OnResize(oyaWidth, oyaHeight, oyaNDCs);
-                }
-            }*/
         }
 
-        // Todo: rename this to something more appropriate
         public void SetNDCs(float oyaWidth, float oyaHeight, TexCoords oyaNDCs)
         {
             TexCoords anchoredDimensions = GetAnchoredDimensions(oyaWidth, oyaHeight);
@@ -156,12 +148,12 @@ namespace FeloxGame.GUI
             Vector2 relativeDimensions = new();
             float OyaAspectRatio = OyaWidth / OyaHeight;
                         
-            if (OyaAspectRatio > AspectRatio) //koHeight is constraint
+            if (OyaAspectRatio > AspectRatio) // koHeight is constraint
             {
                 relativeDimensions.Y = OyaHeight * Scale;
                 relativeDimensions.X = relativeDimensions.Y * AspectRatio;
             }
-            else //koWidth is constraint
+            else // koWidth is constraint
             {
                 relativeDimensions.X = OyaWidth * Scale;
                 relativeDimensions.Y = relativeDimensions.X / AspectRatio;
