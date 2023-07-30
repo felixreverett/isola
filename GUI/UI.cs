@@ -3,7 +3,6 @@ using FeloxGame.Core.Rendering;
 using FeloxGame.WorldClasses;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using System.Diagnostics.CodeAnalysis;
 
 namespace FeloxGame.GUI
 {
@@ -35,13 +34,15 @@ namespace FeloxGame.GUI
             1, 2, 3  // second triangle
         };
         private bool Drawable { get; set; }
+        public bool ToggleDraw { get; set; }
+
         private VertexBuffer _vertexBuffer;
         private VertexArray _vertexArray;
         private IndexBuffer _indexBuffer;
         private Texture2D inventoryAtlas;
 
         // Constructor
-        public UI(float koWidth, float koHeight, eAnchor anchor, float scale, bool drawable = false)
+        public UI(float koWidth, float koHeight, eAnchor anchor, float scale, bool drawable = false, bool toggleDraw = true)
         {
             this.KoWidth = koWidth;
             this.KoHeight = koHeight;
@@ -51,6 +52,7 @@ namespace FeloxGame.GUI
             this.KoNDCs = new();
             this.Kodomo = new Dictionary<string, UI>();
             this.Drawable = drawable;
+            this.ToggleDraw = toggleDraw;
             OnLoad();
         }
 
@@ -75,7 +77,7 @@ namespace FeloxGame.GUI
 
         public void Draw()
         {
-            if (Drawable)
+            if (Drawable && ToggleDraw)
             {
                 inventoryAtlas.Use();
 
@@ -87,7 +89,7 @@ namespace FeloxGame.GUI
                 GL.DrawElements(PrimitiveType.Triangles, Indices.Length, DrawElementsType.UnsignedInt, 0); // Used for drawing Elements
             }
             
-            if (Kodomo.Count != 0)
+            if (Kodomo.Count != 0 && ToggleDraw)
             {
                 foreach (UI ui in Kodomo.Values)
                 {

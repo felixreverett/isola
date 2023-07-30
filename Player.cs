@@ -33,6 +33,10 @@ namespace FeloxGame
                 return colRec;
             }
         }// draw rectangle
+        
+        // Inventory will only be accessed through methods like .Add() and .Remove()
+        // Might switch to a non-visual Inventory class
+        private Dictionary<Item, int> _items;
 
         // Rendering
         private float[] vertices =

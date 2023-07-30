@@ -127,8 +127,9 @@ namespace FeloxGame
                 Close();
             }
 
-            if (input.IsKeyReleased(Keys.E))
+            if (input.IsKeyReleased(Keys.I))
             {
+                MasterUI.Kodomo["Inventory"].ToggleDraw = !MasterUI.Kodomo["Inventory"].ToggleDraw;
                 //toggleInventory = !toggleInventory;
             }
 
@@ -242,8 +243,8 @@ namespace FeloxGame
             GL.Enable(EnableCap.DepthTest);
             GL.ClearColor(Color4.CornflowerBlue);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
             
+            // WORLD
             _shader.Use();
             // matrices for camera
             var model = Matrix4.Identity;

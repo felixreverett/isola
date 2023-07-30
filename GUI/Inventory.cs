@@ -9,9 +9,6 @@ namespace FeloxGame
 {
     public class Inventory : UI
     {
-        // Fields (inventory will only be accessed through methods like .Add() and .Remove()
-        private Dictionary<Item, int> _items;
-
         // Rendering
         private float[] vertices;
         private uint[] indices;
@@ -36,8 +33,6 @@ namespace FeloxGame
 
         public void OnLoad()
         {
-            _items = new Dictionary<Item, int>();
-
             _vertexArray = new();
             _vertexBuffer = new VertexBuffer(vertices);
 
