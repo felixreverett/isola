@@ -155,6 +155,7 @@ namespace FeloxGame
 
             if (input.IsKeyPressed(Keys.Q))
             {
+                // temporary code to ensure Anchors are working. Will leave for now as debug
                 currentAnchor++;
                 if (currentAnchor > 8) { currentAnchor = 0; }
                 switch (currentAnchor)
@@ -244,7 +245,8 @@ namespace FeloxGame
             GL.ClearColor(Color4.CornflowerBlue);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             
-            // WORLD
+            // ---------- WORLD ----------
+
             _shader.Use();
             // matrices for camera
             var model = Matrix4.Identity;
@@ -259,18 +261,11 @@ namespace FeloxGame
             //_shader.SetInt("myTextureUnit", 1);
             _player.Draw();
 
-            // UI
+            // ---------- UI ----------
+
             GL.Disable(EnableCap.DepthTest);
             _UIShader.Use();
             MasterUI.Draw();
-
-            if (toggleInventory)
-            {
-                GL.Disable(EnableCap.DepthTest); // this is the main fix.
-                _UIShader.Use();
-                //_shader.SetInt("myTextureUnit", 2);
-                _player.inventory.Draw();
-            }
 
             SwapBuffers();
         }
@@ -281,8 +276,6 @@ namespace FeloxGame
             GL.Viewport(0, 0, e.Width, e.Height);
             _camera.AspectRatio = (float)e.Width / e.Height;
             _camera.UpdateCameraDimensions();
-            _player.inventory.UpdateScreenCoordsNew(Size.X, Size.Y);
-
             MasterUI.OnResize(e.Width, e.Height, new TexCoords(-1f, -1f, 1f, 1f));
         }
 

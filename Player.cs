@@ -4,8 +4,6 @@ using RectangleF = System.Drawing.RectangleF;
 using FeloxGame.Core.Management;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
-using FeloxGame.GUI;
-using OpenTK.Windowing.Desktop;
 
 namespace FeloxGame
 {
@@ -14,7 +12,7 @@ namespace FeloxGame
         public Vector2 Position { get; set; }
         private Vector2 Size;
         private Texture2D playerSprite;
-        public Inventory inventory;
+        public Inventory Inventory { get; set; }
         public int RenderDistance { get; set; } = 2;
         public RectangleF ColRec
         {
@@ -33,10 +31,6 @@ namespace FeloxGame
                 return colRec;
             }
         }// draw rectangle
-        
-        // Inventory will only be accessed through methods like .Add() and .Remove()
-        // Might switch to a non-visual Inventory class
-        private Dictionary<Item, int> _items;
 
         // Rendering
         private float[] vertices =
@@ -64,8 +58,8 @@ namespace FeloxGame
         {
             this.Position = startPos;
             this.Size = size;
+            this.Inventory = new Inventory(5, 10);
             this.playerSprite = ResourceManager.Instance.LoadTexture(@"../../../Resources/Textures/Entities/Player.png", 1);
-            this.inventory = new Inventory(346, 180, eAnchor.Middle, 0.5f);
             Reach = 5f;
             OnLoad();
         }

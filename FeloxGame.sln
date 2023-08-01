@@ -5,6 +5,8 @@ VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeloxGame", "FeloxGame.csproj", "{720809F1-FA6D-471F-BF18-19B01486BA47}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextBasedAdventureGame", "..\TextBasedAdventureGame\TextBasedAdventureGame.csproj", "{3CF3A09B-06E5-45DC-8740-5EE1867532A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{720809F1-FA6D-471F-BF18-19B01486BA47}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{720809F1-FA6D-471F-BF18-19B01486BA47}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{720809F1-FA6D-471F-BF18-19B01486BA47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CF3A09B-06E5-45DC-8740-5EE1867532A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CF3A09B-06E5-45DC-8740-5EE1867532A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CF3A09B-06E5-45DC-8740-5EE1867532A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CF3A09B-06E5-45DC-8740-5EE1867532A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
