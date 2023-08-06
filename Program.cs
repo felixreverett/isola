@@ -9,12 +9,17 @@ namespace FeloxGame
     {
         static void Main(string[] args)
         {
-            Game1 game = new Game1(1280, 720, "FeloxGame");
-            game.Run();
+            //Game1 game = new Game1(1280, 720, "FeloxGame");
+            //game.Run();
 
-            //UI uI = new UI(1920f, 1080f, eAnchor.Middle, 1.0f);
-            //Vector2 myVec = uI.GetRelativeDimensions(1920f, 1080f);
-            //Console.WriteLine($"X: {myVec.X}. Y: {myVec.Y}");
+            int _rows = 5; int _cols = 10;
+
+            for (int i = 0; i < _rows * _cols; i++)
+            {
+                int currentRow = i / _cols;
+                int currentCol = i % _cols;
+                Console.WriteLine($"Row: {currentRow}, Column: {currentCol}");
+            }
         }
     }
 }
