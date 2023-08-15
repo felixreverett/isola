@@ -2,7 +2,8 @@
 {
     public class ItemSlotUI : UI
     {
-        public ItemSlotUI()// : base()
+        public ItemSlotUI(float koWidth, float koHeight, eAnchor anchor, float scale) 
+            : base(koWidth, koHeight, anchor, scale)
         {
 
         }

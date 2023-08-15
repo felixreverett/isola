@@ -114,7 +114,7 @@ namespace FeloxGame.GUI
             SetNDCs(oyaWidth, oyaHeight, oyaNDCs);
         }
 
-        public void SetNDCs(float oyaWidth, float oyaHeight, TexCoords oyaNDCs)
+        public virtual void SetNDCs(float oyaWidth, float oyaHeight, TexCoords oyaNDCs)
         {
             TexCoords anchoredDimensions = GetAnchoredDimensions(oyaWidth, oyaHeight);
 
