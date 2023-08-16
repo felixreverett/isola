@@ -80,8 +80,8 @@ namespace FeloxGame
             MasterUI = new(Size.X, Size.Y, eAnchor.Middle, 1.0f);
                 MasterUI.Kodomo.Add("Inventory", new UI(346f, 180f, eAnchor.Middle, 0.5f, true));
                 MasterUI.Kodomo["Inventory"].SetTextureCoords(4, 840, 346, 180, 1024, 1024);
-                    MasterUI.Kodomo["Inventory"].Kodomo.Add("Test inventory", new UI(346f, 180f, eAnchor.Middle, 0.5f, true));
-                    MasterUI.Kodomo["Inventory"].Kodomo["Test inventory"].SetTextureCoords(4, 840, 346, 180, 1024, 1024);
+                    //MasterUI.Kodomo["Inventory"].Kodomo.Add("Test inventory", new UI(346f, 180f, eAnchor.Middle, 0.5f, true));
+                    //MasterUI.Kodomo["Inventory"].Kodomo["Test inventory"].SetTextureCoords(4, 840, 346, 180, 1024, 1024);
 
             // Textures
             _shader.Use();

@@ -29,11 +29,6 @@ namespace FeloxGame.GUI
             GenerateKodomo();
         }
 
-        public override void SetNDCs(float oyaWidth, float oyaHeight, TexCoords oyaNDCs)
-        { 
-
-        }
-
         public void GenerateKodomo()
         {
             // Set the width and height of a UI Slot
@@ -42,47 +37,36 @@ namespace FeloxGame.GUI
             float itemSlotWidth = (availableWidth - (_cols - 1) * _itemSlotPadding) / _cols;
             float itemSlotHeight = (availableHeight - (_rows - 1) * _itemSlotPadding - _hotbarPadding) / _rows;
 
-            // Get the coordinates for each UI Slot
-            // 10-19
-            // 20-29
-            // 30-39
-            // 40-49
-            // =====
-            // 0 - 9
-            int slotIndex = 0;
+            /// Get the coordinates for each UI Slot
+            /// 10-19
+            /// 20-29
+            /// 30-39
+            /// 40-49
+            /// =====
+            /// 0 - 9
+            int slotIndex = 0; TexCoords koPosition = new();
 
             for (int row = 0; row < _rows; row++)
             {
                 for (int col = 0; col < _cols; col++)
                 {
-                    Kodomo.Add($"{slotIndex}", new ItemSlotUI(itemSlotWidth, itemSlotHeight, eAnchor.None, 1f));
-                    TexCoords position = new TexCoords();
+                    koPosition.MinX = _edgePadding + col * (itemSlotWidth + _itemSlotPadding);
 
                     if (row == 0)
                     {
-                        //position.MinX = _edgePadding + col *;
-                        //position.MinY = ;
+                        koPosition.MinY = _edgePadding;
                     }
                     else
                     {
-
+                        koPosition.MinY = KoHeight - (row *  itemSlotHeight) - (row - 1) * _itemSlotPadding;
                     }
-                    position.MaxX = position.MinX + itemSlotWidth;
-                    position.MaxY = position.MinY + itemSlotHeight;
+
+                    koPosition.MaxX = koPosition.MinX + itemSlotWidth;
+                    koPosition.MaxY = koPosition.MinY + itemSlotHeight;
+
+                    Kodomo.Add($"{slotIndex}", new ItemSlotUI(itemSlotWidth, itemSlotHeight, eAnchor.None, 1f, koPosition));
 
                     slotIndex++;
-                }
-            }
-
-            // use width, height, rows, cols, itemslotdimensions
-            for (int i = 0; i < _rows * _cols; i++)
-            {
-                base.Kodomo.Add($"{i}", new ItemSlotUI());
-                int currentRow = i / _cols;
-                int currentCol = i % _cols;
-                if (currentRow == 0)
-                {
-
                 }
             }
         }

@@ -14,6 +14,7 @@ namespace FeloxGame.GUI
         protected float KoHeight { get; set; }
         protected float AspectRatio { get; set; }
         protected float Scale { get; set; }
+        protected TexCoords KoPosition { get; set; }
         protected TexCoords KoNDCs { get; set; }
 
         // Kodomo
@@ -116,13 +117,16 @@ namespace FeloxGame.GUI
 
         public virtual void SetNDCs(float oyaWidth, float oyaHeight, TexCoords oyaNDCs)
         {
-            TexCoords anchoredDimensions = GetAnchoredDimensions(oyaWidth, oyaHeight);
+            if (Anchor != eAnchor.None)
+            {
+                KoPosition = GetAnchoredDimensions(oyaWidth, oyaHeight);
+            }
 
             // map anchored coordinates
-            KoNDCs.MaxX = ((anchoredDimensions.MaxX / oyaWidth) * (oyaNDCs.MaxX - oyaNDCs.MinX) + oyaNDCs.MinX);
-            KoNDCs.MinX = ((anchoredDimensions.MinX / oyaWidth) * (oyaNDCs.MaxX - oyaNDCs.MinX) + oyaNDCs.MinX);
-            KoNDCs.MaxY = ((anchoredDimensions.MaxY / oyaHeight) * (oyaNDCs.MaxY - oyaNDCs.MinY) + oyaNDCs.MinY);
-            KoNDCs.MinY = ((anchoredDimensions.MinY / oyaHeight) * (oyaNDCs.MaxY - oyaNDCs.MinY) + oyaNDCs.MinY);
+            KoNDCs.MaxX = ((KoPosition.MaxX / oyaWidth) * (oyaNDCs.MaxX - oyaNDCs.MinX) + oyaNDCs.MinX);
+            KoNDCs.MinX = ((KoPosition.MinX / oyaWidth) * (oyaNDCs.MaxX - oyaNDCs.MinX) + oyaNDCs.MinX);
+            KoNDCs.MaxY = ((KoPosition.MaxY / oyaHeight) * (oyaNDCs.MaxY - oyaNDCs.MinY) + oyaNDCs.MinY);
+            KoNDCs.MinY = ((KoPosition.MinY / oyaHeight) * (oyaNDCs.MaxY - oyaNDCs.MinY) + oyaNDCs.MinY);
 
             // Set screen position
             Vertices[0]  = KoNDCs.MaxX; Vertices[1]  = KoNDCs.MaxY; // ( 1,  1)
