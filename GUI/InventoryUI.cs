@@ -44,12 +44,14 @@ namespace FeloxGame.GUI
             /// 40-49
             /// =====
             /// 0 - 9
-            int slotIndex = 0; TexCoords koPosition = new();
+            int slotIndex = 0; 
 
             for (int row = 0; row < _rows; row++)
             {
                 for (int col = 0; col < _cols; col++)
                 {
+                    TexCoords koPosition = new();
+
                     koPosition.MinX = _edgePadding + col * (itemSlotWidth + _itemSlotPadding);
 
                     if (row == 0)
@@ -58,13 +60,13 @@ namespace FeloxGame.GUI
                     }
                     else
                     {
-                        koPosition.MinY = KoHeight - (row *  itemSlotHeight) - (row - 1) * _itemSlotPadding;
+                        koPosition.MinY = KoHeight - _edgePadding - (row *  itemSlotHeight) - (row - 1) * _itemSlotPadding;
                     }
 
                     koPosition.MaxX = koPosition.MinX + itemSlotWidth;
                     koPosition.MaxY = koPosition.MinY + itemSlotHeight;
 
-                    Kodomo.Add($"{slotIndex}", new ItemSlotUI(itemSlotWidth, itemSlotHeight, eAnchor.None, 1f, koPosition));
+                    Kodomo.Add($"{slotIndex}", new ItemSlotUI(itemSlotWidth, itemSlotHeight, eAnchor.None, 1f, true, true, koPosition));
 
                     slotIndex++;
                 }
