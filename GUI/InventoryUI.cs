@@ -34,8 +34,6 @@ namespace FeloxGame.GUI
             // Set the width and height of a UI Slot
             float availableWidth = this.KoWidth - 2 * _edgePadding;
             float availableHeight = this.KoHeight - 2 * _edgePadding - _hotbarPadding;
-            float itemSlotWidth = (availableWidth - (_cols - 1) * _itemSlotPadding) / _cols;
-            float itemSlotHeight = (availableHeight - (_rows - 1) * _itemSlotPadding - _hotbarPadding) / _rows;
 
             /// Get the coordinates for each UI Slot
             /// 10-19
@@ -52,7 +50,7 @@ namespace FeloxGame.GUI
                 {
                     TexCoords koPosition = new();
 
-                    koPosition.MinX = _edgePadding + col * (itemSlotWidth + _itemSlotPadding);
+                    koPosition.MinX = _edgePadding + col * (_itemSlotWidth + _itemSlotPadding);
 
                     if (row == 0)
                     {
@@ -60,13 +58,13 @@ namespace FeloxGame.GUI
                     }
                     else
                     {
-                        koPosition.MinY = KoHeight - _edgePadding - (row *  itemSlotHeight) - (row - 1) * _itemSlotPadding;
+                        koPosition.MinY = KoHeight - _edgePadding - (row *  _itemSlotHeight) - (row - 1) * _itemSlotPadding;
                     }
 
-                    koPosition.MaxX = koPosition.MinX + itemSlotWidth;
-                    koPosition.MaxY = koPosition.MinY + itemSlotHeight;
+                    koPosition.MaxX = koPosition.MinX + _itemSlotWidth;
+                    koPosition.MaxY = koPosition.MinY + _itemSlotHeight;
 
-                    Kodomo.Add($"{slotIndex}", new ItemSlotUI(itemSlotWidth, itemSlotHeight, eAnchor.None, 1f, true, true, koPosition));
+                    Kodomo.Add($"{slotIndex}", new ItemSlotUI(_itemSlotWidth, _itemSlotHeight, eAnchor.None, 1f, true, true, koPosition));
 
                     slotIndex++;
                 }
