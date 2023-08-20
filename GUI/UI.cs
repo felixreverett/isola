@@ -112,6 +112,9 @@ namespace FeloxGame.GUI
 
         public void OnResize(float oyaWidth, float oyaHeight, TexCoords oyaNDCs)
         {
+            this.KoWidth = oyaWidth;
+            this.KoHeight = oyaHeight;
+            this.AspectRatio = oyaWidth / oyaHeight;
             SetNDCs(oyaWidth, oyaHeight, oyaNDCs);
         }
 
@@ -237,6 +240,7 @@ namespace FeloxGame.GUI
                 default:
                     break;
             }
+                        
             return anchoredDimensions;
         }
 

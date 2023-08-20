@@ -78,12 +78,8 @@ namespace FeloxGame
 
             // UI systems
             MasterUI = new(Size.X, Size.Y, eAnchor.Middle, 1.0f);
-                //MasterUI.Kodomo.Add("Inventory", new UI(346f, 180f, eAnchor.Middle, 0.5f, true));
-                MasterUI.Kodomo.Add("Inventory", new InventoryUI(346f, 180f, eAnchor.Middle, 0.5f,
-                true, true, 5, 10, 32f, 32f));
+                MasterUI.Kodomo.Add("Inventory", new InventoryUI(346f, 180f, eAnchor.Middle, 0.5f, true, true, 5, 10, 32f, 32f));
                 MasterUI.Kodomo["Inventory"].SetTextureCoords(4, 840, 346, 180, 1024, 1024);
-                    //MasterUI.Kodomo["Inventory"].Kodomo.Add("Test inventory", new UI(346f, 180f, eAnchor.Middle, 0.5f, true));
-                    //MasterUI.Kodomo["Inventory"].Kodomo["Test inventory"].SetTextureCoords(4, 840, 346, 180, 1024, 1024);
 
             // Textures
             _shader.Use();
@@ -192,45 +188,7 @@ namespace FeloxGame
                 }
                 MasterUI.SetNDCs(Size.X, Size.Y, new TexCoords(-1f, -1f, 1f, 1f));
             }
-
-            if (input.IsKeyPressed(Keys.E))
-            {
-                currentAnchor2++;
-                if (currentAnchor2 > 8) { currentAnchor2 = 0; }
-                switch (currentAnchor2)
-                {
-                    case 0:
-                        MasterUI.Kodomo["Inventory"].Kodomo["Test inventory"].Anchor = eAnchor.Middle;
-                        break;
-                    case 1:
-                        MasterUI.Kodomo["Inventory"].Kodomo["Test inventory"].Anchor = eAnchor.Left;
-                        break;
-                    case 2:
-                        MasterUI.Kodomo["Inventory"].Kodomo["Test inventory"].Anchor = eAnchor.Top;
-                        break;
-                    case 3:
-                        MasterUI.Kodomo["Inventory"].Kodomo["Test inventory"].Anchor = eAnchor.Right;
-                        break;
-                    case 4:
-                        MasterUI.Kodomo["Inventory"].Kodomo["Test inventory"].Anchor = eAnchor.Bottom;
-                        break;
-                    case 5:
-                        MasterUI.Kodomo["Inventory"].Kodomo["Test inventory"].Anchor = eAnchor.TopLeft;
-                        break;
-                    case 6:
-                        MasterUI.Kodomo["Inventory"].Kodomo["Test inventory"].Anchor = eAnchor.TopRight;
-                        break;
-                    case 7:
-                        MasterUI.Kodomo["Inventory"].Kodomo["Test inventory"].Anchor = eAnchor.BottomRight;
-                        break;
-                    case 8:
-                        MasterUI.Kodomo["Inventory"].Kodomo["Test inventory"].Anchor = eAnchor.BottomLeft;
-                        break;
-                }
-                MasterUI.SetNDCs(Size.X, Size.Y, new TexCoords(-1f, -1f, 1f, 1f));
-            }
-
-
+                        
             if (movement.LengthSquared > 1.0f) { movement.Normalize(); }
 
             _player.Position += movement * (speed * (float)args.Time);
