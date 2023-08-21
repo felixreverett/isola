@@ -2,11 +2,16 @@
 {
     public class ItemStack
     {
-        public Item Item { get; set; }
+        public string ItemName { get; set; }
         public int Amount { get; set; }
         public ItemStack()
         {
-            this.Item = new Item();
+            
+        }
+
+        public virtual void Use()
+        {
+            //
         }
     }
 }

@@ -2,9 +2,15 @@
 {
     public class Item
     {
+
         public string Name { get; set; }
-        // item name
-        // texture atlas index location
-        // item category
+        public int TextureIndex { get; set; }
+        
+        // item category or type
+        public Item(string name, int textureIndex)
+        {
+            Name = name;
+            TextureIndex = textureIndex;
+        }
     }
 }

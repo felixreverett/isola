@@ -1,12 +1,11 @@
 ﻿using FeloxGame.InventoryClasses;
-using System.Linq;
 
 namespace FeloxGame
 {
     // Inventory items will only be accessed through methods like .Add() and .Remove()
     public class Inventory
     {
-        private ItemStack[]? _items;
+        private ItemStack[]? _itemStackList;
         private int _rows;
         private int _cols;
 
@@ -14,18 +13,18 @@ namespace FeloxGame
         {
             this._rows = rows;
             this._cols = cols;
-            this._items = new ItemStack[rows * cols];
+            this._itemStackList = new ItemStack[rows*cols];
         }
 
         public void Add(ItemStack itemStack)
         {
-            var matchingItemStack = _items.FirstOrDefault(i => i.Item.Name == itemStack.Item.Name);
+            var matchingItemStack = _itemStackList.FirstOrDefault(i => i.ItemName == itemStack.ItemName);
             
             if (matchingItemStack is null)
             {
                 if (FirstFreeIndex(out var index))
                 {
-                    _items[index] = itemStack;
+                    _itemStackList[index] = itemStack;
                 }
             }
             else
@@ -36,7 +35,7 @@ namespace FeloxGame
 
         public void Remove(ItemStack itemStack)
         {
-            var matchingItemStack = _items.FirstOrDefault(i => i.Item.Name == itemStack.Item.Name);
+            var matchingItemStack = _itemStackList.FirstOrDefault(i => i.ItemName == itemStack.ItemName);
 
             if ( matchingItemStack is null)
             {
@@ -48,8 +47,8 @@ namespace FeloxGame
             }
             else if (matchingItemStack.Amount == itemStack.Amount)
             {
-                int index = Array.IndexOf(_items, matchingItemStack);
-                _items[index] = null;
+                int index = Array.IndexOf(_itemStackList, matchingItemStack);
+                _itemStackList[index] = null;
             }
             else if (matchingItemStack.Amount < itemStack.Amount)
             {
@@ -60,9 +59,9 @@ namespace FeloxGame
         public bool FirstFreeIndex(out int index)
         {
             index = -1;
-            for (int i = 0; i < _items.Length; i++)
+            for (int i = 0; i < _itemStackList.Length; i++)
             {
-                if (_items[i] is not null)
+                if (_itemStackList[i] is not null)
                 {
                     index = i;
                     return true;
@@ -77,11 +76,11 @@ namespace FeloxGame
             switch (sortType)
             {
                 case eSortType.Alphabetical:
-                    sortedItems = _items.OrderBy(i => i.Item.Name).ToArray();
-                    _items = sortedItems;
+                    sortedItems = _itemStackList.OrderBy(i => i.ItemName).ToArray();
+                    _itemStackList = sortedItems;
                     break;
                 case eSortType.Amount:
-                    sortedItems = _items.OrderBy(i => i.Amount).ThenBy(i => i.Item.Name).ToArray();
+                    sortedItems = _itemStackList.OrderBy(i => i.Amount).ThenBy(i => i.ItemName).ToArray();
                     break;
                 case eSortType.Category:
                     // not yet implemented

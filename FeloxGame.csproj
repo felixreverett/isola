@@ -46,6 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Resources\Items\" />
     <Folder Include="Resources\Tiles\" />
     <Folder Include="Resources\World\WorldFiles\" />
   </ItemGroup>
