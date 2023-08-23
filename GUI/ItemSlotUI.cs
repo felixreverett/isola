@@ -12,5 +12,15 @@ namespace FeloxGame.GUI
             SetTextureCoords(4, 840, 346, 180, 1024, 1024);
         }
 
+        /// <summary>
+        /// Updates information on the item contained within 
+        /// </summary>
+        public void UpdateItem(/*feed it the item info*/)
+        {
+            // if (no item anymore) { ToggleDraw = false; }
+            // else
+            //SetTextureCoords();
+        }
+
     }
 }

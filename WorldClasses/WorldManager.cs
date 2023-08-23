@@ -1,4 +1,5 @@
 ﻿using FeloxGame.Core.Management;
+using System.Reflection.Metadata.Ecma335;
 
 namespace FeloxGame.WorldClasses
 {
@@ -43,6 +44,29 @@ namespace FeloxGame.WorldClasses
 
             return texCoords;
         }
+
+        /// <summary>
+        /// Returns Atlas coordinates for a texture at the given index.
+        /// </summary>
+        /// <returns></returns>
+        public TexCoords GetIndexedAtlasCoords(int textureIndex, int textureSize, int atlasSize, int padding)
+        {
+            TexCoords texCoords = new TexCoords();
+
+            int rowColumnLength = atlasSize / (textureSize + padding);
+            int column = textureIndex % rowColumnLength;
+            int row = textureIndex / rowColumnLength;
+            float normalisedOffset = (textureSize + padding) / (float)atlasSize;
+            
+            texCoords.MinX = (float)column * normalisedOffset;
+            texCoords.MaxX = texCoords.MinX + normalisedOffset;
+            texCoords.MinY = (float)row * normalisedOffset;
+            texCoords.MaxY = texCoords.MinY + normalisedOffset;
+
+            return texCoords;
+        }
+
+        //public TexCords GetPreciseAtlasCoords() { }
 
         public TexCoords GetTexCoordFromAtlas(float x, float y, float textureWidth, float textureHeight, float atlasWidth, float atlasHeight)
         {
