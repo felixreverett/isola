@@ -44,7 +44,7 @@ namespace FeloxGame.WorldClasses // rename this later?
 
         public void OnLoad()
         {
-            WorldTexture = ResourceManager.Instance.LoadTexture(@"../../../Resources/Textures/WorldTextures.png", 0);
+            WorldTexture = ResourceManager.Instance.LoadTexture("TileAtlas.png", 0); // 24-8 change
 
             _vertexArray = new();
             _vertexBuffer = new VertexBuffer(_vertices);
@@ -108,7 +108,8 @@ namespace FeloxGame.WorldClasses // rename this later?
                         _vertices[24] = loadedChunk.ChunkPosX * 16 + x; _vertices[25] = loadedChunk.ChunkPosY * 16 + y + 1; // top left (0, 1)
                         string textureName = loadedChunk.Tiles[x, y];
                         int textureIndex = _tileList.Where(t => t.Name.ToLower() == textureName.ToLower()).FirstOrDefault().TextureIndex;
-                        TexCoords texCoords = WorldManager.Instance.GetSubTextureCoordinates(textureIndex);
+                        //TexCoords texCoords = WorldManager.Instance.GetSubTextureCoordinates(textureIndex);
+                        TexCoords texCoords = WorldManager.Instance.GetIndexedAtlasCoords(textureIndex, 32, 1024, 8, true); // 24-8 change
                         _vertices[3] = texCoords.MaxX; _vertices[4] = texCoords.MaxY;   // (1, 1)
                         _vertices[11] = texCoords.MaxX; _vertices[12] = texCoords.MinY; // (1, 0)
                         _vertices[19] = texCoords.MinX; _vertices[20] = texCoords.MinY; // (0, 0)

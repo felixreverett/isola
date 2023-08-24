@@ -49,6 +49,7 @@ namespace FeloxGame
         Texture2D tileAtlas;
         Texture2D playerSprites;
         Texture2D inventoryAtlas;
+        Texture2D itemAtlas;
 
         protected override void OnLoad()
         {
@@ -84,9 +85,10 @@ namespace FeloxGame
             // Textures
             _shader.Use();
 
-            tileAtlas = ResourceManager.Instance.LoadTexture(@"../../../Resources/Textures/WorldTextures.png", 0);
-            playerSprites = ResourceManager.Instance.LoadTexture(@"../../../Resources/Textures/Entities/Player.png", 1); ;
-            inventoryAtlas = ResourceManager.Instance.LoadTexture(@"../../../Resources/Textures/Inventories/Inventory Atlas.png", 2);
+            tileAtlas = ResourceManager.Instance.LoadTexture("TileAtlas.png", 0); // 24-8 change
+            playerSprites = ResourceManager.Instance.LoadTexture("Entities/Player.png", 1); ;
+            inventoryAtlas = ResourceManager.Instance.LoadTexture("Inventories/Inventory Atlas.png", 2);
+            itemAtlas = ResourceManager.Instance.LoadTexture("Items/Item Atlas.png", 3);
 
             //var textureSampleUniformLocation = _shader.GetUniformLocation("u_Texture[0]"); // ??
             //int[] samplers = new int[3] { 0, 1, 2 }; // ??

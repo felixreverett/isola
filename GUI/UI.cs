@@ -61,7 +61,7 @@ namespace FeloxGame.GUI
         {
             if (Drawable)
             {
-                this.inventoryAtlas = ResourceManager.Instance.LoadTexture(@"../../../Resources/Textures/Inventories/Inventory Atlas.png", 2);
+                this.inventoryAtlas = ResourceManager.Instance.LoadTexture("Inventories/Inventory Atlas.png", 2);
 
                 _vertexArray = new();
                 _vertexBuffer = new VertexBuffer(Vertices);
@@ -99,9 +99,9 @@ namespace FeloxGame.GUI
             }
         }
 
-        public void SetTextureCoords(float x, float y, float textureWidth, float textureHeight, float atlasWidth, float atlasHeight)
+        public virtual void SetTextureCoords(float x, float y, float textureWidth, float textureHeight, float atlasWidth, float atlasHeight)
         {
-            TexCoords inventoryCoords = WorldManager.Instance.GetTexCoordFromAtlas(x, y, textureWidth, textureHeight, atlasWidth, atlasHeight);
+            TexCoords inventoryCoords = WorldManager.Instance.GetPrecisionAtlasCoords(x, y, textureWidth, textureHeight, atlasWidth, atlasHeight);
 
             // Set texCoords of atlas
             Vertices[3]  = inventoryCoords.MaxX; Vertices[4]  = inventoryCoords.MaxY; // (1, 1)

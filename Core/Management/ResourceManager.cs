@@ -25,13 +25,14 @@ namespace FeloxGame.Core.Management
 
         public Texture2D LoadTexture(string textureName, int textureUnit)
         {
-            _textureCache.TryGetValue(textureName, out var value);
+            string texturePath = @"../../../Resources/Textures/" + textureName;
+            _textureCache.TryGetValue(texturePath, out var value);
             if (value is not null)
             {
                 return value;
             }
-            value = TextureFactory.Load(textureName, textureUnit);
-            _textureCache.Add(textureName, value);
+            value = TextureFactory.Load(texturePath, textureUnit);
+            _textureCache.Add(texturePath, value);
             return value;
         }
     }

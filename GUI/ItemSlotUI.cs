@@ -1,4 +1,5 @@
 ﻿using FeloxGame.Core.Management;
+using FeloxGame.WorldClasses;
 
 namespace FeloxGame.GUI
 {
@@ -21,6 +22,17 @@ namespace FeloxGame.GUI
             // else
             //SetTextureCoords();
         }
+
+        /*public override void SetTextureCoords()
+        {
+            TexCoords inventoryCoords = WorldManager.Instance.GetIndexedAtlasCoords();
+
+            // Set texCoords of atlas
+            Vertices[3] = inventoryCoords.MaxX; Vertices[4] = inventoryCoords.MaxY; // (1, 1)
+            Vertices[11] = inventoryCoords.MaxX; Vertices[12] = inventoryCoords.MinY; // (1, 0)
+            Vertices[19] = inventoryCoords.MinX; Vertices[20] = inventoryCoords.MinY; // (0, 0)
+            Vertices[27] = inventoryCoords.MinX; Vertices[28] = inventoryCoords.MaxY; // (0, 1)
+        }*/
 
     }
 }

@@ -1,5 +1,5 @@
 {
 	"Name": "Grass",
-	"TextureLocation": "Resources/Textures/grass.png",
+	"TextureLocation": "grass.png",
 	"TextureIndex": 0
 }
