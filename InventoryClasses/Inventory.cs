@@ -5,7 +5,7 @@ namespace FeloxGame
     // Inventory items will only be accessed through methods like .Add() and .Remove()
     public class Inventory
     {
-        private ItemStack[]? _itemStackList;
+        public ItemStack[] _itemStackList;
         private int _rows;
         private int _cols;
 
@@ -18,7 +18,7 @@ namespace FeloxGame
 
         public void Add(ItemStack itemStack)
         {
-            var matchingItemStack = _itemStackList.FirstOrDefault(i => i.ItemName == itemStack.ItemName);
+            var matchingItemStack = _itemStackList.FirstOrDefault(i => i is not null && i.ItemName == itemStack.ItemName);
             
             if (matchingItemStack is null)
             {
@@ -61,7 +61,7 @@ namespace FeloxGame
             index = -1;
             for (int i = 0; i < _itemStackList.Length; i++)
             {
-                if (_itemStackList[i] is not null)
+                if (_itemStackList[i] is null)
                 {
                     index = i;
                     return true;

@@ -2,7 +2,7 @@
 {
     internal class ToolStack : ItemStack
     {
-        public ToolStack() : base()
+        public ToolStack(string itemName, int amount) : base(itemName, amount)
         {
             
         }

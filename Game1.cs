@@ -34,6 +34,10 @@ namespace FeloxGame
         // player data
         private Player _player;
 
+        // item data
+        private readonly string itemListFolderPath = @"../../../Resources/Items";
+        private List<Item> _itemList;
+
         // Cursor data
         private GameCursor _cursor;
 
@@ -102,6 +106,7 @@ namespace FeloxGame
 
             // Resource loading
             _tileList = Loading.LoadAllObjects<Tile>(tileListFolderPath);
+            _itemList = Loading.LoadAllObjects<Item>(itemListFolderPath);
 
             //_shader.Debug();
         }
@@ -192,6 +197,22 @@ namespace FeloxGame
             }
                         
             if (movement.LengthSquared > 1.0f) { movement.Normalize(); }
+
+            if (input.IsKeyPressed(Keys.P))
+            {
+                _player.Inventory.Add(new InventoryClasses.ItemStack("Persimmon", 1));
+            }
+
+            if (input.IsKeyPressed(Keys.O))
+            {
+                foreach (var item in _player.Inventory._itemStackList)
+                {
+                    if (item != null)
+                    {
+                        Console.WriteLine($"{item.ItemName}: {item.Amount}");
+                    }
+                }
+            }
 
             _player.Position += movement * (speed * (float)args.Time);
 
