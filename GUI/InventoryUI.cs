@@ -1,4 +1,5 @@
 ﻿using FeloxGame.Core.Management;
+using FeloxGame.InventoryClasses;
 
 namespace FeloxGame.GUI
 {
@@ -67,6 +68,27 @@ namespace FeloxGame.GUI
                     Kodomo.Add($"{slotIndex}", new ItemSlotUI(_itemSlotWidth, _itemSlotHeight, eAnchor.None, 1f, true, true, koPosition));
 
                     slotIndex++;
+                }
+            }
+        }
+
+        public void SubscribeToInventory(Inventory inventory)
+        {
+            inventory.InventoryChanged += HandleInventoryChanged;
+        }
+
+        private void HandleInventoryChanged(ItemStack[] itemStackList)
+        {
+            for (int i = 0; i < _rows * _cols; i++)
+            {
+                if (itemStackList[i] != null)
+                {
+                    Kodomo[$"{i}"].ToggleDraw = true;
+                    ((ItemSlotUI)Kodomo[$"{i}"]).UpdateItem(itemStackList[i]);
+                }
+                else
+                {
+                    Kodomo[$"{i}"].ToggleDraw = false;
                 }
             }
         }

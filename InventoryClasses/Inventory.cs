@@ -16,6 +16,8 @@ namespace FeloxGame
             this._itemStackList = new ItemStack[rows*cols];
         }
 
+        public event Action<ItemStack[]> InventoryChanged;
+
         public void Add(ItemStack itemStack)
         {
             var matchingItemStack = _itemStackList.FirstOrDefault(i => i is not null && i.ItemName == itemStack.ItemName);
@@ -31,6 +33,8 @@ namespace FeloxGame
             {
                 matchingItemStack.Amount += itemStack.Amount;
             }
+
+            InventoryChanged?.Invoke(_itemStackList);
         }
 
         public void Remove(ItemStack itemStack)
@@ -54,6 +58,8 @@ namespace FeloxGame
             {
                 throw new ArgumentException("Error. Tried to remove more items than in inventory");
             }
+
+            InventoryChanged?.Invoke(_itemStackList);
         }
 
         public bool FirstFreeIndex(out int index)
@@ -86,6 +92,8 @@ namespace FeloxGame
                     // not yet implemented
                     break;
             }
+
+            InventoryChanged?.Invoke(_itemStackList);
         }
     }
 }

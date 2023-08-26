@@ -2,14 +2,13 @@
 {
     public class Item
     {
-
-        public string Name { get; set; }
+        public string ItemName { get; set; }
         public int TextureIndex { get; set; }
         
         // item category or type
-        public Item(string name, int textureIndex)
+        public Item(string itemName, int textureIndex)
         {
-            Name = name;
+            ItemName = itemName;
             TextureIndex = textureIndex;
         }
     }

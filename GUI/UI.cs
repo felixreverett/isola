@@ -37,10 +37,10 @@ namespace FeloxGame.GUI
         private bool Drawable { get; set; }
         public bool ToggleDraw { get; set; }
 
-        private VertexBuffer _vertexBuffer;
-        private VertexArray _vertexArray;
-        private IndexBuffer _indexBuffer;
-        private Texture2D inventoryAtlas;
+        protected VertexBuffer _vertexBuffer;
+        protected VertexArray _vertexArray;
+        protected IndexBuffer _indexBuffer;
+        protected Texture2D inventoryAtlas;
 
         // Constructor
         public UI(float koWidth, float koHeight, eAnchor anchor, float scale, bool drawable = false, bool toggleDraw = true)
@@ -61,7 +61,10 @@ namespace FeloxGame.GUI
         {
             if (Drawable)
             {
-                this.inventoryAtlas = ResourceManager.Instance.LoadTexture("Inventories/Inventory Atlas.png", 2);
+                if (this.inventoryAtlas is null)
+                {
+                    this.inventoryAtlas = ResourceManager.Instance.LoadTexture("Inventories/Inventory Atlas.png", 2);
+                }
 
                 _vertexArray = new();
                 _vertexBuffer = new VertexBuffer(Vertices);

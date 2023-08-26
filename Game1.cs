@@ -36,7 +36,6 @@ namespace FeloxGame
 
         // item data
         private readonly string itemListFolderPath = @"../../../Resources/Items";
-        private List<Item> _itemList;
 
         // Cursor data
         private GameCursor _cursor;
@@ -106,9 +105,10 @@ namespace FeloxGame
 
             // Resource loading
             _tileList = Loading.LoadAllObjects<Tile>(tileListFolderPath);
-            _itemList = Loading.LoadAllObjects<Item>(itemListFolderPath);
+            ThingWhereAllTheItemsAreStored.ItemList = Loading.LoadAllObjects<Item>(itemListFolderPath);
 
-            //_shader.Debug();
+            // Event connections
+            ((InventoryUI)MasterUI.Kodomo["Inventory"]).SubscribeToInventory(_player.Inventory);
         }
         
         protected override void OnUpdateFrame(FrameEventArgs args)

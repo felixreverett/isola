@@ -24,7 +24,7 @@ namespace FeloxGame.WorldClasses
         }
 
         /// <summary>
-        /// Returns Atlas coordinates for a texture at the given index.
+        /// Returns Atlas coordinates for a texture at the given index. Use offset for tiles.
         /// </summary>
         /// <returns></returns>
         public TexCoords GetIndexedAtlasCoords(int textureIndex, int textureSize, int atlasSize, int padding, bool useOffset = false)
