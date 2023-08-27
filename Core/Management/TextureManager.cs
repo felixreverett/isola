@@ -1,14 +1,13 @@
 ﻿using FeloxGame.Core.Management;
-using System.Reflection.Metadata.Ecma335;
 
-namespace FeloxGame.WorldClasses
+namespace FeloxGame.Core.Management
 {
-    public class WorldManager
+    public class TextureManager
     {
-        private static WorldManager _instance = null;
+        private static TextureManager _instance = null;
         private static readonly object _loc = new();
                 
-        public static WorldManager Instance
+        public static TextureManager Instance
         {
             get
             {
@@ -16,7 +15,7 @@ namespace FeloxGame.WorldClasses
                 {
                     if (_instance == null)
                     {
-                        _instance = new WorldManager();
+                        _instance = new TextureManager();
                     }
                     return _instance;
                 }
@@ -54,18 +53,16 @@ namespace FeloxGame.WorldClasses
             return texCoords;
         }
 
-        //public TexCords GetPreciseAtlasCoords() { }
-
         public TexCoords GetPrecisionAtlasCoords(float x, float y, float textureWidth, float textureHeight, float atlasWidth, float atlasHeight)
         {
-            //todo: add bounds error checking
+            //todo: add bounds error checking?
             TexCoords texCoords = new TexCoords();
             float pixelOffsetX = 1f / (atlasWidth * 2);
             float pixelOffsetY = 1f / (atlasHeight * 2);
-            texCoords.MinX = x / atlasWidth;// + pixelOffsetX;
-            texCoords.MinY = y / atlasHeight;// + pixelOffsetY;
-            texCoords.MaxX = (x + textureWidth) / atlasWidth;// - pixelOffsetX;
-            texCoords.MaxY = (y + textureHeight) / atlasHeight;// - pixelOffsetY;
+            texCoords.MinX = x / atlasWidth;
+            texCoords.MinY = y / atlasHeight;
+            texCoords.MaxX = (x + textureWidth) / atlasWidth;
+            texCoords.MaxY = (y + textureHeight) / atlasHeight;
 
             return texCoords;
         }

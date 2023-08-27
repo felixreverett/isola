@@ -14,6 +14,7 @@ Yes! Here is an ever expanding list of implemented concepts and general coding p
 ### __Coding Practices & Concepts__:
 *recursion | enums | perlin noise | class inheritance | matrices | GLSL*
 - **enums**: Finding opportunities to use them
+- **Events**: Learning about subscribing to events to send data between uncoupled classes.
 - **File handling**: Loading appropriately and efficiently from files, using JSON, ImageSharp, etc.
 - **Github**: Learning the essentials of Git and the programmer workflow.
 - **GLSL (shaders)**: Understanding the fundamentals of what a GPU should do vs a CPU; using uniforms; changing shaders; setting active texture units; studying the graphics pipeline

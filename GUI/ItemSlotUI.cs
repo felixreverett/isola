@@ -1,7 +1,6 @@
 ﻿using FeloxGame.Core;
 using FeloxGame.Core.Management;
 using FeloxGame.InventoryClasses;
-using FeloxGame.WorldClasses;
 
 namespace FeloxGame.GUI
 {
@@ -21,14 +20,14 @@ namespace FeloxGame.GUI
         {
             int index = 0;
             
-            Item matchingItem = ThingWhereAllTheItemsAreStored.ItemList.FirstOrDefault(i => i.ItemName == itemStack.ItemName);
+            Item matchingItem = AssetLibrary.ItemList.FirstOrDefault(i => i.ItemName == itemStack.ItemName);
             
             if (matchingItem != null)
             {
                 index = matchingItem.TextureIndex;
             }
             
-            TexCoords texCoords = WorldManager.Instance.GetIndexedAtlasCoords(index, 32, 1024, 8);
+            TexCoords texCoords = TextureManager.Instance.GetIndexedAtlasCoords(index, 32, 1024, 8);
 
             SetTextureCoords(texCoords);
         }

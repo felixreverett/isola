@@ -1,4 +1,5 @@
-﻿using FeloxGame.Core.Management;
+﻿using FeloxGame.Core;
+using FeloxGame.Core.Management;
 using FeloxGame.Core.Rendering;
 using OpenTK.Graphics.OpenGL4;
 using SharpNoise;
@@ -89,7 +90,7 @@ namespace FeloxGame.WorldClasses // rename this later?
             }
         }
 
-        public void Draw(List<Tile> _tileList) // todo: remove inputs?
+        public void Draw()
         {
             WorldTexture.Use();
             _vertexArray.Bind();
@@ -107,21 +108,20 @@ namespace FeloxGame.WorldClasses // rename this later?
                         _vertices[16] = loadedChunk.ChunkPosX * 16 + x; _vertices[17] = loadedChunk.ChunkPosY * 16 + y; // bottom left (0, 0)
                         _vertices[24] = loadedChunk.ChunkPosX * 16 + x; _vertices[25] = loadedChunk.ChunkPosY * 16 + y + 1; // top left (0, 1)
                         string textureName = loadedChunk.Tiles[x, y];
-                        int textureIndex = _tileList.Where(t => t.Name.ToLower() == textureName.ToLower()).FirstOrDefault().TextureIndex;
-                        //TexCoords texCoords = WorldManager.Instance.GetSubTextureCoordinates(textureIndex);
-                        TexCoords texCoords = WorldManager.Instance.GetIndexedAtlasCoords(textureIndex, 32, 1024, 8, true); // 24-8 change
+                        int textureIndex = AssetLibrary.TileList.Where(t => t.Name.ToLower() == textureName.ToLower()).FirstOrDefault().TextureIndex;
+                        
+                        TexCoords texCoords = TextureManager.Instance.GetIndexedAtlasCoords(textureIndex, 32, 1024, 8, true); // 24-8 change
                         _vertices[3] = texCoords.MaxX; _vertices[4] = texCoords.MaxY;   // (1, 1)
                         _vertices[11] = texCoords.MaxX; _vertices[12] = texCoords.MinY; // (1, 0)
                         _vertices[19] = texCoords.MinX; _vertices[20] = texCoords.MinY; // (0, 0)
                         _vertices[27] = texCoords.MinX; _vertices[28] = texCoords.MaxY; // (0, 1)
+
                         GL.BufferSubData(BufferTarget.ArrayBuffer, 0, sizeof(float) * _vertices.Length, _vertices);
                         GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0); // Used for drawing Elements
                     }
                 }
             }
         }
-
-
 
         // Terrain Generation code
 

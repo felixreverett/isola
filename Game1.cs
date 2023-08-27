@@ -29,7 +29,6 @@ namespace FeloxGame
         // world data
         private World _world;
         private readonly string tileListFolderPath = @"../../../Resources/Tiles";
-        private List<Tile> _tileList; // will contain all tiles
 
         // player data
         private Player _player;
@@ -46,7 +45,6 @@ namespace FeloxGame
         // UISystem
         private UI MasterUI { get; set; }
         int currentAnchor = 0; //debug
-        int currentAnchor2 = 0;
 
         // Textures
         Texture2D tileAtlas;
@@ -82,20 +80,16 @@ namespace FeloxGame
 
             // UI systems
             MasterUI = new(Size.X, Size.Y, eAnchor.Middle, 1.0f);
-                MasterUI.Kodomo.Add("Inventory", new InventoryUI(346f, 180f, eAnchor.Middle, 0.5f, true, true, 5, 10, 32f, 32f));
+                MasterUI.Kodomo.Add("Inventory", new InventoryUI(346f, 180f, eAnchor.Middle, 0.5f, true, false, 5, 10, 32f, 32f));
                 MasterUI.Kodomo["Inventory"].SetTextureCoords(4, 840, 346, 180, 1024, 1024);
 
             // Textures
             _shader.Use();
 
-            tileAtlas = ResourceManager.Instance.LoadTexture("TileAtlas.png", 0); // 24-8 change
+            tileAtlas = ResourceManager.Instance.LoadTexture("TileAtlas.png", 0);
             playerSprites = ResourceManager.Instance.LoadTexture("Entities/Player.png", 1); ;
             inventoryAtlas = ResourceManager.Instance.LoadTexture("Inventories/Inventory Atlas.png", 2);
             itemAtlas = ResourceManager.Instance.LoadTexture("Items/Item Atlas.png", 3);
-
-            //var textureSampleUniformLocation = _shader.GetUniformLocation("u_Texture[0]"); // ??
-            //int[] samplers = new int[3] { 0, 1, 2 }; // ??
-            //GL.Uniform1(textureSampleUniformLocation, 2, samplers); // ??
 
             // Camera
             _camera = new Camera(Vector3.UnitZ * 10, Size.X / (float)Size.Y);
@@ -104,10 +98,10 @@ namespace FeloxGame
             _cursor = new GameCursor();
 
             // Resource loading
-            _tileList = Loading.LoadAllObjects<Tile>(tileListFolderPath);
-            ThingWhereAllTheItemsAreStored.ItemList = Loading.LoadAllObjects<Item>(itemListFolderPath);
+            AssetLibrary.ItemList = Loading.LoadAllObjects<Item>(itemListFolderPath);
+            AssetLibrary.TileList = Loading.LoadAllObjects<Tile>(tileListFolderPath);
 
-            // Event connections
+            // Events
             ((InventoryUI)MasterUI.Kodomo["Inventory"]).SubscribeToInventory(_player.Inventory);
         }
         
@@ -132,10 +126,9 @@ namespace FeloxGame
                 Close();
             }
 
-            if (input.IsKeyReleased(Keys.I))
+            if (input.IsKeyReleased(Keys.E))
             {
                 MasterUI.Kodomo["Inventory"].ToggleDraw = !MasterUI.Kodomo["Inventory"].ToggleDraw;
-                //toggleInventory = !toggleInventory;
             }
 
             if (input.IsKeyDown(Keys.A) | input.IsKeyDown(Keys.Left))
@@ -228,20 +221,17 @@ namespace FeloxGame
             GL.ClearColor(Color4.CornflowerBlue);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             
-            // ---------- WORLD ----------
+            // ---------- WORLD & Entities ----------
 
             _shader.Use();
-            // matrices for camera
-            var model = Matrix4.Identity;
 
-            _shader.SetMatrix4("model", model);
+            // matrices for camera
+            _shader.SetMatrix4("model", Matrix4.Identity);
             _shader.SetMatrix4("view", _camera.GetViewMatrix());
             _shader.SetMatrix4("projection", _camera.GetProjectionMatrix());
 
-            //_shader.SetInt("myTextureUnit", 0);
-            _world.Draw(_tileList);
+            _world.Draw();
 
-            //_shader.SetInt("myTextureUnit", 1);
             _player.Draw();
 
             // ---------- UI ----------

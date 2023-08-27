@@ -1,6 +1,5 @@
 ﻿using FeloxGame.Core.Management;
 using FeloxGame.Core.Rendering;
-using FeloxGame.WorldClasses;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
@@ -104,7 +103,7 @@ namespace FeloxGame.GUI
 
         public virtual void SetTextureCoords(float x, float y, float textureWidth, float textureHeight, float atlasWidth, float atlasHeight)
         {
-            TexCoords inventoryCoords = WorldManager.Instance.GetPrecisionAtlasCoords(x, y, textureWidth, textureHeight, atlasWidth, atlasHeight);
+            TexCoords inventoryCoords = TextureManager.Instance.GetPrecisionAtlasCoords(x, y, textureWidth, textureHeight, atlasWidth, atlasHeight);
 
             // Set texCoords of atlas
             Vertices[3]  = inventoryCoords.MaxX; Vertices[4]  = inventoryCoords.MaxY; // (1, 1)
