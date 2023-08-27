@@ -65,7 +65,7 @@ namespace FeloxGame.GUI
                     koPosition.MaxX = koPosition.MinX + _itemSlotWidth;
                     koPosition.MaxY = koPosition.MinY + _itemSlotHeight;
 
-                    Kodomo.Add($"{slotIndex}", new ItemSlotUI(_itemSlotWidth, _itemSlotHeight, eAnchor.None, 1f, true, true, koPosition));
+                    Kodomo.Add($"{slotIndex}", new ItemSlotUI(_itemSlotWidth, _itemSlotHeight, eAnchor.None, 1f, true, false, koPosition));
 
                     slotIndex++;
                 }

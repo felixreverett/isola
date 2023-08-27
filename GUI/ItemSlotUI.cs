@@ -12,8 +12,6 @@ namespace FeloxGame.GUI
         {
             this.KoPosition = koPosition;
             inventoryAtlas = ResourceManager.Instance.LoadTexture("Items/Item Atlas.png", 3);
-
-            SetTextureCoords(4, 840, 346, 180, 1024, 1024);
         }
 
         /// <summary>
@@ -22,7 +20,9 @@ namespace FeloxGame.GUI
         public void UpdateItem(ItemStack itemStack)
         {
             int index = 0;
+            
             Item matchingItem = ThingWhereAllTheItemsAreStored.ItemList.FirstOrDefault(i => i.ItemName == itemStack.ItemName);
+            
             if (matchingItem != null)
             {
                 index = matchingItem.TextureIndex;
