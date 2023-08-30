@@ -80,7 +80,7 @@ namespace FeloxGame
 
             // UI systems
             MasterUI = new(Size.X, Size.Y, eAnchor.Middle, 1.0f);
-                MasterUI.Kodomo.Add("Inventory", new InventoryUI(346f, 180f, eAnchor.Middle, 0.5f, true, false, 5, 10, 32f, 32f));
+                MasterUI.Kodomo.Add("Inventory", new InventoryUI(346f, 180f, eAnchor.Middle, 0.5f, true, false, false, 5, 10, 32f, 32f));
                 MasterUI.Kodomo["Inventory"].SetTextureCoords(4, 840, 346, 180, 1024, 1024);
 
             // Textures
@@ -257,7 +257,8 @@ namespace FeloxGame
             base.OnMouseMove(e);
 
             _cursor.UpdatePosition(MousePosition, _camera.Position, Size, _camera.Width, _camera.Height);
-            
+
+            MasterUI.OnMouseMove();
         }
 
         protected override void OnMouseDown(MouseButtonEventArgs e)
@@ -269,11 +270,21 @@ namespace FeloxGame
             Console.WriteLine($"{_cursor.Position.X} => {_cursor.Rounded(_cursor.Position.X)}, {_cursor.Position.Y} => {_cursor.Rounded(_cursor.Position.Y)}");
             Console.WriteLine($"The cursor is {distanceFromPlayer} units from the player.");
             _world.UpdateTile(_cursor.Rounded(_cursor.Position.X), _cursor.Rounded(_cursor.Position.Y));
+            Console.WriteLine($"Mouse X: {MousePosition.X}\nMouse Y: {MousePosition.Y}");
+            MasterUI.OnMouseDown(GetMouseNDCs());
         }
 
         protected override void OnUnload()
         {
             base.OnUnload();
+        }
+
+        // Todo: move to more relevant location
+        public Vector2 GetMouseNDCs()
+        {
+            float ndcX = (2.0f * MousePosition.X) / Size.X - 1.0f;
+            float ndcY = 1.0f - (2.0f * MousePosition.Y) / Size.Y;
+            return new Vector2(ndcX, ndcY);
         }
 
     }

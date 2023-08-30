@@ -18,10 +18,10 @@ namespace FeloxGame.GUI
 
         public InventoryUI
         (
-            float koWidth, float koHeight, eAnchor anchor, float scale, bool drawable, bool toggleDraw,
+            float koWidth, float koHeight, eAnchor anchor, float scale, bool drawable, bool toggleDraw, bool isClickable,
             int rows, int cols, float itemSlotHeight, float itemSlotWidth
         )
-            : base(koWidth, koHeight, anchor, scale, drawable, toggleDraw)
+            : base(koWidth, koHeight, anchor, scale, drawable, toggleDraw, isClickable)
         {
             this._rows = rows;
             this._cols = cols;
@@ -65,7 +65,7 @@ namespace FeloxGame.GUI
                     koPosition.MaxX = koPosition.MinX + _itemSlotWidth;
                     koPosition.MaxY = koPosition.MinY + _itemSlotHeight;
 
-                    Kodomo.Add($"{slotIndex}", new ItemSlotUI(_itemSlotWidth, _itemSlotHeight, eAnchor.None, 1f, true, false, koPosition));
+                    Kodomo.Add($"{slotIndex}", new ItemSlotUI(_itemSlotWidth, _itemSlotHeight, eAnchor.None, 1f, true, false, true, koPosition));
 
                     slotIndex++;
                 }
@@ -90,6 +90,14 @@ namespace FeloxGame.GUI
                 {
                     Kodomo[$"{i}"].ToggleDraw = false;
                 }
+            }
+        }
+
+        public override void OnMouseMove()
+        {
+            base.OnMouseMove();
+            {
+
             }
         }
     }

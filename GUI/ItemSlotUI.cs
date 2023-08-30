@@ -6,8 +6,8 @@ namespace FeloxGame.GUI
 {
     public class ItemSlotUI : UI
     {
-        public ItemSlotUI(float koWidth, float koHeight, eAnchor anchor, float scale, bool drawable, bool toggleDraw, TexCoords koPosition) 
-            : base(koWidth, koHeight, anchor, scale, drawable, toggleDraw)
+        public ItemSlotUI(float koWidth, float koHeight, eAnchor anchor, float scale, bool drawable, bool toggleDraw, bool isClickable, TexCoords koPosition) 
+            : base(koWidth, koHeight, anchor, scale, drawable, toggleDraw, isClickable)
         {
             this.KoPosition = koPosition;
             inventoryAtlas = ResourceManager.Instance.LoadTexture("Items/Item Atlas.png", 3);
@@ -39,6 +39,12 @@ namespace FeloxGame.GUI
             Vertices[11] = texCoords.MaxX; Vertices[12] = texCoords.MinY; // (1, 0)
             Vertices[19] = texCoords.MinX; Vertices[20] = texCoords.MinY; // (0, 0)
             Vertices[27] = texCoords.MinX; Vertices[28] = texCoords.MaxY; // (0, 1)
+        }
+
+        public override void OnClick()
+        {
+            base.OnClick();
+            Console.WriteLine($"Min X: {KoPosition.MinX}\nMin Y: {KoPosition.MinY}");
         }
 
     }

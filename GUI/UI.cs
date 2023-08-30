@@ -36,13 +36,15 @@ namespace FeloxGame.GUI
         private bool Drawable { get; set; }
         public bool ToggleDraw { get; set; }
 
+        protected bool IsClickable { get; set; }
+
         protected VertexBuffer _vertexBuffer;
         protected VertexArray _vertexArray;
         protected IndexBuffer _indexBuffer;
         protected Texture2D inventoryAtlas;
 
         // Constructor
-        public UI(float koWidth, float koHeight, eAnchor anchor, float scale, bool drawable = false, bool toggleDraw = true)
+        public UI(float koWidth, float koHeight, eAnchor anchor, float scale, bool drawable = false, bool toggleDraw = true, bool isClickable = false)
         {
             this.KoWidth = koWidth;
             this.KoHeight = koHeight;
@@ -53,6 +55,7 @@ namespace FeloxGame.GUI
             this.Kodomo = new Dictionary<string, UI>();
             this.Drawable = drawable;
             this.ToggleDraw = toggleDraw;
+            this.IsClickable = isClickable;
             OnLoad();
         }
 
@@ -118,6 +121,56 @@ namespace FeloxGame.GUI
             this.KoHeight = oyaHeight;
             this.AspectRatio = oyaWidth / oyaHeight;
             SetNDCs(oyaWidth, oyaHeight, oyaNDCs);
+        }
+
+        public virtual void OnMouseMove()
+        {
+            // iterate through the tree
+            // Get the new mouse coordinates
+            // Update MouseUI slot? (or should this only be in Inventory)
+            // Check to see if any UI elements are beneath the mouse
+            // Ultimately have a visual indicator, but not yet
+            // 
+            // Add a toggleClickable bool which will prevent the hotbar from interaction when the inventory is open
+            // Add a clickable bool which will prevent all child elements down the tree from being called for mousemove/mousedown
+        }
+
+        public void OnMouseDown(Vector2 mouseNDCs)
+        {
+            // iterate through the tree
+            // check if mouse is over this UI slot
+            // if it is, check child elements. (if not, end and the next branch of the generation will be checked)
+            // repeat this until you find the last element on the tree that is being clicked on and run relevant "OnClick" or "ActivateClick" code
+            // achieve this "search" through checking if (Kodomo.Count != 0) & use a out var to check if a child element is in the right location without
+                        
+            if (!IsMouseInBounds(mouseNDCs))
+            {
+                return;
+            }
+
+            if (Kodomo.Count > 0)
+            {
+                foreach (UI ui in Kodomo.Values)
+                {
+                    ui.OnMouseDown(mouseNDCs);
+                }
+            }
+                
+            if (this.IsClickable)
+            {
+                OnClick();
+            }
+        }
+
+        public virtual void OnClick()
+        {
+            Console.WriteLine("This has been clicked");
+        }
+
+        public bool IsMouseInBounds(Vector2 mouseNDCs)
+        {
+            if (mouseNDCs.X >= KoNDCs.MinX && mouseNDCs.Y >= KoNDCs.MinY && mouseNDCs.X <= KoNDCs.MaxX && mouseNDCs.Y <= KoNDCs.MaxY) { return true; }
+            else { return false; }
         }
 
         public virtual void SetNDCs(float oyaWidth, float oyaHeight, TexCoords oyaNDCs)
@@ -245,6 +298,5 @@ namespace FeloxGame.GUI
                         
             return anchoredDimensions;
         }
-
     }
 }
