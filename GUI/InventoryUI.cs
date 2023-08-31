@@ -15,11 +15,12 @@ namespace FeloxGame.GUI
         private float _edgePadding = 4f;
         private float _hotbarPadding = 4f;
         private float _itemSlotPadding = 2f;
+        Inventory Inventory;
 
         public InventoryUI
         (
             float koWidth, float koHeight, eAnchor anchor, float scale, bool drawable, bool toggleDraw, bool isClickable,
-            int rows, int cols, float itemSlotHeight, float itemSlotWidth
+            int rows, int cols, float itemSlotHeight, float itemSlotWidth, Inventory inventory
         )
             : base(koWidth, koHeight, anchor, scale, drawable, toggleDraw, isClickable)
         {
@@ -27,6 +28,7 @@ namespace FeloxGame.GUI
             this._cols = cols;
             this._itemSlotHeight = itemSlotHeight;
             this._itemSlotWidth = itemSlotWidth;
+            this.Inventory = inventory;
             GenerateKodomo();
         }
 
@@ -65,7 +67,7 @@ namespace FeloxGame.GUI
                     koPosition.MaxX = koPosition.MinX + _itemSlotWidth;
                     koPosition.MaxY = koPosition.MinY + _itemSlotHeight;
 
-                    Kodomo.Add($"{slotIndex}", new ItemSlotUI(_itemSlotWidth, _itemSlotHeight, eAnchor.None, 1f, true, false, true, koPosition));
+                    Kodomo.Add($"{slotIndex}", new ItemSlotUI(_itemSlotWidth, _itemSlotHeight, eAnchor.None, 1f, true, false, true, koPosition, slotIndex, Inventory));
 
                     slotIndex++;
                 }

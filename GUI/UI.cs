@@ -164,7 +164,7 @@ namespace FeloxGame.GUI
 
         public virtual void OnClick()
         {
-            Console.WriteLine("This has been clicked");
+            //Console.WriteLine("This has been clicked");
         }
 
         public bool IsMouseInBounds(Vector2 mouseNDCs)

@@ -80,7 +80,7 @@ namespace FeloxGame
 
             // UI systems
             MasterUI = new(Size.X, Size.Y, eAnchor.Middle, 1.0f);
-                MasterUI.Kodomo.Add("Inventory", new InventoryUI(346f, 180f, eAnchor.Middle, 0.5f, true, false, false, 5, 10, 32f, 32f));
+                MasterUI.Kodomo.Add("Inventory", new InventoryUI(346f, 180f, eAnchor.Middle, 0.5f, true, false, false, 5, 10, 32f, 32f, _player.Inventory));
                 MasterUI.Kodomo["Inventory"].SetTextureCoords(4, 840, 346, 180, 1024, 1024);
 
             // Textures
@@ -267,10 +267,10 @@ namespace FeloxGame
             _cursor.UpdatePosition(MousePosition, _camera.Position, Size, _camera.Width, _camera.Height);
             float distanceFromPlayer = Vector2.Distance(_player.Position, _cursor.Position);
             // debug
-            Console.WriteLine($"{_cursor.Position.X} => {_cursor.Rounded(_cursor.Position.X)}, {_cursor.Position.Y} => {_cursor.Rounded(_cursor.Position.Y)}");
-            Console.WriteLine($"The cursor is {distanceFromPlayer} units from the player.");
+            //Console.WriteLine($"{_cursor.Position.X} => {_cursor.Rounded(_cursor.Position.X)}, {_cursor.Position.Y} => {_cursor.Rounded(_cursor.Position.Y)}");
+            //Console.WriteLine($"The cursor is {distanceFromPlayer} units from the player.");
             _world.UpdateTile(_cursor.Rounded(_cursor.Position.X), _cursor.Rounded(_cursor.Position.Y));
-            Console.WriteLine($"Mouse X: {MousePosition.X}\nMouse Y: {MousePosition.Y}");
+            //Console.WriteLine($"Mouse X: {MousePosition.X}\nMouse Y: {MousePosition.Y}");
             MasterUI.OnMouseDown(GetMouseNDCs());
         }
 

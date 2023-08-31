@@ -95,5 +95,10 @@ namespace FeloxGame
 
             InventoryChanged?.Invoke(_itemStackList);
         }
+
+        public void OnItemSlotClick(int slotIndex)
+        {
+            Console.WriteLine($"Slot {slotIndex} was clicked!");
+        }
     }
 }
