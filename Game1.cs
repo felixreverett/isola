@@ -72,6 +72,10 @@ namespace FeloxGame
                 return;
             }
 
+            // Assets
+            AssetLibrary.ItemList = Loading.LoadAllObjects<Item>(itemListFolderPath);
+            AssetLibrary.TileList = Loading.LoadAllObjects<Tile>(tileListFolderPath);
+
             // World
             _world = new World();
 
@@ -96,10 +100,6 @@ namespace FeloxGame
 
             //GameCursor
             _cursor = new GameCursor();
-
-            // Resource loading
-            AssetLibrary.ItemList = Loading.LoadAllObjects<Item>(itemListFolderPath);
-            AssetLibrary.TileList = Loading.LoadAllObjects<Tile>(tileListFolderPath);
 
             // Events
             ((InventoryUI)MasterUI.Kodomo["Inventory"]).SubscribeToInventory(_player.Inventory);
@@ -258,7 +258,7 @@ namespace FeloxGame
 
             _cursor.UpdatePosition(MousePosition, _camera.Position, Size, _camera.Width, _camera.Height);
 
-            MasterUI.OnMouseMove();
+            MasterUI.OnMouseMove(GetMouseNDCs());
         }
 
         protected override void OnMouseDown(MouseButtonEventArgs e)

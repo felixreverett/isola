@@ -67,11 +67,13 @@ namespace FeloxGame.GUI
                     koPosition.MaxX = koPosition.MinX + _itemSlotWidth;
                     koPosition.MaxY = koPosition.MinY + _itemSlotHeight;
 
-                    Kodomo.Add($"{slotIndex}", new ItemSlotUI(_itemSlotWidth, _itemSlotHeight, eAnchor.None, 1f, true, false, true, koPosition, slotIndex, Inventory));
+                    Kodomo.Add($"{slotIndex}", new ItemSlotUI(_itemSlotWidth, _itemSlotHeight, eAnchor.None, 1f, true, false, true, slotIndex, Inventory, koPosition));
 
                     slotIndex++;
                 }
             }
+
+            Kodomo.Add("mouseSlot", new MouseSlotUI(_itemSlotWidth, _itemSlotHeight, eAnchor.None, 1f, true, false, true, slotIndex, Inventory, new TexCoords()));
         }
 
         public void SubscribeToInventory(Inventory inventory)
@@ -92,14 +94,6 @@ namespace FeloxGame.GUI
                 {
                     Kodomo[$"{i}"].ToggleDraw = false;
                 }
-            }
-        }
-
-        public override void OnMouseMove()
-        {
-            base.OnMouseMove();
-            {
-
             }
         }
     }
