@@ -1,7 +1,6 @@
 ﻿using FeloxGame.Core;
 using FeloxGame.Core.Management;
 using FeloxGame.InventoryClasses;
-using OpenTK.Mathematics;
 
 namespace FeloxGame.GUI
 {
@@ -12,10 +11,10 @@ namespace FeloxGame.GUI
 
         public SlotUI
         (
-            float koWidth, float koHeight, eAnchor anchor, float scale, bool drawable, bool toggleDraw, bool isClickable,
+            float koWidth, float koHeight, eAnchor anchor, float scale, bool isDrawable, bool toggleDraw, bool isClickable,
             int itemSlotID, Inventory inventory, TexCoords koPosition
         )
-            : base(koWidth, koHeight, anchor, scale, drawable, toggleDraw, isClickable)
+            : base(koWidth, koHeight, anchor, scale, isDrawable, toggleDraw, isClickable)
         {
             this.ItemSlotID = itemSlotID;
             this.Inventory = inventory;

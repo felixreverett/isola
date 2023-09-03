@@ -6,10 +6,10 @@ namespace FeloxGame.GUI
     {
         public ItemSlotUI
         (
-            float koWidth, float koHeight, eAnchor anchor, float scale, bool drawable, bool toggleDraw, bool isClickable,
+            float koWidth, float koHeight, eAnchor anchor, float scale, bool isDrawable, bool toggleDraw, bool isClickable,
             int itemSlotID, Inventory inventory, TexCoords koPosition
         ) 
-            : base(koWidth, koHeight, anchor, scale, drawable, toggleDraw, isClickable,
+            : base(koWidth, koHeight, anchor, scale, isDrawable, toggleDraw, isClickable,
                   itemSlotID, inventory, koPosition)
         {
             

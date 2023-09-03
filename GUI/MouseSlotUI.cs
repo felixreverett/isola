@@ -6,20 +6,25 @@ namespace FeloxGame.GUI
 {
     public class MouseSlotUI : SlotUI
     {
+        private Vector2 MouseNDCs { get; set; }
+        protected Vector2 NDCDimensions;
+
         public MouseSlotUI
         (
-            float koWidth, float koHeight, eAnchor anchor, float scale, bool drawable, bool toggleDraw, bool isClickable,
+            float koWidth, float koHeight, eAnchor anchor, float scale, bool isDrawable, bool toggleDraw, bool isClickable,
             int itemSlotID, Inventory inventory, TexCoords koPosition
         )
-            : base(koWidth, koHeight, anchor, scale, drawable, toggleDraw, isClickable,
+            : base(koWidth, koHeight, anchor, scale, isDrawable, toggleDraw, isClickable,
                   itemSlotID, inventory, koPosition)
         {
-
+            UpdateItem(new ItemStack("Persimmon", 1));
+            ToggleDraw = true;
         }
 
         public override void OnMouseMove(Vector2 mouseNDCs)
         {
-            SetTextureCoords(mouseNDCs);
+            MouseNDCs = mouseNDCs;
+            SetNDCs();
 
             if (Kodomo.Count > 0)
             {
@@ -30,12 +35,26 @@ namespace FeloxGame.GUI
             }
         }
 
-        public void SetTextureCoords(Vector2 mouseNDCs)
+        // This one updates the NDCs when the parent UI element calls it
+        public override void SetNDCs(float oyaWidth, float oyaHeight, TexCoords oyaNDCs)
         {
-            Vertices[3]  = mouseNDCs.X + KoWidth / 2f; Vertices[4]  = mouseNDCs.Y + KoHeight / 2f; // (1, 1)
-            Vertices[11] = mouseNDCs.X + KoWidth / 2f; Vertices[12] = mouseNDCs.Y - KoHeight / 2f; // (1, 0)
-            Vertices[19] = mouseNDCs.X - KoWidth / 2f; Vertices[20] = mouseNDCs.Y - KoHeight / 2f; // (0, 0)
-            Vertices[27] = mouseNDCs.X - KoWidth / 2f; Vertices[28] = mouseNDCs.Y + KoHeight / 2f; // (0, 1)
+            NDCDimensions.X = (KoWidth / oyaWidth) * (oyaNDCs.MaxX - oyaNDCs.MinX);
+            NDCDimensions.Y = (KoHeight / oyaHeight) * (oyaNDCs.MaxY - oyaNDCs.MinY);
+        }
+
+        // This one updates the NDCs when the mouse moves
+        protected void SetNDCs()
+        {
+            KoNDCs.MaxX = MouseNDCs.X + NDCDimensions.X / 2.0f;
+            KoNDCs.MinX = MouseNDCs.X - NDCDimensions.X / 2.0f;
+            KoNDCs.MaxY = MouseNDCs.Y + NDCDimensions.Y / 2.0f;
+            KoNDCs.MinY = MouseNDCs.Y - NDCDimensions.Y / 2.0f;
+                        
+            // Set screen position
+            Vertices[0] = KoNDCs.MaxX; Vertices[1] = KoNDCs.MaxY; // ( 1,  1)
+            Vertices[8] = KoNDCs.MaxX; Vertices[9] = KoNDCs.MinY; // ( 1, -1)
+            Vertices[16] = KoNDCs.MinX; Vertices[17] = KoNDCs.MinY; // (-1, -1)
+            Vertices[24] = KoNDCs.MinX; Vertices[25] = KoNDCs.MaxY; // (-1,  1)
         }
 
     }

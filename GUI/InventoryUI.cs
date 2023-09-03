@@ -19,10 +19,10 @@ namespace FeloxGame.GUI
 
         public InventoryUI
         (
-            float koWidth, float koHeight, eAnchor anchor, float scale, bool drawable, bool toggleDraw, bool isClickable,
+            float koWidth, float koHeight, eAnchor anchor, float scale, bool isDrawable, bool toggleDraw, bool isClickable,
             int rows, int cols, float itemSlotHeight, float itemSlotWidth, Inventory inventory
         )
-            : base(koWidth, koHeight, anchor, scale, drawable, toggleDraw, isClickable)
+            : base(koWidth, koHeight, anchor, scale, isDrawable, toggleDraw, isClickable)
         {
             this._rows = rows;
             this._cols = cols;

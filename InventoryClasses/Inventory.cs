@@ -6,6 +6,7 @@ namespace FeloxGame
     public class Inventory
     {
         public ItemStack[] _itemStackList;
+        public ItemStack _mouseSlotItemStack;
         private int _rows;
         private int _cols;
 

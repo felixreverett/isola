@@ -33,7 +33,7 @@ namespace FeloxGame.GUI
             0, 1, 3, // first triangle
             1, 2, 3  // second triangle
         };
-        private bool Drawable { get; set; }
+        private bool IsDrawable { get; set; }
         public bool ToggleDraw { get; set; }
 
         protected bool IsClickable { get; set; }
@@ -44,7 +44,7 @@ namespace FeloxGame.GUI
         protected Texture2D inventoryAtlas;
 
         // Constructor
-        public UI(float koWidth, float koHeight, eAnchor anchor, float scale, bool drawable = false, bool toggleDraw = true, bool isClickable = false)
+        public UI(float koWidth, float koHeight, eAnchor anchor, float scale, bool isDrawable = false, bool toggleDraw = true, bool isClickable = false)
         {
             this.KoWidth = koWidth;
             this.KoHeight = koHeight;
@@ -53,7 +53,7 @@ namespace FeloxGame.GUI
             this.Scale = Math.Clamp(scale, 0.0f, 1.0f);
             this.KoNDCs = new();
             this.Kodomo = new Dictionary<string, UI>();
-            this.Drawable = drawable;
+            this.IsDrawable = isDrawable;
             this.ToggleDraw = toggleDraw;
             this.IsClickable = isClickable;
             OnLoad();
@@ -61,7 +61,7 @@ namespace FeloxGame.GUI
 
         public void OnLoad()
         {
-            if (Drawable)
+            if (IsDrawable)
             {
                 if (this.inventoryAtlas is null)
                 {
@@ -83,7 +83,7 @@ namespace FeloxGame.GUI
 
         public void Draw()
         {
-            if (Drawable && ToggleDraw)
+            if (IsDrawable && ToggleDraw)
             {
                 inventoryAtlas.Use();
 
@@ -149,7 +149,7 @@ namespace FeloxGame.GUI
                 }
             }
                 
-            if (this.IsClickable /*&& ToggleDraw*/)
+            if (this.IsClickable && ToggleDraw)
             {
                 OnClick();
             }
