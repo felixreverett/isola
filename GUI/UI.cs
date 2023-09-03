@@ -13,8 +13,8 @@ namespace FeloxGame.GUI
         protected float KoHeight { get; set; }
         protected float AspectRatio { get; set; }
         protected float Scale { get; set; }
-        protected TexCoords KoPosition { get; set; }
-        protected TexCoords KoNDCs { get; set; }
+        protected RPC KoPosition { get; set; }
+        protected NDC KoNDCs { get; set; }
 
         // Kodomo
         public Dictionary<string, UI> Kodomo { get; set; }
@@ -115,7 +115,7 @@ namespace FeloxGame.GUI
             Vertices[27] = inventoryCoords.MinX; Vertices[28] = inventoryCoords.MaxY; // (0, 1)
         }
 
-        public void OnResize(float oyaWidth, float oyaHeight, TexCoords oyaNDCs)
+        public void OnResize(float oyaWidth, float oyaHeight, NDC oyaNDCs)
         {
             this.KoWidth = oyaWidth;
             this.KoHeight = oyaHeight;
@@ -166,7 +166,7 @@ namespace FeloxGame.GUI
             else { return false; }
         }
 
-        public virtual void SetNDCs(float oyaWidth, float oyaHeight, TexCoords oyaNDCs)
+        public virtual void SetNDCs(float oyaWidth, float oyaHeight, NDC oyaNDCs)
         {
             if (Anchor != eAnchor.None)
             {
@@ -225,10 +225,10 @@ namespace FeloxGame.GUI
         /// <param name="OyaWidth"></param>
         /// <param name="OyaHeight"></param>
         /// <returns></returns>
-        public TexCoords GetAnchoredDimensions(float OyaWidth, float OyaHeight)
+        public RPC GetAnchoredDimensions(float OyaWidth, float OyaHeight)
         {
             Vector2 relativeDimensions = GetRelativeDimensions(OyaWidth, OyaHeight);
-            TexCoords anchoredDimensions = new();
+            RPC anchoredDimensions = new();
             switch (this.Anchor)
             {
                 case eAnchor.Middle:

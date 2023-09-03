@@ -186,7 +186,7 @@ namespace FeloxGame
                         MasterUI.Kodomo["Inventory"].Anchor = eAnchor.BottomLeft;
                         break;
                 }
-                MasterUI.SetNDCs(Size.X, Size.Y, new TexCoords(-1f, -1f, 1f, 1f));
+                MasterUI.SetNDCs(Size.X, Size.Y, new NDC(-1f, -1f, 1f, 1f));
             }
                         
             if (movement.LengthSquared > 1.0f) { movement.Normalize(); }
@@ -249,7 +249,7 @@ namespace FeloxGame
             GL.Viewport(0, 0, e.Width, e.Height);
             _camera.AspectRatio = (float)e.Width / e.Height;
             _camera.UpdateCameraDimensions();
-            MasterUI.OnResize(e.Width, e.Height, new TexCoords(-1f, -1f, 1f, 1f));
+            MasterUI.OnResize(e.Width, e.Height, new NDC(-1f, -1f, 1f, 1f));
         }
 
         protected override void OnMouseMove(MouseMoveEventArgs e)

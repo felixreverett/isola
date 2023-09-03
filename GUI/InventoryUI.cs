@@ -1,4 +1,5 @@
 ﻿using FeloxGame.Core.Management;
+using FeloxGame.Core.Rendering;
 using FeloxGame.InventoryClasses;
 
 namespace FeloxGame.GUI
@@ -51,7 +52,7 @@ namespace FeloxGame.GUI
             {
                 for (int col = 0; col < _cols; col++)
                 {
-                    TexCoords koPosition = new();
+                    RPC koPosition = new();
 
                     koPosition.MinX = _edgePadding + col * (_itemSlotWidth + _itemSlotPadding);
 
@@ -73,7 +74,7 @@ namespace FeloxGame.GUI
                 }
             }
 
-            Kodomo.Add("mouseSlot", new MouseSlotUI(_itemSlotWidth, _itemSlotHeight, eAnchor.None, 1f, true, false, true, slotIndex, Inventory, new TexCoords()));
+            Kodomo.Add("mouseSlot", new MouseSlotUI(_itemSlotWidth, _itemSlotHeight, eAnchor.None, 1f, true, false, true, slotIndex, Inventory, new RPC()));
         }
 
         public void SubscribeToInventory(Inventory inventory)

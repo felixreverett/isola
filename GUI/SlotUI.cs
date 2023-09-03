@@ -1,5 +1,6 @@
 ﻿using FeloxGame.Core;
 using FeloxGame.Core.Management;
+using FeloxGame.Core.Rendering;
 using FeloxGame.InventoryClasses;
 
 namespace FeloxGame.GUI
@@ -12,7 +13,7 @@ namespace FeloxGame.GUI
         public SlotUI
         (
             float koWidth, float koHeight, eAnchor anchor, float scale, bool isDrawable, bool toggleDraw, bool isClickable,
-            int itemSlotID, Inventory inventory, TexCoords koPosition
+            int itemSlotID, Inventory inventory, RPC koPosition
         )
             : base(koWidth, koHeight, anchor, scale, isDrawable, toggleDraw, isClickable)
         {

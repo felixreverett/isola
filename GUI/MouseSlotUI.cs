@@ -1,4 +1,5 @@
 ﻿using FeloxGame.Core.Management;
+using FeloxGame.Core.Rendering;
 using FeloxGame.InventoryClasses;
 using OpenTK.Mathematics;
 
@@ -12,7 +13,7 @@ namespace FeloxGame.GUI
         public MouseSlotUI
         (
             float koWidth, float koHeight, eAnchor anchor, float scale, bool isDrawable, bool toggleDraw, bool isClickable,
-            int itemSlotID, Inventory inventory, TexCoords koPosition
+            int itemSlotID, Inventory inventory, RPC koPosition
         )
             : base(koWidth, koHeight, anchor, scale, isDrawable, toggleDraw, isClickable,
                   itemSlotID, inventory, koPosition)
@@ -36,7 +37,7 @@ namespace FeloxGame.GUI
         }
 
         // This one updates the NDCs when the parent UI element calls it
-        public override void SetNDCs(float oyaWidth, float oyaHeight, TexCoords oyaNDCs)
+        public override void SetNDCs(float oyaWidth, float oyaHeight, NDC oyaNDCs)
         {
             NDCDimensions.X = (KoWidth / oyaWidth) * (oyaNDCs.MaxX - oyaNDCs.MinX);
             NDCDimensions.Y = (KoHeight / oyaHeight) * (oyaNDCs.MaxY - oyaNDCs.MinY);
