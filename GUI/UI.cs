@@ -149,7 +149,7 @@ namespace FeloxGame.GUI
                 }
             }
                 
-            if (this.IsClickable && ToggleDraw)
+            if (this.IsClickable)
             {
                 OnClick();
             }

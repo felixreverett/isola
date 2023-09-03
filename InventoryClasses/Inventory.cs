@@ -17,7 +17,7 @@ namespace FeloxGame
             this._itemStackList = new ItemStack[rows*cols];
         }
 
-        public event Action<ItemStack[]> InventoryChanged;
+        public event Action<ItemStack[], ItemStack> InventoryChanged;
 
         public void Add(ItemStack itemStack)
         {
@@ -35,7 +35,7 @@ namespace FeloxGame
                 matchingItemStack.Amount += itemStack.Amount;
             }
 
-            InventoryChanged?.Invoke(_itemStackList);
+            InventoryChanged?.Invoke(_itemStackList, _mouseSlotItemStack);
         }
 
         public void Remove(ItemStack itemStack)
@@ -60,7 +60,7 @@ namespace FeloxGame
                 throw new ArgumentException("Error. Tried to remove more items than in inventory");
             }
 
-            InventoryChanged?.Invoke(_itemStackList);
+            InventoryChanged?.Invoke(_itemStackList, _mouseSlotItemStack);
         }
 
         public bool FirstFreeIndex(out int index)
@@ -94,12 +94,38 @@ namespace FeloxGame
                     break;
             }
 
-            InventoryChanged?.Invoke(_itemStackList);
+            InventoryChanged?.Invoke(_itemStackList, _mouseSlotItemStack);
+        }
+
+        public void SwapSlots(int slotIndex)
+        {
+            if (_itemStackList[slotIndex] is not null)
+            {
+                if (_mouseSlotItemStack is not null)
+                {
+                    ItemStack temporaryItemStack = _mouseSlotItemStack;
+                    _mouseSlotItemStack = _itemStackList[slotIndex];
+                    _itemStackList[slotIndex] = temporaryItemStack;
+                }
+                else
+                {
+                    _mouseSlotItemStack = _itemStackList[slotIndex];
+                    _itemStackList[slotIndex] = null;
+                }
+            }
+            else if (_mouseSlotItemStack is not null)
+            {
+                _itemStackList[slotIndex] = _mouseSlotItemStack;
+                _mouseSlotItemStack = null;
+            }
+
+            InventoryChanged?.Invoke(_itemStackList, _mouseSlotItemStack);
         }
 
         public void OnItemSlotClick(int slotIndex)
         {
             Console.WriteLine($"Slot {slotIndex} was clicked!");
+            SwapSlots(slotIndex);
         }
     }
 }

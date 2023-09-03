@@ -82,7 +82,7 @@ namespace FeloxGame.GUI
             inventory.InventoryChanged += HandleInventoryChanged;
         }
 
-        private void HandleInventoryChanged(ItemStack[] itemStackList)
+        private void HandleInventoryChanged(ItemStack[] itemStackList, ItemStack mouseItemStack)
         {
             for (int i = 0; i < _rows * _cols; i++)
             {
@@ -95,6 +95,17 @@ namespace FeloxGame.GUI
                 {
                     Kodomo[$"{i}"].ToggleDraw = false;
                 }
+            }
+
+            if (mouseItemStack != null)
+            {
+                Kodomo["mouseSlot"].ToggleDraw = true;
+                ((MouseSlotUI)Kodomo["mouseSlot"]).UpdateItem(mouseItemStack);
+            }
+            
+            else
+            {
+                Kodomo["mouseSlot"].ToggleDraw = false;
             }
         }
     }

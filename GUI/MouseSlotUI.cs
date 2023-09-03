@@ -18,8 +18,8 @@ namespace FeloxGame.GUI
             : base(koWidth, koHeight, anchor, scale, isDrawable, toggleDraw, isClickable,
                   itemSlotID, inventory, koPosition)
         {
-            UpdateItem(new ItemStack("Persimmon", 1));
-            ToggleDraw = true;
+            //UpdateItem(new ItemStack("Persimmon", 1));
+            //ToggleDraw = true;
         }
 
         public override void OnMouseMove(Vector2 mouseNDCs)
