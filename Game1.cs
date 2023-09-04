@@ -8,6 +8,7 @@ using OpenTK.Mathematics;
 using FeloxGame.WorldClasses;
 using FeloxGame.Core.Management;
 using FeloxGame.GUI;
+using FeloxGame.InventoryClasses;
 
 namespace FeloxGame
 {
@@ -193,7 +194,8 @@ namespace FeloxGame
 
             if (input.IsKeyPressed(Keys.P))
             {
-                _player.Inventory.Add(new InventoryClasses.ItemStack("Persimmon", 1));
+                //_player.Inventory.Add(new InventoryClasses.ItemStack("Persimmon", 1));
+                _player.Inventory.AddToSlotIndex(new ItemStack("Persimmon", 1), 0);
             }
 
             if (input.IsKeyPressed(Keys.O))

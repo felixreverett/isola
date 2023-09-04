@@ -63,6 +63,16 @@ namespace FeloxGame
             InventoryChanged?.Invoke(_itemStackList, _mouseSlotItemStack);
         }
 
+        public void AddToSlotIndex(ItemStack itemStack, int slotIndex)
+        {
+            if (_itemStackList[slotIndex] is null)
+            {
+                _itemStackList[slotIndex] = itemStack;
+            }
+
+            InventoryChanged?.Invoke(_itemStackList, _mouseSlotItemStack);
+        }
+
         public bool FirstFreeIndex(out int index)
         {
             index = -1;
@@ -97,22 +107,37 @@ namespace FeloxGame
             InventoryChanged?.Invoke(_itemStackList, _mouseSlotItemStack);
         }
 
+        // Todo: improve this method to solve the identified issues
         public void SwapSlots(int slotIndex)
         {
             if (_itemStackList[slotIndex] is not null)
             {
+                // if both slots have itemstacks
                 if (_mouseSlotItemStack is not null)
                 {
-                    ItemStack temporaryItemStack = _mouseSlotItemStack;
-                    _mouseSlotItemStack = _itemStackList[slotIndex];
-                    _itemStackList[slotIndex] = temporaryItemStack;
+                    // if items are the same, merge them to slot
+                    if (_itemStackList[slotIndex].ItemName == _mouseSlotItemStack.ItemName)
+                    {
+                        // This will not work with stack limits.
+                        _itemStackList[slotIndex].Amount += _mouseSlotItemStack.Amount;
+                        _mouseSlotItemStack = null;
+                    }
+                    // if items are not the same, swap them
+                    else
+                    {
+                        ItemStack temporaryItemStack = _mouseSlotItemStack;
+                        _mouseSlotItemStack = _itemStackList[slotIndex];
+                        _itemStackList[slotIndex] = temporaryItemStack;
+                    }
                 }
+                // if only the itemslot has an itemstack
                 else
                 {
                     _mouseSlotItemStack = _itemStackList[slotIndex];
                     _itemStackList[slotIndex] = null;
                 }
             }
+            // if only the mouseSlot has an itemstack
             else if (_mouseSlotItemStack is not null)
             {
                 _itemStackList[slotIndex] = _mouseSlotItemStack;
