@@ -40,7 +40,7 @@ namespace FeloxGame
         // Cursor data
         private GameCursor _cursor;
 
-        // Gamestate data
+        // Gamestate data UPDATE: reusing this (5 sept)
         private bool toggleInventory = false;
 
         // UISystem
@@ -129,7 +129,15 @@ namespace FeloxGame
 
             if (input.IsKeyReleased(Keys.E))
             {
-                MasterUI.Kodomo["Inventory"].ToggleDraw = !MasterUI.Kodomo["Inventory"].ToggleDraw;
+                toggleInventory = !toggleInventory;
+                if (toggleInventory)
+                {
+                    MasterUI.Kodomo["Inventory"].ToggleDraw = true;
+                }
+                else
+                {
+                    MasterUI.Kodomo["Inventory"].ToggleDraw = false;
+                }
             }
 
             if (input.IsKeyDown(Keys.A) | input.IsKeyDown(Keys.Left))
@@ -271,15 +279,16 @@ namespace FeloxGame
             // debug
             //Console.WriteLine($"{_cursor.Position.X} => {_cursor.Rounded(_cursor.Position.X)}, {_cursor.Position.Y} => {_cursor.Rounded(_cursor.Position.Y)}");
             //Console.WriteLine($"The cursor is {distanceFromPlayer} units from the player.");
-            if (!MasterUI.Kodomo["Inventory"].ToggleDraw)
+
+            if (toggleInventory)
             {
-                _world.UpdateTile(_cursor.Rounded(_cursor.Position.X), _cursor.Rounded(_cursor.Position.Y));
-            }
-            
-            if (MasterUI.Kodomo["Inventory"].ToggleDraw)
-            {
-                // This will only suffice as long as there is nothing clickable except the inventory
+                // Run if inventory open
                 MasterUI.OnMouseDown(GetMouseNDCs());
+            }
+            else
+            {
+                // Run if inventory not open
+                _world.UpdateTile(_cursor.Rounded(_cursor.Position.X), _cursor.Rounded(_cursor.Position.Y));
             }
         }
 
