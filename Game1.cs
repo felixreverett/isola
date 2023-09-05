@@ -271,9 +271,16 @@ namespace FeloxGame
             // debug
             //Console.WriteLine($"{_cursor.Position.X} => {_cursor.Rounded(_cursor.Position.X)}, {_cursor.Position.Y} => {_cursor.Rounded(_cursor.Position.Y)}");
             //Console.WriteLine($"The cursor is {distanceFromPlayer} units from the player.");
-            _world.UpdateTile(_cursor.Rounded(_cursor.Position.X), _cursor.Rounded(_cursor.Position.Y));
-            //Console.WriteLine($"Mouse X: {MousePosition.X}\nMouse Y: {MousePosition.Y}");
-            MasterUI.OnMouseDown(GetMouseNDCs());
+            if (!MasterUI.Kodomo["Inventory"].ToggleDraw)
+            {
+                _world.UpdateTile(_cursor.Rounded(_cursor.Position.X), _cursor.Rounded(_cursor.Position.Y));
+            }
+            
+            if (MasterUI.Kodomo["Inventory"].ToggleDraw)
+            {
+                // This will only suffice as long as there is nothing clickable except the inventory
+                MasterUI.OnMouseDown(GetMouseNDCs());
+            }
         }
 
         protected override void OnUnload()
