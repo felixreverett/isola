@@ -87,7 +87,7 @@ namespace FeloxGame
             MasterUI = new(Size.X, Size.Y, eAnchor.Middle, 1.0f);
                 MasterUI.Kodomo.Add("Inventory", new InventoryUI(346f, 180f, eAnchor.Middle, 0.5f, true, false, false, 5, 10, 32f, 32f, _player.Inventory));
                 MasterUI.Kodomo["Inventory"].SetTextureCoords(4, 840, 346, 180, 1024, 1024);
-            MasterUI.Kodomo.Add("Hotbar", new UI(346f, 40f, eAnchor.Bottom, 0.5f, true, true, false/*, 5, 10, 32f, 32f, _player.Inventory*/));
+            MasterUI.Kodomo.Add("Hotbar", new HotbarUI(346f, 40f, eAnchor.Bottom, 0.5f, true, true, false, 1, 10, 32f, 32f, _player.Inventory));
             MasterUI.Kodomo["Hotbar"].SetTextureCoords(4, 792, 346, 40, 1024, 1024);
 
             // Textures
@@ -106,6 +106,7 @@ namespace FeloxGame
 
             // Events
             ((InventoryUI)MasterUI.Kodomo["Inventory"]).SubscribeToInventory(_player.Inventory);
+            ((HotbarUI)MasterUI.Kodomo["Hotbar"]).SubscribeToInventory(_player.Inventory);
         }
         
         protected override void OnUpdateFrame(FrameEventArgs args)
