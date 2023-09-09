@@ -206,11 +206,11 @@ namespace FeloxGame.WorldClasses // rename this later?
         // Updates (code for world interaction)
         public void UpdateTile(int worldX, int worldY) //Todo: add error checking
         {
-            int chunkX = worldX >= 0 ? worldX / 16 : worldX / 16 -1;
-            int chunkY = worldY >= 0 ? worldY / 16 : worldY / 16 -1;
+            int chunkX = worldX >= 0 ? worldX / 16 : worldX % 16 == 0 ? worldX / 16 : worldX / 16 - 1;
+            int chunkY = worldY >= 0 ? worldY / 16 : worldY % 16 == 0 ? worldY / 16 : worldY / 16 - 1;
 
-            int x = worldX >= 0 ? worldX % 16 : 16 + worldX % 16;
-            int y = worldY >= 0 ? worldY % 16 : 16 + worldY % 16;
+            int x = worldX >= 0 ? worldX % 16 : worldX % 16 == 0 ? 0 : 16 + worldX % 16;
+            int y = worldY >= 0 ? worldY % 16 : worldY % 16 == 0 ? 0 : 16 + worldY % 16;
             
             LoadedChunks[$"x{chunkX}y{chunkY}"].Tiles[x, y] = "Grass";
         }
