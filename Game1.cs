@@ -81,7 +81,7 @@ namespace FeloxGame
             _world = new World();
 
             // Player
-            _player = new Player(new Vector2(0, 0), new Vector2(1, 2));
+            _player = new Player(new Vector2(0, 0), new Vector2(1, 2), "Entities/Player.png", 1);
 
             // UI systems
             MasterUI = new(Size.X, Size.Y, eAnchor.Middle, 1.0f);
