@@ -36,7 +36,7 @@ namespace FeloxGame
         private Player _player;
 
         // entity data
-        private List<Entity> _entityList;
+        private List<Entity> _loadedEntityList;
 
         // item data
         private readonly string itemListFolderPath = @"../../../Resources/Items";
@@ -90,7 +90,7 @@ namespace FeloxGame
             _player = new Player(new Vector2(0, 0), new Vector2(1, 2), "Entities/Player.png", 1);
 
             // Entities
-            _entityList = new List<Entity>();
+            _loadedEntityList = new List<Entity>();
 
             // UI systems
             MasterUI = new(Size.X, Size.Y, eAnchor.Middle, 1.0f);
@@ -231,7 +231,7 @@ namespace FeloxGame
 
             if (input.IsKeyPressed(Keys.L))
             {
-                _entityList.Add(new ItemEntity(_player.Position, new Vector2(1f, 1f), new ItemStack("Persimmon", 1)));
+                _loadedEntityList.Add(new ItemEntity(_player.Position, new Vector2(1f, 1f), new ItemStack("Persimmon", 1)));
             }
 
             _player.Position += movement * (speed * (float)args.Time);
@@ -261,8 +261,8 @@ namespace FeloxGame
 
             _player.Draw();
 
-            //to-do: draw in order of y height
-            foreach (Entity entity in _entityList)
+            _loadedEntityList = _loadedEntityList.OrderByDescending(i => i.Position.Y).ToList();
+            foreach (Entity entity in _loadedEntityList)
             {
                 entity.Draw();
             }
