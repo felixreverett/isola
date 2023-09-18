@@ -9,6 +9,7 @@ using FeloxGame.WorldClasses;
 using FeloxGame.Core.Management;
 using FeloxGame.GUI;
 using FeloxGame.InventoryClasses;
+using FeloxGame.EntityClasses;
 
 namespace FeloxGame
 {
@@ -34,6 +35,9 @@ namespace FeloxGame
         // player data
         private Player _player;
 
+        // entity data
+        private List<Entity> _entityList;
+
         // item data
         private readonly string itemListFolderPath = @"../../../Resources/Items";
 
@@ -57,7 +61,9 @@ namespace FeloxGame
         {
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Blend);
-            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+            //GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+            GL.Arb.BlendFuncSeparate(0, BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha, BlendingFactor.SrcAlpha, BlendingFactor.DstAlpha);
+            
 
             _shader = new(Shader.ParseShader(@"../../../Resources/Shaders/TextureWithColorAndTextureSlotAndUniforms.glsl"));
             if (!_shader.CompileShader())
@@ -82,6 +88,9 @@ namespace FeloxGame
 
             // Player
             _player = new Player(new Vector2(0, 0), new Vector2(1, 2), "Entities/Player.png", 1);
+
+            // Entities
+            _entityList = new List<Entity>();
 
             // UI systems
             MasterUI = new(Size.X, Size.Y, eAnchor.Middle, 1.0f);
@@ -220,6 +229,11 @@ namespace FeloxGame
                 }
             }
 
+            if (input.IsKeyPressed(Keys.L))
+            {
+                _entityList.Add(new ItemEntity(_player.Position, new Vector2(1f, 1f), new ItemStack("Persimmon", 1)));
+            }
+
             _player.Position += movement * (speed * (float)args.Time);
 
             // Track player with camera
@@ -230,10 +244,10 @@ namespace FeloxGame
         protected override void OnRenderFrame(FrameEventArgs args)
         {
             base.OnRenderFrame(args);
-            GL.Enable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.DepthTest | EnableCap.Blend);
             GL.ClearColor(Color4.CornflowerBlue);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            
+
             // ---------- WORLD & Entities ----------
 
             _shader.Use();
@@ -246,6 +260,12 @@ namespace FeloxGame
             _world.Draw();
 
             _player.Draw();
+
+            //to-do: draw in order of y height
+            foreach (Entity entity in _entityList)
+            {
+                entity.Draw();
+            }
 
             // ---------- UI ----------
 

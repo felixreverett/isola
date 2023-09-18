@@ -17,7 +17,7 @@ namespace FeloxGame
         protected Texture2D TextureAtlas { get; set; }
 
         // <!----- Rendering ----->
-        private float[] vertices =
+        protected float[] vertices =
         {
             //Vertices          //texCoords //texColors       
             1.0f, 2.0f, 0.001f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, //top right (1,1)
@@ -26,7 +26,7 @@ namespace FeloxGame
             0.0f, 2.0f, 0.001f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f  //top left (0, 1)
         };
 
-        private uint[] _indices =
+        protected uint[] _indices =
         {
             0, 1, 3, // first triangle
             1, 2, 3  // second triangle
