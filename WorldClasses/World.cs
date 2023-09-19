@@ -99,15 +99,15 @@ namespace FeloxGame.WorldClasses // rename this later?
 
             foreach (Chunk loadedChunk in LoadedChunks.Values)
             {
-                for (int y = 0; y < loadedChunk.Tiles.GetLength(1); y++)
+                for (int y = 0; y < 16; y++)
                 {
-                    for (int x = 0; x < loadedChunk.Tiles.GetLength(0); x++)
+                    for (int x = 0; x < 16; x++)
                     {
                         _vertices[0] = loadedChunk.ChunkPosX * 16 + x + 1; _vertices[1] = loadedChunk.ChunkPosY * 16 + y + 1; // top right (1, 1)
                         _vertices[8] = loadedChunk.ChunkPosX * 16 + x + 1; _vertices[9] = loadedChunk.ChunkPosY * 16 + y; // bottom right (1, 0)
                         _vertices[16] = loadedChunk.ChunkPosX * 16 + x; _vertices[17] = loadedChunk.ChunkPosY * 16 + y; // bottom left (0, 0)
                         _vertices[24] = loadedChunk.ChunkPosX * 16 + x; _vertices[25] = loadedChunk.ChunkPosY * 16 + y + 1; // top left (0, 1)
-                        string textureName = loadedChunk.Tiles[x, y];
+                        string textureName = loadedChunk.GetTile(x, y);
                         int textureIndex = AssetLibrary.TileList.Where(t => t.Name.ToLower() == textureName.ToLower()).FirstOrDefault().TextureIndex;
                         
                         TexCoords texCoords = TextureManager.Instance.GetIndexedAtlasCoords(textureIndex, 32, 1024, 8, true); // 24-8 change
@@ -148,7 +148,7 @@ namespace FeloxGame.WorldClasses // rename this later?
                 string[] cols = row.Split(" ");
                 for (int x = 0; x < cols.Length; x++)
                 {
-                    newChunk.Tiles[x, y] = cols[x];
+                    newChunk.SetTile(x, y, cols[x]);
                 }
             }
 
@@ -200,8 +200,12 @@ namespace FeloxGame.WorldClasses // rename this later?
             return chunk;
         }
 
-        public void SaveChunk(string folder, Chunk chunk)
-        { }
+        public void SaveChunk(string folder, int chunkPosX, int chunkPosY)
+        {
+            //Todo: add error checking
+            Chunk chunk = LoadedChunks[$"x{chunkPosX}y{chunkPosY}"];
+            Loading.SaveObject(chunk, $"{folder}/x{chunkPosX}y{chunkPosY}.json");
+        }
 
         // Updates (code for world interaction)
         public void UpdateTile(int worldX, int worldY) //Todo: add error checking
@@ -212,7 +216,7 @@ namespace FeloxGame.WorldClasses // rename this later?
             int x = worldX >= 0 ? worldX % 16 : worldX % 16 == 0 ? 0 : 16 + worldX % 16;
             int y = worldY >= 0 ? worldY % 16 : worldY % 16 == 0 ? 0 : 16 + worldY % 16;
             
-            LoadedChunks[$"x{chunkX}y{chunkY}"].Tiles[x, y] = "Grass";
+            LoadedChunks[$"x{chunkX}y{chunkY}"].SetTile(x, y, "Grass");
         }
     }
 }

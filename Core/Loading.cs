@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Xml;
 
 namespace FeloxGame.Core
 {
@@ -22,6 +23,11 @@ namespace FeloxGame.Core
                 }
             }
             return list;
+        }
+
+        public static void SaveObject<T>(T obj, string filePath)
+        {
+            File.WriteAllText(filePath, JsonSerializer.Serialize(obj));
         }
     }
 }

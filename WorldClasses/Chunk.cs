@@ -5,7 +5,8 @@
         public string ChunkID { get; private set; }
         public int ChunkPosX { get; private set; }
         public int ChunkPosY { get; private set; }
-        public string[,] Tiles { get; set; } = new string[16, 16];
+        public string[] Tiles { get; set; } = new string[16*16];
+        public List<Entity> ChunkEntities { get; set; }
         
         public Chunk(int chunkPosX, int chunkPosY)
         {
@@ -14,16 +15,14 @@
             ChunkID = $"x{chunkPosX}y{chunkPosY}";
         }
 
-        //public List<Entity> Entities { get; set; }
-
         public string GetTile(int x, int y)
         {
-            return Tiles[x, y];
+            return Tiles[y * 16 + x];
         }
 
         public void SetTile(int x, int y, string tileId)
         {
-            Tiles[x, y] = tileId;
+            Tiles[y* 16 + x] = tileId;
         }
     }
 }

@@ -232,9 +232,16 @@ namespace FeloxGame
                 }
             }
 
+            // TEST - spawn entity
             if (input.IsKeyPressed(Keys.L))
             {
                 _loadedEntityList.Add(new ItemEntity(_player.Position, new Vector2(1f, 1f), new ItemStack("Persimmon", 1)));
+            }
+
+            // TEST - save chunk
+            if (input.IsKeyPressed(Keys.K))
+            {
+                _world.SaveChunk(@"../../../TestingFolder", 0, 0);
             }
 
             _player.Position += movement * (speed * (float)args.Time);

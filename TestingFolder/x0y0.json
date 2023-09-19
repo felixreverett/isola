@@ -1,0 +1,23 @@
+{
+    "ChunkID": "x0y0",
+    "ChunkPosX": 0,
+    "ChunkPosY": 0,
+    "Tiles": [
+				"Grass", "Sand", "Sand", "Sand", "Sand", "Sand", "Water", "Water_2", "Water_2", "Water_2", "Water_2", "Water_2", "Water_2", "Water_2", "Water_2", "Water_2", 
+				"Grass", "Sand", "Sand", "Sand", "Sand", "Sand", "Sand", "Water", "Water_2", "Water_2", "Water_2", "Water_2", "Water_2", "Water_2", "Water_2", "Water_2", 
+				"Grass", "Grass", "Grass", "Grass", "Sand", "Sand", "Sand", "Sand", "Water", "Water_2", "Water_2", "Water_2", "Water_2", "Water_2", "Water", "Water", 
+				"Grass", "Grass", "Grass", "Grass", "Grass", "Sand", "Sand", "Sand", "Water", "Water", "Water_2", "Water_2", "Water_2", "Water", "Water", "Water", 
+				"Grass", "Grass", "Grass", "Grass", "Grass", "Grass", "Sand", "Sand", "Water", "Water", "Water_2", "Water_2", "Water_2", "Water", "Water", "Water", 
+				"Grass", "Grass", "Grass", "Grass", "Grass", "Grass", "Sand", "Sand", "Water", "Water_2", "Water_2", "Water_2", "Water_2", "Water_2", "Water", "Water", 
+				"Grass", "Grass", "Grass", "Grass", "Grass", "Grass", "Grass", "Sand", "Water", "Water_2", "Water_2", "Water_2", "Water_2", "Water_2", "Water_2", "Water", 
+				"Grass", "Grass", "Grass", "Grass", "Grass", "Grass", "Grass", "Sand", "Water", "Water_2", "Water_2", "Water_2", "Water_2", "Water_2", "Water_2", "Water_2", 
+				"Grass", "Grass", "Grass", "Grass", "Grass", "Grass", "Grass", "Sand", "Sand", "Water_2", "Water_2", "Water_2", "Water_2", "Water_2", "Water_2", "Water_2", 
+				"Grass", "Grass", "Grass", "Grass", "Grass", "Grass", "Grass", "Sand", "Sand", "Water", "Water_2", "Water_2", "Water_2", "Water_2", "Water_2", "Water_2", 
+				"Grass", "Grass", "Grass", "Grass", "Grass", "Grass", "Grass", "Grass", "Sand", "Water", "Water_2", "Water_2", "Water_2", "Water_2", "Water_2", "Water_2", 
+				"Grass", "Grass", "Grass", "Grass", "Grass", "Grass", "Grass", "Grass", "Sand", "Water", "Water", "Water_2", "Water_2", "Water_2", "Water_2", "Water_2", 
+				"Grass", "Grass", "Grass", "Grass", "Grass", "Grass", "Grass", "Grass", "Sand", "Sand", "Water", "Water_2", "Water_2", "Water_2", "Water", "Water", 
+				"Grass", "Grass", "Grass", "Grass", "Grass", "Grass", "Grass", "Grass", "Sand", "Sand", "Water", "Water", "Water", "Water", "Water", "Sand", "Grass", 
+				"Grass", "Grass", "Grass", "Grass", "Grass", "Grass", "Grass", "Grass", "Sand", "Sand", "Water", "Water", "Water", "Sand", "Sand", "Grass", "Grass", 
+				"Grass", "Grass", "Grass", "Grass", "Grass", "Grass", "Grass", "Sand", "Sand", "Sand", "Sand", "Sand", "Sand", "Sand"],
+    "ChunkEntities": null
+}
