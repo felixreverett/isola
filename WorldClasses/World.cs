@@ -13,6 +13,7 @@ namespace FeloxGame.WorldClasses // rename this later?
     public class World
     {
         public Dictionary<string, Chunk> LoadedChunks { get; private set; }
+        public List<Entity> LoadedEntityList { get; set; }
         private string _worldFolderPath = @"../../../Resources/World/WorldFiles";
         public int Seed { get; private set; }
 
@@ -39,6 +40,7 @@ namespace FeloxGame.WorldClasses // rename this later?
         public World(int seed = 1)
         {
             LoadedChunks = new Dictionary<string, Chunk>();
+            LoadedEntityList = new List<Entity>();
             Seed = seed;
             OnLoad();
         }
@@ -121,7 +123,19 @@ namespace FeloxGame.WorldClasses // rename this later?
                     }
                 }
             }
+
+            DrawEntities();
         }
+
+        private void DrawEntities()
+        {
+            LoadedEntityList = LoadedEntityList.OrderByDescending(i => i.Position.Y).ToList();
+            foreach (Entity entity in LoadedEntityList)
+            {
+                entity.Draw();
+            }
+        }
+
 
         // Terrain Generation code
 
@@ -217,6 +231,11 @@ namespace FeloxGame.WorldClasses // rename this later?
             int y = worldY >= 0 ? worldY % 16 : worldY % 16 == 0 ? 0 : 16 + worldY % 16;
             
             LoadedChunks[$"x{chunkX}y{chunkY}"].SetTile(x, y, "Grass");
+        }
+
+        public void AddEntityToWorld(Entity entity)
+        {
+            LoadedEntityList.Add(entity);
         }
     }
 }

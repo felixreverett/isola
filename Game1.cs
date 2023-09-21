@@ -85,15 +85,12 @@ namespace FeloxGame
 
             // World
             _world = new World();
-
+            
             // Player
             _player = new Player(new Vector2(0, 0), new Vector2(1, 2), "Entities/Player.png", 1);
 
             // Entities
-            _loadedEntityList = new List<Entity>
-            {
-                _player
-            };
+            _world.AddEntityToWorld(_player);
 
             // UI systems
             MasterUI = new(Size.X, Size.Y, eAnchor.Middle, 1.0f);
@@ -235,7 +232,7 @@ namespace FeloxGame
             // TEST - spawn entity
             if (input.IsKeyPressed(Keys.L))
             {
-                _loadedEntityList.Add(new ItemEntity(_player.Position, new Vector2(1f, 1f), new ItemStack("Persimmon", 1)));
+                _world.AddEntityToWorld(new ItemEntity(_player.Position, new Vector2(1f, 1f), new ItemStack("Persimmon", 1)));
             }
 
             // TEST - save chunk
@@ -268,12 +265,6 @@ namespace FeloxGame
             _shader.SetMatrix4("projection", _camera.GetProjectionMatrix());
 
             _world.Draw();
-
-            _loadedEntityList = _loadedEntityList.OrderByDescending(i => i.Position.Y).ToList();
-            foreach (Entity entity in _loadedEntityList)
-            {
-                entity.Draw();
-            }
 
             // ---------- UI ----------
 
