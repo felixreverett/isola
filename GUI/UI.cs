@@ -134,7 +134,7 @@ namespace FeloxGame.GUI
             }
         }
 
-        public void OnMouseDown(Vector2 mouseNDCs)
+        public virtual void OnMouseDown(Vector2 mouseNDCs)
         {
             if (!IsMouseInBounds(mouseNDCs))
             {

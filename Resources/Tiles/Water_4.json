@@ -1,5 +1,6 @@
 {
 	"Name": "Water_4",
 	"TextureLocation": "water_4.png",
-	"TextureIndex": 5
+	"TextureIndex": 5,
+	"IsCollidable": true
 }

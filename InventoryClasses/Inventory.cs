@@ -1,4 +1,5 @@
-﻿using FeloxGame.InventoryClasses;
+﻿using FeloxGame.EntityClasses;
+using FeloxGame.InventoryClasses;
 
 namespace FeloxGame
 {
@@ -151,6 +152,18 @@ namespace FeloxGame
         {
             Console.WriteLine($"Slot {slotIndex} was clicked!");
             SwapSlots(slotIndex);
+        }
+
+        public void OnExternalClick()
+        {
+            if (_mouseSlotItemStack != null)
+            {
+                ItemStack itemStack = _mouseSlotItemStack;
+                _mouseSlotItemStack = null;
+                //AddEntity();
+                //_loadedEntityList.Add(new ItemEntity(_player.Position, new Vector2(1f, 1f), new ItemStack("Persimmon", 1)));
+                InventoryChanged?.Invoke(_itemStackList, _mouseSlotItemStack);
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using FeloxGame.Core.Rendering;
 using FeloxGame.InventoryClasses;
+using OpenTK.Mathematics;
 
 namespace FeloxGame.GUI
 {
@@ -106,6 +107,33 @@ namespace FeloxGame.GUI
             {
                 Kodomo["mouseSlot"].ToggleDraw = false;
             }
+        }
+
+        public override void OnMouseDown(Vector2 mouseNDCs)
+        {
+            if (!IsMouseInBounds(mouseNDCs))
+            {
+                OnExternalClick();
+                return;
+            }
+
+            if (Kodomo.Count > 0)
+            {
+                foreach (UI ui in Kodomo.Values)
+                {
+                    ui.OnMouseDown(mouseNDCs);
+                }
+            }
+
+            if (this.IsClickable)
+            {
+                OnClick();
+            }
+        }
+
+        public void OnExternalClick()
+        {
+            Inventory.OnExternalClick();
         }
     }
 }

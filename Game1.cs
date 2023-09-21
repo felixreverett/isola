@@ -36,7 +36,7 @@ namespace FeloxGame
         private Player _player;
 
         // entity data
-        private List<Entity> _loadedEntityList;
+        protected List<Entity> _loadedEntityList;
 
         // item data
         private readonly string itemListFolderPath = @"../../../Resources/Items";
@@ -334,6 +334,12 @@ namespace FeloxGame
             float ndcX = (2.0f * MousePosition.X) / Size.X - 1.0f;
             float ndcY = 1.0f - (2.0f * MousePosition.Y) / Size.Y;
             return new Vector2(ndcX, ndcY);
+        }
+
+        // Todo: allow this to generate any entity. Might move this, too
+        public void AddEntity()
+        {
+
         }
 
     }

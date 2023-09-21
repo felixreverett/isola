@@ -2,14 +2,12 @@
 using FeloxGame.Core.Rendering;
 using RectangleF = System.Drawing.RectangleF;
 using OpenTK.Windowing.Common;
+using FeloxGame.EntityClasses;
 
 namespace FeloxGame
 {
     public class Player : Entity // ICollidable, 
     {
-        
-        public Inventory Inventory { get; set; }
-        public int RenderDistance { get; set; } = 2;
         public RectangleF ColRec
         {
             get
@@ -29,7 +27,10 @@ namespace FeloxGame
         }// draw rectangle
 
         // Properties
+        public Inventory Inventory { get; set; }
         public float Reach { get; set; }
+        public int RenderDistance { get; set; } = 2;
+        public eFacing Facing { get; set; } = eFacing.South;
 
         public Player(Vector2 startPos, Vector2 size, string textureAtlasName, int textureUnit)
             : base (startPos, size, textureAtlasName, textureUnit)
