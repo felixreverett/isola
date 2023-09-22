@@ -160,8 +160,8 @@ namespace FeloxGame
             {
                 ItemStack itemStack = _mouseSlotItemStack;
                 _mouseSlotItemStack = null;
-                //AddEntity();
-                //_loadedEntityList.Add(new ItemEntity(_player.Position, new Vector2(1f, 1f), new ItemStack("Persimmon", 1)));
+                // Add a new item entity at the player's location
+                //
                 InventoryChanged?.Invoke(_itemStackList, _mouseSlotItemStack);
             }
         }

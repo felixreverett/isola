@@ -92,13 +92,22 @@ namespace FeloxGame.WorldClasses // rename this later?
             }
         }
 
+        // ===== Rendering =====
+
         public void Draw()
         {
             WorldTexture.Use();
             _vertexArray.Bind();
             _vertexBuffer.Bind();
             _indexBuffer.Bind();
+                        
+            DrawChunks();
 
+            DrawEntities();
+        }
+
+        private void DrawChunks()
+        {
             foreach (Chunk loadedChunk in LoadedChunks.Values)
             {
                 for (int y = 0; y < 16; y++)
@@ -111,7 +120,7 @@ namespace FeloxGame.WorldClasses // rename this later?
                         _vertices[24] = loadedChunk.ChunkPosX * 16 + x; _vertices[25] = loadedChunk.ChunkPosY * 16 + y + 1; // top left (0, 1)
                         string textureName = loadedChunk.GetTile(x, y);
                         int textureIndex = AssetLibrary.TileList.Where(t => t.Name.ToLower() == textureName.ToLower()).FirstOrDefault().TextureIndex;
-                        
+
                         TexCoords texCoords = TextureManager.Instance.GetIndexedAtlasCoords(textureIndex, 32, 1024, 8, true); // 24-8 change
                         _vertices[3] = texCoords.MaxX; _vertices[4] = texCoords.MaxY;   // (1, 1)
                         _vertices[11] = texCoords.MaxX; _vertices[12] = texCoords.MinY; // (1, 0)
@@ -123,8 +132,6 @@ namespace FeloxGame.WorldClasses // rename this later?
                     }
                 }
             }
-
-            DrawEntities();
         }
 
         private void DrawEntities()
@@ -136,8 +143,7 @@ namespace FeloxGame.WorldClasses // rename this later?
             }
         }
 
-
-        // Terrain Generation code
+        // ===== Terrain Generation & Loading =====
 
         public Chunk LoadOrGenerateChunk(string filePath, int chunkPosX, int chunkPosY)
         {
@@ -216,7 +222,7 @@ namespace FeloxGame.WorldClasses // rename this later?
 
         public void SaveChunk(string folder, int chunkPosX, int chunkPosY)
         {
-            //Todo: add error checking
+            // Todo: add error checking
             Chunk chunk = LoadedChunks[$"x{chunkPosX}y{chunkPosY}"];
             Loading.SaveObject(chunk, $"{folder}/x{chunkPosX}y{chunkPosY}.json");
         }
