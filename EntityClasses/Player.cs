@@ -1,8 +1,8 @@
 ﻿using OpenTK.Mathematics;
-using FeloxGame.Core.Rendering;
 using RectangleF = System.Drawing.RectangleF;
 using OpenTK.Windowing.Common;
 using FeloxGame.EntityClasses;
+using FeloxGame.WorldClasses;
 
 namespace FeloxGame
 {
@@ -31,11 +31,13 @@ namespace FeloxGame
         public float Reach { get; set; }
         public int RenderDistance { get; set; } = 2;
         public eFacing Facing { get; set; } = eFacing.South;
+        public World CurrentWorld { get; protected set; }
 
-        public Player(Vector2 startPos, Vector2 size, string textureAtlasName, int textureUnit)
+        public Player(Vector2 startPos, Vector2 size, string textureAtlasName, int textureUnit, World currentWorld)
             : base (startPos, size, textureAtlasName, textureUnit)
         {
-            this.Inventory = new Inventory(5, 10);
+            this.Inventory = new Inventory(5, 10, this);
+            this.CurrentWorld = currentWorld;
             Reach = 5f;
         }
 

@@ -83,11 +83,11 @@ namespace FeloxGame
             AssetLibrary.ItemList = Loading.LoadAllObjects<Item>(itemListFolderPath);
             AssetLibrary.TileList = Loading.LoadAllObjects<Tile>(tileListFolderPath);
 
-            // World
+            // World (initialised first as player will reference it)
             _world = new World();
             
-            // Player
-            _player = new Player(new Vector2(0, 0), new Vector2(1, 2), "Entities/Player.png", 1);
+            // Player (with reference to _world)
+            _player = new Player(new Vector2(0, 0), new Vector2(1, 2), "Entities/Player.png", 1, _world);
 
             // Entities
             _world.AddEntityToWorld(_player);

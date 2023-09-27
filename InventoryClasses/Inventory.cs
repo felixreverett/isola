@@ -1,5 +1,6 @@
 ﻿using FeloxGame.EntityClasses;
 using FeloxGame.InventoryClasses;
+using OpenTK.Mathematics;
 
 namespace FeloxGame
 {
@@ -8,14 +9,16 @@ namespace FeloxGame
     {
         public ItemStack[] _itemStackList;
         public ItemStack _mouseSlotItemStack;
+        public Player OwnerPlayer { get; set; }
         private int _rows;
         private int _cols;
 
-        public Inventory(int rows, int cols)
+        public Inventory(int rows, int cols, Player ownerPlayer)
         {
             this._rows = rows;
             this._cols = cols;
-            this._itemStackList = new ItemStack[rows*cols];
+            this._itemStackList = new ItemStack[rows * cols];
+            OwnerPlayer = ownerPlayer;
         }
 
         public event Action<ItemStack[], ItemStack> InventoryChanged;
@@ -160,8 +163,9 @@ namespace FeloxGame
             {
                 ItemStack itemStack = _mouseSlotItemStack;
                 _mouseSlotItemStack = null;
+                OwnerPlayer.CurrentWorld.AddEntityToWorld(new ItemEntity(OwnerPlayer.Position, new Vector2(1f, 1f), itemStack));
                 // Add a new item entity at the player's location
-                //
+                
                 InventoryChanged?.Invoke(_itemStackList, _mouseSlotItemStack);
             }
         }
