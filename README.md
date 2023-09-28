@@ -13,6 +13,7 @@ Yes! Here is an ever expanding list of implemented concepts and general coding p
 
 ### __Coding Practices & Concepts__:
 *recursion | enums | perlin noise | class inheritance | matrices | GLSL*
+- **Constructors**: I've found a use of multiple constructors to enable setting default values for non compile-time constants. I've strengthened my understanding of the syntax of subclass constructors.
 - **enums**: Finding opportunities to use them
 - **Events**: Learning about subscribing to events to send data between uncoupled classes.
 - **File handling**: Loading appropriately and efficiently from files, using JSON, ImageSharp, etc.
@@ -23,7 +24,8 @@ Yes! Here is an ever expanding list of implemented concepts and general coding p
 - **Namespaces**: Organising code into a structured system; Knowing when to group files, but also when not to
 - **The `out` keyword**: Finding justification for this hitherto less used keyword in my Inventory.cs class
 - **Procedural world generation**: Use of noise functions to generate an infinite world
-- **Recursion**: I use recursive methods to update and draw my UI system 
+- **Recursion**: I use recursive methods to update and draw my UI system
+- **Reference types**: Using references to objects to enable other options to access their methods without owning that object (e.g., the player is referenced by the World's entity draw call, but is external to that entity list).
 - **Tree structures**: I have developed a tree structure to draw all UI objects within their parent objects
 
 ## How much time have you put into this project?
