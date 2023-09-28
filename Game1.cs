@@ -232,7 +232,7 @@ namespace FeloxGame
             // TEST - spawn entity
             if (input.IsKeyPressed(Keys.L))
             {
-                _world.AddEntityToWorld(new ItemEntity(_player.Position, new Vector2(1f, 1f), new ItemStack("Persimmon", 1)));
+                _world.AddEntityToWorld(new ItemEntity(_player.Position, new ItemStack("Persimmon", 1)));
             }
 
             // TEST - save chunk

@@ -13,7 +13,7 @@ namespace FeloxGame
     public class Entity
     {
         public Vector2 Position { get; set; }
-        public Vector2 Size { get; set; }
+        public Vector2 Size { get; set; } = new Vector2(1f, 1f);
         protected Texture2D TextureAtlas { get; set; }
 
         // <!----- Rendering ----->
@@ -35,14 +35,20 @@ namespace FeloxGame
         private VertexArray _vertexArray;
         private IndexBuffer _indexBuffer;
 
-        public Entity(Vector2 position, Vector2 size, string textureAtlasName, int textureUnit)
+        // Constructors
+
+        public Entity(Vector2 position, Vector2 size, string textureAtlasName, int textureUnit) : this(position, textureAtlasName, textureUnit)
+        {
+            this.Size = size;
+        }
+
+        public Entity(Vector2 position, string textureAtlasName, int textureUnit)
         {
             this.Position = position;
-            this.Size = size;
             this.TextureAtlas = ResourceManager.Instance.LoadTexture(textureAtlasName, textureUnit);
             OnLoad();
         }
-        
+
         public void OnLoad()
         {
             _vertexArray = new();
