@@ -239,6 +239,18 @@ namespace FeloxGame.WorldClasses // rename this later?
             LoadedChunks[$"x{chunkX}y{chunkY}"].SetTile(x, y, "Grass");
         }
 
+        public string GetTile(int worldX, int worldY) //Todo: return Tile instead of string
+        {
+            int chunkX = worldX >= 0 ? worldX / 16 : worldX % 16 == 0 ? worldX / 16 : worldX / 16 - 1;
+            int chunkY = worldY >= 0 ? worldY / 16 : worldY % 16 == 0 ? worldY / 16 : worldY / 16 - 1;
+
+            int x = worldX >= 0 ? worldX % 16 : worldX % 16 == 0 ? 0 : 16 + worldX % 16;
+            int y = worldY >= 0 ? worldY % 16 : worldY % 16 == 0 ? 0 : 16 + worldY % 16;
+
+            return LoadedChunks[$"x{chunkX}y{chunkY}"].GetTile(x, y);
+        }
+
+
         public void AddEntityToWorld(Entity entity)
         {
             LoadedEntityList.Add(entity);

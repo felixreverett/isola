@@ -25,7 +25,6 @@ namespace FeloxGame
         private Shader _UIShader;
         
         // Camera
-        float speed = 5.5f;
         private Camera _camera;
 
         // world data
@@ -241,7 +240,7 @@ namespace FeloxGame
                 _world.SaveChunk(@"../../../TestingFolder", 0, 0);
             }
 
-            _player.Position += movement * (speed * (float)args.Time);
+            _player.UpdatePosition(movement, (float)args.Time);
 
             // Track player with camera
             Vector3 cameraMoveDirection = new Vector3(_player.Position.X - _camera.Position.X, _player.Position.Y - _camera.Position.Y, 0f);

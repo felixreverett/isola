@@ -3,6 +3,7 @@ using RectangleF = System.Drawing.RectangleF;
 using OpenTK.Windowing.Common;
 using FeloxGame.EntityClasses;
 using FeloxGame.WorldClasses;
+using FeloxGame.Core;
 
 namespace FeloxGame
 {
@@ -32,6 +33,7 @@ namespace FeloxGame
         public int RenderDistance { get; set; } = 2;
         public eFacing Facing { get; set; } = eFacing.South;
         public World CurrentWorld { get; protected set; }
+        protected float Speed { get; set; } = 5.5f; // Todo: move to constructor
 
         public Player(Vector2 startPos, Vector2 size, string textureAtlasName, int textureUnit, World currentWorld)
             : base (startPos, size, textureAtlasName, textureUnit)
@@ -39,6 +41,29 @@ namespace FeloxGame
             this.Inventory = new Inventory(5, 10, this);
             this.CurrentWorld = currentWorld;
             Reach = 5f;
+        }
+
+        public void UpdatePosition(Vector2 movement, float time)
+        {
+            Vector2 newPosition = this.Position + movement * (Speed * time);
+
+            //Todo: try setting new pos together without separate x and y components?
+            
+            // if collision detected with tilemap
+            string currentTile = CurrentWorld.GetTile((int)Math.Floor(newPosition.X), (int)Math.Floor(newPosition.Y));
+            
+            if (AssetLibrary.TileList
+                .Where(tile => tile.Name == currentTile)
+                .Select(tile => tile.IsCollidable)
+                .FirstOrDefault())
+            {
+                //Console.WriteLine(currentTile);
+                //Console.WriteLine("Collision detected"); //debug
+            }
+            else
+            {
+                this.Position = newPosition;
+            }
         }
 
         public void Update(FrameEventArgs args)
