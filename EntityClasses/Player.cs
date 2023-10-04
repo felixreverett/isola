@@ -45,24 +45,37 @@ namespace FeloxGame
 
         public void UpdatePosition(Vector2 movement, float time)
         {
-            Vector2 newPosition = this.Position + movement * (Speed * time);
+            Vector2 newPosition = Position + movement * (Speed * time);
+            Vector2 collisionPositionX = new Vector2(newPosition.X, Position.Y);
+            Vector2 collisionPositionY = new Vector2(Position.X, newPosition.Y);
 
-            //Todo: try setting new pos together without separate x and y components?
-            
-            // if collision detected with tilemap
-            string currentTile = CurrentWorld.GetTile((int)Math.Floor(newPosition.X), (int)Math.Floor(newPosition.Y));
-            
-            if (AssetLibrary.TileList
-                .Where(tile => tile.Name == currentTile)
+            string currentTileX = CurrentWorld.GetTile((int)Math.Floor(collisionPositionX.X), (int)Math.Floor(collisionPositionX.Y));
+            string currentTileY = CurrentWorld.GetTile((int)Math.Floor(collisionPositionY.X), (int)Math.Floor(collisionPositionY.Y));
+
+            bool collisionX = AssetLibrary.TileList
+                .Where(tile => tile.Name == currentTileX)
                 .Select(tile => tile.IsCollidable)
-                .FirstOrDefault())
+                .FirstOrDefault();
+
+            bool collisionY = AssetLibrary.TileList
+                .Where(tile => tile.Name == currentTileY)
+                .Select(tile => tile.IsCollidable)
+                .FirstOrDefault();
+
+            // if X but not Y
+            if (collisionX && !collisionY)
             {
-                //Console.WriteLine(currentTile);
-                //Console.WriteLine("Collision detected"); //debug
+                Position = collisionPositionY;
             }
-            else
+            // if Y but not X
+            else if (!collisionX && collisionY)
             {
-                this.Position = newPosition;
+                Position = collisionPositionX;
+            }
+            // if neither
+            else if (!collisionX && !collisionY)
+            {
+                Position = newPosition;
             }
         }
 
