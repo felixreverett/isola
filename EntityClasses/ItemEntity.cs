@@ -31,7 +31,7 @@ namespace FeloxGame.EntityClasses
                 index = matchingItem.TextureIndex;
             }
 
-            TexCoords texCoords = TextureManager.Instance.GetIndexedAtlasCoords(index, 32, 1024, 8);
+            TexCoords texCoords = TextureManager.Instance.GetIndexedAtlasCoords(index, 16, 1024, 8);
 
             SetTextureCoords(texCoords);
         }
