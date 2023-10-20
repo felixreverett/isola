@@ -33,7 +33,7 @@ namespace FeloxGame.Core.Management
             int rowColumnLength = atlasSize / (textureSize + padding);
             int column = textureIndex % rowColumnLength;
             int row = textureIndex / rowColumnLength;
-            float offset = 1f / (atlasSize * 2);
+            float offset = 0.2f / (atlasSize * 2);
             float normalisedOffset = (textureSize + padding) / (float)atlasSize;
             float normalisedTextureSize = textureSize / (float)atlasSize;
             
