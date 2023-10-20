@@ -101,7 +101,7 @@ namespace FeloxGame
             // Textures
             _shader.Use();
 
-            tileAtlas = ResourceManager.Instance.LoadTexture("TileAtlas.png", 0);
+            tileAtlas = ResourceManager.Instance.LoadTexture("Tiles/Tile Atlas.png", 0);
             playerSprites = ResourceManager.Instance.LoadTexture("Entities/Player.png", 1); ;
             inventoryAtlas = ResourceManager.Instance.LoadTexture("Inventories/Inventory Atlas.png", 2);
             itemAtlas = ResourceManager.Instance.LoadTexture("Items/Item Atlas.png", 3);
