@@ -20,6 +20,7 @@ namespace FeloxGame.GUI
             this.ItemSlotID = itemSlotID;
             this.Inventory = inventory;
             this.KoPosition = koPosition;
+            //inventoryAtlas = AssetLibrary.TextureAtlasList["Item Atlas"];
             inventoryAtlas = ResourceManager.Instance.LoadTexture("Items/Item Atlas.png", 3);
         }
 

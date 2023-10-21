@@ -1,43 +1,44 @@
 ﻿using FeloxGame.Core.Management;
 
-namespace FeloxGame.Core.Management
+namespace FeloxGame.Core.Rendering
 {
-    public class TextureManager
+    public class TextureAtlas
     {
-        private static TextureManager _instance = null;
-        private static readonly object _loc = new();
-                
-        public static TextureManager Instance
+        public int AtlasSize { get; private set; }
+        public int TextureSize { get; private set; }
+        public int Padding { get; private set; }
+        public int MaxIndex { get; private set; }
+        public Texture2D Atlas { get; private set; }
+
+        public TextureAtlas(int atlasSize, int textureSize, int padding, string atlasName, int textureUnit)
         {
-            get
-            {
-                lock (_loc)
-                {
-                    if (_instance == null)
-                    {
-                        _instance = new TextureManager();
-                    }
-                    return _instance;
-                }
-            }
+            AtlasSize = atlasSize;
+            TextureSize = textureSize;
+            Padding = padding;
+
+            MaxIndex = ((int)atlasSize / (textureSize + padding)) ^ 2 - 1;
+
+            Atlas = ResourceManager.Instance.LoadTexture(atlasName, textureUnit);
         }
 
-        // Todo: remove once switched to using TextureAtlas.cs
-        /// <summary>
-        /// Returns Atlas coordinates for a texture at the given index. Use offset for tiles.
-        /// </summary>
-        /// <returns></returns>
-        public TexCoords GetIndexedAtlasCoords(int textureIndex, int textureSize, int atlasSize, int padding, bool useOffset = false)
+
+        // Todo: add optimisations once working
+        public TexCoords GetIndexedAtlasCoords(int textureIndex, bool useOffset = false)
         {
+            if (textureIndex > MaxIndex) 
+            {
+                textureIndex = 0;
+            }
+
             TexCoords texCoords = new TexCoords();
 
-            int rowColumnLength = atlasSize / (textureSize + padding);
+            int rowColumnLength = AtlasSize / (TextureSize + Padding);
             int column = textureIndex % rowColumnLength;
             int row = textureIndex / rowColumnLength;
-            float offset = 0.2f / (atlasSize * 2);
-            float normalisedOffset = (textureSize + padding) / (float)atlasSize;
-            float normalisedTextureSize = textureSize / (float)atlasSize;
-            
+            float offset = 0.2f / (AtlasSize * 2);
+            float normalisedOffset = (TextureSize + Padding) / (float)AtlasSize;
+            float normalisedTextureSize = TextureSize / (float)AtlasSize;
+
             texCoords.MinX = (float)column * normalisedOffset;
             texCoords.MaxX = texCoords.MinX + normalisedTextureSize;
             texCoords.MinY = (float)row * normalisedOffset;
@@ -67,5 +68,6 @@ namespace FeloxGame.Core.Management
 
             return texCoords;
         }
+
     }
 }

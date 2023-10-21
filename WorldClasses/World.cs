@@ -35,7 +35,7 @@ namespace FeloxGame.WorldClasses // rename this later?
         private VertexBuffer _vertexBuffer;
         private VertexArray _vertexArray;
         private IndexBuffer _indexBuffer;
-        private Texture2D WorldTexture { get; set; }
+        private TextureAtlas WorldTextureAtlas { get; set; }
 
         public World(int seed = 1)
         {
@@ -47,7 +47,7 @@ namespace FeloxGame.WorldClasses // rename this later?
 
         public void OnLoad()
         {
-            WorldTexture = ResourceManager.Instance.LoadTexture("Tiles/Tile Atlas.png", 0); // 24-8 change
+            WorldTextureAtlas = AssetLibrary.TextureAtlasList["Tile Atlas"];
 
             _vertexArray = new();
             _vertexBuffer = new VertexBuffer(_vertices);
@@ -96,7 +96,7 @@ namespace FeloxGame.WorldClasses // rename this later?
 
         public void Draw()
         {
-            WorldTexture.Use();
+            WorldTextureAtlas.Atlas.Use();
             _vertexArray.Bind();
             _vertexBuffer.Bind();
             _indexBuffer.Bind();

@@ -50,7 +50,7 @@ namespace FeloxGame
         private UI MasterUI { get; set; }
         int currentAnchor = 0; //debug
 
-        // Textures
+        // Textures //todo: remove
         Texture2D tileAtlas;
         Texture2D playerSprites;
         Texture2D inventoryAtlas;
@@ -82,6 +82,12 @@ namespace FeloxGame
             AssetLibrary.ItemList = Loading.LoadAllObjects<Item>(itemListFolderPath);
             AssetLibrary.TileList = Loading.LoadAllObjects<Tile>(tileListFolderPath);
 
+            // Textures & Atlases
+            AssetLibrary.TextureAtlasList.Add("Tile Atlas", new TextureAtlas(1024, 16, 8, "Tiles/Tile Atlas.png", 0));
+            playerSprites = ResourceManager.Instance.LoadTexture("Entities/Player.png", 1);
+            inventoryAtlas = ResourceManager.Instance.LoadTexture("Inventories/Inventory Atlas.png", 2);
+            AssetLibrary.TextureAtlasList.Add("Item Atlas", new TextureAtlas(1024, 16, 8, "Items/Item Atlas.png", 3));
+
             // World (initialised first as player will reference it)
             _world = new World();
             
@@ -99,12 +105,7 @@ namespace FeloxGame
             MasterUI.Kodomo["Hotbar"].SetTextureCoords(4, 792, 346, 40, 1024, 1024);
 
             // Textures
-            _shader.Use();
-
-            tileAtlas = ResourceManager.Instance.LoadTexture("Tiles/Tile Atlas.png", 0);
-            playerSprites = ResourceManager.Instance.LoadTexture("Entities/Player.png", 1); ;
-            inventoryAtlas = ResourceManager.Instance.LoadTexture("Inventories/Inventory Atlas.png", 2);
-            itemAtlas = ResourceManager.Instance.LoadTexture("Items/Item Atlas.png", 3);
+            _shader.Use(); //do I need this?
 
             // Camera
             _camera = new Camera(Vector3.UnitZ * 10, Size.X / (float)Size.Y);
