@@ -1,6 +1,6 @@
 {
 	"Name": "Grass",
 	"TextureLocation": "grass.png",
-	"TextureIndex": 0,
+	"TextureIndex": 1,
 	"IsCollidable": false
 }

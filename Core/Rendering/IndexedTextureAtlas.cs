@@ -16,7 +16,7 @@ namespace FeloxGame.Core.Rendering
             Padding = padding;
 
             RowColumnLength = AtlasSize / (TextureSize + Padding);
-            MaxIndex = RowColumnLength ^ 2 - 1;
+            MaxIndex = RowColumnLength * RowColumnLength - 1;
             
         }
 
@@ -25,7 +25,6 @@ namespace FeloxGame.Core.Rendering
         {
             if (textureIndex > MaxIndex)
             {
-                Console.WriteLine(textureIndex);
                 textureIndex = 0;
             }
 

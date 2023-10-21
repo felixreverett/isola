@@ -1,6 +1,6 @@
 {
 	"Name": "Sand",
 	"TextureLocation": "sand.png",
-	"TextureIndex": 1,
+	"TextureIndex": 2,
 	"IsCollidable": false
 }
