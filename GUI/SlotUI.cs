@@ -2,6 +2,7 @@
 using FeloxGame.Core.Management;
 using FeloxGame.Core.Rendering;
 using FeloxGame.InventoryClasses;
+using OpenTK.Graphics.OpenGL4;
 
 namespace FeloxGame.GUI
 {
@@ -9,6 +10,7 @@ namespace FeloxGame.GUI
     {
         protected int ItemSlotID;
         protected Inventory Inventory;
+        protected IndexedTextureAtlas ItemAtlas = (IndexedTextureAtlas)AssetLibrary.TextureAtlasList["Item Atlas"]; //Todo: redesign this whole system.
 
         public SlotUI
         (
@@ -20,8 +22,6 @@ namespace FeloxGame.GUI
             this.ItemSlotID = itemSlotID;
             this.Inventory = inventory;
             this.KoPosition = koPosition;
-            //inventoryAtlas = AssetLibrary.TextureAtlasList["Item Atlas"];
-            inventoryAtlas = ResourceManager.Instance.LoadTexture("Items/Item Atlas.png", 3);
         }
 
         /// <summary>
@@ -29,16 +29,17 @@ namespace FeloxGame.GUI
         /// </summary>
         public void UpdateItem(ItemStack itemStack)
         {
-            int index = 0;
+            int textureIndex = 0;
 
             Item matchingItem = AssetLibrary.ItemList.FirstOrDefault(i => i.ItemName == itemStack.ItemName);
 
             if (matchingItem != null)
             {
-                index = matchingItem.TextureIndex;
+                textureIndex = matchingItem.TextureIndex;
             }
 
-            TexCoords texCoords = TextureManager.Instance.GetIndexedAtlasCoords(index, 16, 1024, 8);
+            TexCoords texCoords = ItemAtlas.GetIndexedAtlasCoords(textureIndex);
+            //TextureManager.Instance.GetIndexedAtlasCoords(index, 16, 1024, 8);
 
             SetTextureCoords(texCoords);
         }
@@ -50,6 +51,29 @@ namespace FeloxGame.GUI
             Vertices[11] = texCoords.MaxX; Vertices[12] = texCoords.MinY; // (1, 0)
             Vertices[19] = texCoords.MinX; Vertices[20] = texCoords.MinY; // (0, 0)
             Vertices[27] = texCoords.MinX; Vertices[28] = texCoords.MaxY; // (0, 1)
+        }
+
+        public override void Draw()
+        {
+            if (IsDrawable && ToggleDraw)
+            {
+                ItemAtlas.Texture.Use();
+
+                _vertexArray.Bind();
+                _vertexBuffer.Bind();
+                _indexBuffer.Bind();
+
+                GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * Vertices.Length, Vertices, BufferUsageHint.DynamicDraw);
+                GL.DrawElements(PrimitiveType.Triangles, Indices.Length, DrawElementsType.UnsignedInt, 0); // Used for drawing Elements
+            }
+
+            if (Kodomo.Count != 0 && ToggleDraw)
+            {
+                foreach (UI ui in Kodomo.Values)
+                {
+                    ui.Draw();
+                }
+            }
         }
     }
 }

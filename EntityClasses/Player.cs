@@ -35,8 +35,8 @@ namespace FeloxGame
         public World CurrentWorld { get; protected set; }
         protected float Speed { get; set; } = 5.5f; // Todo: move to constructor
 
-        public Player(Vector2 startPos, Vector2 size, string textureAtlasName, int textureUnit, World currentWorld)
-            : base (startPos, size, textureAtlasName, textureUnit)
+        public Player(Vector2 startPos, Vector2 size, string textureAtlasName, World currentWorld)
+            : base (startPos, size, textureAtlasName)
         {
             this.Inventory = new Inventory(5, 10, this);
             this.CurrentWorld = currentWorld;

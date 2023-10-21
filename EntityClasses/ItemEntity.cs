@@ -9,8 +9,8 @@ namespace FeloxGame.EntityClasses
     {
         public ItemStack ItemStack { get; set; }
 
-        public ItemEntity(Vector2 position, ItemStack itemStack, string textureAtlasName = "Items/Item Atlas.png", int textureUnit = 3) 
-            : base(position, textureAtlasName, textureUnit)
+        public ItemEntity(Vector2 position, ItemStack itemStack, string textureAtlasName = "Item Atlas") 
+            : base(position, textureAtlasName)
         {
             UpdateItem(itemStack);
         }

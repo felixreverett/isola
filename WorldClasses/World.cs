@@ -35,7 +35,7 @@ namespace FeloxGame.WorldClasses // rename this later?
         private VertexBuffer _vertexBuffer;
         private VertexArray _vertexArray;
         private IndexBuffer _indexBuffer;
-        private TextureAtlas WorldTextureAtlas { get; set; }
+        private IndexedTextureAtlas WorldTextureAtlas { get; set; }
 
         public World(int seed = 1)
         {
@@ -47,7 +47,7 @@ namespace FeloxGame.WorldClasses // rename this later?
 
         public void OnLoad()
         {
-            WorldTextureAtlas = AssetLibrary.TextureAtlasList["Tile Atlas"];
+            WorldTextureAtlas = (IndexedTextureAtlas)AssetLibrary.TextureAtlasList["Tile Atlas"];
 
             _vertexArray = new();
             _vertexBuffer = new VertexBuffer(_vertices);
@@ -96,7 +96,7 @@ namespace FeloxGame.WorldClasses // rename this later?
 
         public void Draw()
         {
-            WorldTextureAtlas.Atlas.Use();
+            WorldTextureAtlas.Texture.Use();
             _vertexArray.Bind();
             _vertexBuffer.Bind();
             _indexBuffer.Bind();
@@ -110,6 +110,7 @@ namespace FeloxGame.WorldClasses // rename this later?
         {
             foreach (Chunk loadedChunk in LoadedChunks.Values)
             {
+                //var Stopwatch = System.Diagnostics.Stopwatch.StartNew();
                 for (int y = 0; y < 16; y++)
                 {
                     for (int x = 0; x < 16; x++)
@@ -121,7 +122,8 @@ namespace FeloxGame.WorldClasses // rename this later?
                         string textureName = loadedChunk.GetTile(x, y);
                         int textureIndex = AssetLibrary.TileList.Where(t => t.Name.ToLower() == textureName.ToLower()).FirstOrDefault().TextureIndex;
 
-                        TexCoords texCoords = TextureManager.Instance.GetIndexedAtlasCoords(textureIndex, 16, 1024, 8, true); // 24-8 change
+                        TexCoords texCoords = WorldTextureAtlas.GetIndexedAtlasCoords(textureIndex);
+                        
                         _vertices[3] = texCoords.MaxX; _vertices[4] = texCoords.MaxY;   // (1, 1)
                         _vertices[11] = texCoords.MaxX; _vertices[12] = texCoords.MinY; // (1, 0)
                         _vertices[19] = texCoords.MinX; _vertices[20] = texCoords.MinY; // (0, 0)
@@ -131,6 +133,7 @@ namespace FeloxGame.WorldClasses // rename this later?
                         GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0); // Used for drawing Elements
                     }
                 }
+                //Console.WriteLine($"This loop took {Stopwatch.Elapsed.TotalMilliseconds}ms");
             }
         }
 

@@ -50,12 +50,6 @@ namespace FeloxGame
         private UI MasterUI { get; set; }
         int currentAnchor = 0; //debug
 
-        // Textures //todo: remove
-        Texture2D tileAtlas;
-        Texture2D playerSprites;
-        Texture2D inventoryAtlas;
-        Texture2D itemAtlas;
-
         protected override void OnLoad()
         {
             GL.Enable(EnableCap.DepthTest);
@@ -83,16 +77,16 @@ namespace FeloxGame
             AssetLibrary.TileList = Loading.LoadAllObjects<Tile>(tileListFolderPath);
 
             // Textures & Atlases
-            AssetLibrary.TextureAtlasList.Add("Tile Atlas", new TextureAtlas(1024, 16, 8, "Tiles/Tile Atlas.png", 0));
-            playerSprites = ResourceManager.Instance.LoadTexture("Entities/Player.png", 1);
-            inventoryAtlas = ResourceManager.Instance.LoadTexture("Inventories/Inventory Atlas.png", 2);
-            AssetLibrary.TextureAtlasList.Add("Item Atlas", new TextureAtlas(1024, 16, 8, "Items/Item Atlas.png", 3));
+            AssetLibrary.TextureAtlasList.Add("Tile Atlas", new IndexedTextureAtlas(1024, 16, 8, "Tiles/Tile Atlas.png", 0, true));
+            AssetLibrary.TextureAtlasList.Add("Player Atlas", new TextureAtlas(1024, "Entities/Player.png", 1));
+            AssetLibrary.TextureAtlasList.Add("Inventory Atlas", new PrecisionTextureAtlas(1024, "Inventories/Inventory Atlas.png", 2, 1024, 1024));
+            AssetLibrary.TextureAtlasList.Add("Item Atlas", new IndexedTextureAtlas(1024, 16, 8, "Items/Item Atlas.png", 3));
 
             // World (initialised first as player will reference it)
             _world = new World();
             
             // Player (with reference to _world)
-            _player = new Player(new Vector2(0, 0), new Vector2(1, 2), "Entities/Player.png", 1, _world);
+            _player = new Player(new Vector2(0, 0), new Vector2(1, 2), "Player Atlas", _world);
 
             // Entities
             _world.AddEntityToWorld(_player);
@@ -100,9 +94,9 @@ namespace FeloxGame
             // UI systems
             MasterUI = new(Size.X, Size.Y, eAnchor.Middle, 1.0f);
                 MasterUI.Kodomo.Add("Inventory", new InventoryUI(346f, 180f, eAnchor.Middle, 0.5f, true, false, false, 5, 10, 32f, 32f, _player.Inventory));
-                MasterUI.Kodomo["Inventory"].SetTextureCoords(4, 840, 346, 180, 1024, 1024);
+                MasterUI.Kodomo["Inventory"].SetTextureCoords(4, 840, 346, 180);
             MasterUI.Kodomo.Add("Hotbar", new HotbarUI(346f, 40f, eAnchor.Bottom, 0.5f, true, true, false, 1, 10, 32f, 32f, _player.Inventory));
-            MasterUI.Kodomo["Hotbar"].SetTextureCoords(4, 792, 346, 40, 1024, 1024);
+            MasterUI.Kodomo["Hotbar"].SetTextureCoords(4, 792, 346, 40);
 
             // Textures
             _shader.Use(); //do I need this?

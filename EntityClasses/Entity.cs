@@ -2,7 +2,7 @@
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Graphics.OpenGL4;
-using FeloxGame.Core.Management;
+using FeloxGame.Core;
 
 namespace FeloxGame
 {
@@ -14,7 +14,7 @@ namespace FeloxGame
     {
         public Vector2 Position { get; set; }
         public Vector2 Size { get; set; } = new Vector2(1f, 1f);
-        protected Texture2D TextureAtlas { get; set; }
+        protected TextureAtlas EntityTextureAtlas { get; set; }
 
         // <!----- Rendering ----->
         protected float[] vertices =
@@ -37,15 +37,15 @@ namespace FeloxGame
 
         // Constructors
 
-        public Entity(Vector2 position, Vector2 size, string textureAtlasName, int textureUnit) : this(position, textureAtlasName, textureUnit)
+        public Entity(Vector2 position, Vector2 size, string textureAtlasName) : this(position, textureAtlasName)
         {
             this.Size = size;
         }
 
-        public Entity(Vector2 position, string textureAtlasName, int textureUnit)
+        public Entity(Vector2 position, string textureAtlasName)
         {
             this.Position = position;
-            this.TextureAtlas = ResourceManager.Instance.LoadTexture(textureAtlasName, textureUnit);
+            this.EntityTextureAtlas = AssetLibrary.TextureAtlasList[textureAtlasName];
             OnLoad();
         }
 
@@ -75,7 +75,7 @@ namespace FeloxGame
             vertices[16] = Position.X - Size.X / 2f; vertices[17] = Position.Y;
             vertices[24] = Position.X - Size.X / 2f; vertices[25] = Position.Y + Size.Y;
 
-            TextureAtlas.Use(); //GL.ActiveTexture() and GL.BindTexture()
+            EntityTextureAtlas.Texture.Use(); //GL.ActiveTexture() and GL.BindTexture()
 
             GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * vertices.Length, vertices, BufferUsageHint.DynamicDraw);
             GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0); // Used for drawing Elements
