@@ -72,15 +72,14 @@ namespace FeloxGame
                 return;
             }
 
-            // Assets
-            AssetLibrary.ItemList = Loading.LoadAllObjects<Item>(itemListFolderPath);
-            AssetLibrary.TileList = Loading.LoadAllObjects<Tile>(tileListFolderPath);
-
-            // Textures & Atlases
+            // Textures & Assets
             AssetLibrary.TextureAtlasList.Add("Tile Atlas", new IndexedTextureAtlas(1024, 16, 8, "Tiles/Tile Atlas.png", 0, true));
             AssetLibrary.TextureAtlasList.Add("Player Atlas", new TextureAtlas(1024, "Entities/Player.png", 1));
             AssetLibrary.TextureAtlasList.Add("Inventory Atlas", new PrecisionTextureAtlas(1024, "Inventories/Inventory Atlas.png", 2, 1024, 1024));
             AssetLibrary.TextureAtlasList.Add("Item Atlas", new IndexedTextureAtlas(1024, 16, 8, "Items/Item Atlas.png", 3));
+            
+            AssetLibrary.ItemList = Loading.LoadAllObjects<Item>(itemListFolderPath);
+            AssetLibrary.TileList = Loading.LoadAllObjects<Tile>(tileListFolderPath);
 
             // World (initialised first as player will reference it)
             _world = new World();

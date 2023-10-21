@@ -108,6 +108,7 @@ namespace FeloxGame.WorldClasses // rename this later?
 
         private void DrawChunks()
         {
+            var Stopwatch = System.Diagnostics.Stopwatch.StartNew();
             foreach (Chunk loadedChunk in LoadedChunks.Values)
             {
                 //var Stopwatch = System.Diagnostics.Stopwatch.StartNew();
@@ -115,14 +116,14 @@ namespace FeloxGame.WorldClasses // rename this later?
                 {
                     for (int x = 0; x < 16; x++)
                     {
-                        _vertices[0] = loadedChunk.ChunkPosX * 16 + x + 1; _vertices[1] = loadedChunk.ChunkPosY * 16 + y + 1; // top right (1, 1)
-                        _vertices[8] = loadedChunk.ChunkPosX * 16 + x + 1; _vertices[9] = loadedChunk.ChunkPosY * 16 + y; // bottom right (1, 0)
-                        _vertices[16] = loadedChunk.ChunkPosX * 16 + x; _vertices[17] = loadedChunk.ChunkPosY * 16 + y; // bottom left (0, 0)
-                        _vertices[24] = loadedChunk.ChunkPosX * 16 + x; _vertices[25] = loadedChunk.ChunkPosY * 16 + y + 1; // top left (0, 1)
+                        _vertices[0]  = loadedChunk.ChunkPosX * 16 + x + 1; _vertices[1]  = loadedChunk.ChunkPosY * 16 + y + 1; // top right (1, 1)
+                        _vertices[8]  = loadedChunk.ChunkPosX * 16 + x + 1; _vertices[9]  = loadedChunk.ChunkPosY * 16 + y;     // bottom right (1, 0)
+                        _vertices[16] = loadedChunk.ChunkPosX * 16 + x;     _vertices[17] = loadedChunk.ChunkPosY * 16 + y;     // bottom left (0, 0)
+                        _vertices[24] = loadedChunk.ChunkPosX * 16 + x;     _vertices[25] = loadedChunk.ChunkPosY * 16 + y + 1; // top left (0, 1)
+                        
                         string textureName = loadedChunk.GetTile(x, y);
-                        int textureIndex = AssetLibrary.TileList.Where(t => t.Name.ToLower() == textureName.ToLower()).FirstOrDefault().TextureIndex;
 
-                        TexCoords texCoords = WorldTextureAtlas.GetIndexedAtlasCoords(textureIndex);
+                        TexCoords texCoords = AssetLibrary.TileList.Where(t => t.Name.ToLower() == textureName.ToLower()).FirstOrDefault().TexCoords;
                         
                         _vertices[3] = texCoords.MaxX; _vertices[4] = texCoords.MaxY;   // (1, 1)
                         _vertices[11] = texCoords.MaxX; _vertices[12] = texCoords.MinY; // (1, 0)
@@ -135,6 +136,7 @@ namespace FeloxGame.WorldClasses // rename this later?
                 }
                 //Console.WriteLine($"This loop took {Stopwatch.Elapsed.TotalMilliseconds}ms");
             }
+            Console.WriteLine($"This frame: {Stopwatch.Elapsed.TotalMilliseconds}");
         }
 
         private void DrawEntities()
