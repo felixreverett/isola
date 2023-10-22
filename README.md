@@ -22,6 +22,7 @@ Yes! Here is an ever expanding list of implemented concepts and general coding p
 - **Inheritance**: Added class inheritance in Inventory.cs and strengthened my understandings of `base`
 - **Matrix manipulation**: Use and understanding of vectors and matrices to draw the world, player, and UI.
 - **Namespaces**: Organising code into a structured system; Knowing when to group files, but also when not to
+- **[NonSerialized]**: Use of the NonSerialized tag for parts of an object I don't want saved to JSON 
 - **The `out` keyword**: Finding justification for this hitherto less used keyword in my Inventory.cs class
 - **Procedural world generation**: Use of noise functions to generate an infinite world
 - **Recursion**: I use recursive methods to update and draw my UI system

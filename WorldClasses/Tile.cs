@@ -7,6 +7,7 @@ namespace FeloxGame
     public class Tile
     {
         public string Name { get; private set; }
+        public int TileID { get; private set; }
         public string TextureLocation { get; private set; }
         public int TextureIndex { get; private set; }
         public bool IsCollidable { get; private set; } = false;
@@ -16,9 +17,10 @@ namespace FeloxGame
         public TexCoords TexCoords;
 
 
-        public Tile(string name, string textureLocation, int textureIndex, bool isCollidable)
+        public Tile(string name, int tileID, string textureLocation, int textureIndex, bool isCollidable)
         {
             Name = name;
+            TileID = tileID;
             TextureLocation = textureLocation;
             TextureIndex = textureIndex;
             IsCollidable = isCollidable;

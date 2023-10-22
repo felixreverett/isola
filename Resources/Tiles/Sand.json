@@ -1,5 +1,6 @@
 {
 	"Name": "Sand",
+	"TileID": 1,
 	"TextureLocation": "sand.png",
 	"TextureIndex": 2,
 	"IsCollidable": false

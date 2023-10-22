@@ -1,5 +1,6 @@
 {
 	"Name": "Water_4",
+	"TileID": 5,
 	"TextureLocation": "water_4.png",
 	"TextureIndex": 6,
 	"IsCollidable": true

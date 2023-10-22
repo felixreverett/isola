@@ -108,10 +108,10 @@ namespace FeloxGame.WorldClasses // rename this later?
 
         private void DrawChunks()
         {
-            var Stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            //var Stopwatch = System.Diagnostics.Stopwatch.StartNew();
             foreach (Chunk loadedChunk in LoadedChunks.Values)
             {
-                //var Stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                
                 for (int y = 0; y < 16; y++)
                 {
                     for (int x = 0; x < 16; x++)
@@ -121,9 +121,8 @@ namespace FeloxGame.WorldClasses // rename this later?
                         _vertices[16] = loadedChunk.ChunkPosX * 16 + x;     _vertices[17] = loadedChunk.ChunkPosY * 16 + y;     // bottom left (0, 0)
                         _vertices[24] = loadedChunk.ChunkPosX * 16 + x;     _vertices[25] = loadedChunk.ChunkPosY * 16 + y + 1; // top left (0, 1)
                         
-                        string textureName = loadedChunk.GetTile(x, y);
-
-                        TexCoords texCoords = AssetLibrary.TileList.Where(t => t.Name.ToLower() == textureName.ToLower()).FirstOrDefault().TexCoords;
+                        ChunkTile currentTile = loadedChunk.GetTile(x, y);
+                        TexCoords texCoords = AssetLibrary.TileList.Where(t => t.TileID == currentTile.TileID).FirstOrDefault().TexCoords;
                         
                         _vertices[3] = texCoords.MaxX; _vertices[4] = texCoords.MaxY;   // (1, 1)
                         _vertices[11] = texCoords.MaxX; _vertices[12] = texCoords.MinY; // (1, 0)
@@ -134,9 +133,9 @@ namespace FeloxGame.WorldClasses // rename this later?
                         GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0); // Used for drawing Elements
                     }
                 }
-                //Console.WriteLine($"This loop took {Stopwatch.Elapsed.TotalMilliseconds}ms");
+                
             }
-            Console.WriteLine($"This frame: {Stopwatch.Elapsed.TotalMilliseconds}");
+            //Console.WriteLine($"This frame: {Stopwatch.Elapsed.TotalMilliseconds}");
         }
 
         private void DrawEntities()
@@ -162,6 +161,7 @@ namespace FeloxGame.WorldClasses // rename this later?
             }
         }
 
+        // Todo: make this functional by actually loading a chunk
         public Chunk LoadChunk(string filePath, int chunkPosX, int chunkPosY)
         {
             string[] rows = File.ReadAllText(filePath).Trim().Replace("\r", "").Split("\n").ToArray();
@@ -173,7 +173,7 @@ namespace FeloxGame.WorldClasses // rename this later?
                 string[] cols = row.Split(" ");
                 for (int x = 0; x < cols.Length; x++)
                 {
-                    newChunk.SetTile(x, y, cols[x]);
+                    newChunk.SetTile(x, y, new ChunkTile(0)/*cols[x]*/); //todo: fix this
                 }
             }
 
@@ -196,27 +196,27 @@ namespace FeloxGame.WorldClasses // rename this later?
                     float noiseValue = noiseMap.GetValue(x, y);
                     if (noiseValue < -0.35f)
                     {
-                        chunk.SetTile(x, y, "Water_4");
+                        chunk.SetTile(x, y, new ChunkTile(5)); // Water_4
                     }
                     else if (noiseValue < -0.25f)
                     {
-                        chunk.SetTile(x, y, "Water_3");
+                        chunk.SetTile(x, y, new ChunkTile(4)); // Water_3
                     }
                     else if (noiseValue < -0.15f)
                     {
-                        chunk.SetTile(x, y, "Water_2");
+                        chunk.SetTile(x, y, new ChunkTile(3)); // Water_2
                     }
                     else if (noiseValue < -0.1f)
                     {
-                        chunk.SetTile(x, y, "Water");
+                        chunk.SetTile(x, y, new ChunkTile(2)); // Water
                     }
                     else if (noiseValue < 0.0f)
                     {
-                        chunk.SetTile(x, y, "Sand");
+                        chunk.SetTile(x, y, new ChunkTile(1)); // Sand
                     }
                     else
                     {
-                        chunk.SetTile(x, y, "Grass");
+                        chunk.SetTile(x, y, new ChunkTile(0)); // Grass
                     }
                     // -0.35, -0.25, -0.15, -0.1, 0, 0.1, 0.2, 0.5, 0.7, 0.8, 0.85, 0.9, 1
                 }
@@ -241,10 +241,11 @@ namespace FeloxGame.WorldClasses // rename this later?
             int x = worldX >= 0 ? worldX % 16 : worldX % 16 == 0 ? 0 : 16 + worldX % 16;
             int y = worldY >= 0 ? worldY % 16 : worldY % 16 == 0 ? 0 : 16 + worldY % 16;
             
-            LoadedChunks[$"x{chunkX}y{chunkY}"].SetTile(x, y, "Grass");
+            // Todo: prevent this from being hard-coded
+            LoadedChunks[$"x{chunkX}y{chunkY}"].SetTile(x, y, new ChunkTile(0)); // sets to grass
         }
 
-        public string GetTile(int worldX, int worldY) //Todo: return Tile instead of string
+        public ChunkTile GetTile(int worldX, int worldY)
         {
             int chunkX = worldX >= 0 ? worldX / 16 : worldX % 16 == 0 ? worldX / 16 : worldX / 16 - 1;
             int chunkY = worldY >= 0 ? worldY / 16 : worldY % 16 == 0 ? worldY / 16 : worldY / 16 - 1;

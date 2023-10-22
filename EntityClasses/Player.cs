@@ -53,16 +53,16 @@ namespace FeloxGame
                 Vector2 collisionPositionX = new Vector2(newPosition.X, Position.Y);
                 Vector2 collisionPositionY = new Vector2(Position.X, newPosition.Y);
 
-                string currentTileX = CurrentWorld.GetTile((int)Math.Floor(collisionPositionX.X), (int)Math.Floor(collisionPositionX.Y));
-                string currentTileY = CurrentWorld.GetTile((int)Math.Floor(collisionPositionY.X), (int)Math.Floor(collisionPositionY.Y));
+                ChunkTile currentTileX = CurrentWorld.GetTile((int)Math.Floor(collisionPositionX.X), (int)Math.Floor(collisionPositionX.Y));
+                ChunkTile currentTileY = CurrentWorld.GetTile((int)Math.Floor(collisionPositionY.X), (int)Math.Floor(collisionPositionY.Y));
 
                 bool collisionX = AssetLibrary.TileList
-                    .Where(tile => tile.Name == currentTileX)
+                    .Where(tile => tile.TileID == currentTileX.TileID)
                     .Select(tile => tile.IsCollidable)
                     .FirstOrDefault();
 
                 bool collisionY = AssetLibrary.TileList
-                    .Where(tile => tile.Name == currentTileY)
+                    .Where(tile => tile.TileID == currentTileY.TileID)
                     .Select(tile => tile.IsCollidable)
                     .FirstOrDefault();
 
