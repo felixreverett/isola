@@ -1,10 +1,18 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace FeloxGame.Core
 {
     public static class Loading
     {
         // Yes, this is from my text-based game!
+        private static JsonSerializerOptions JsonOptions = new JsonSerializerOptions();
+
+        static Loading()
+        {
+            JsonOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
+        }
+
         public static T LoadObject<T>(string filePath)
         {
             return JsonSerializer.Deserialize<T>(File.ReadAllText(filePath))!;
@@ -26,7 +34,7 @@ namespace FeloxGame.Core
 
         public static void SaveObject<T>(T obj, string filePath)
         {
-            File.WriteAllText(filePath, JsonSerializer.Serialize(obj));
+            File.WriteAllText(filePath, JsonSerializer.Serialize(obj, JsonOptions));
         }
     }
 }
