@@ -231,7 +231,7 @@ namespace FeloxGame
             // TEST - save chunk
             if (input.IsKeyPressed(Keys.K))
             {
-                _world.SaveChunk(@"../../../TestingFolder", 0, 0);
+                _world.SaveChunk(@"../../../Saves/SampleWorldStructure/ChunkData", 0, 0);
             }
 
             _player.UpdatePosition(movement, (float)args.Time);

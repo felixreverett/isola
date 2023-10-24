@@ -5,14 +5,14 @@ namespace FeloxGame.Core
 {
     public static class Loading
     {
-        // Yes, this is from my text-based game!
         private static JsonSerializerOptions JsonOptions = new JsonSerializerOptions();
 
         static Loading()
         {
-            JsonOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
+            JsonOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
         }
 
+        // Yes, this is from my text-based game!
         public static T LoadObject<T>(string filePath)
         {
             return JsonSerializer.Deserialize<T>(File.ReadAllText(filePath))!;
