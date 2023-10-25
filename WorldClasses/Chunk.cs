@@ -4,9 +4,9 @@ namespace FeloxGame
 {
     public class Chunk
     {
-        public string ChunkID { get; private set; }
-        public int ChunkPosX { get; private set; }
-        public int ChunkPosY { get; private set; }
+        public string ChunkID { get; set; } // todo: make private again
+        public int ChunkPosX { get; set; } // todo: make private again
+        public int ChunkPosY { get; set; } // todo: make private again
         public List<Entity> ChunkEntities { get; set; }
         public ChunkTile[] ChunkTiles { get; set; }
 

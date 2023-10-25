@@ -14,7 +14,8 @@ namespace FeloxGame.WorldClasses // rename this later?
     {
         public Dictionary<string, Chunk> LoadedChunks { get; private set; }
         public List<Entity> LoadedEntityList { get; set; }
-        private string _worldFolderPath = @"../../../Resources/World/WorldFiles";
+        //private string _worldFolderPath = @"../../../Resources/World/WorldFiles";
+        private string _worldFolderPath = @"../../../Saves/SampleWorldStructure/ChunkData";
         public int Seed { get; private set; }
 
         // Rendering
@@ -76,7 +77,7 @@ namespace FeloxGame.WorldClasses // rename this later?
                     string chunkID = $"x{x}y{y}";
                     if (!LoadedChunks.ContainsKey(chunkID))
                     {
-                        Chunk newChunk = LoadOrGenerateChunk($"{_worldFolderPath}/{chunkID}.txt", x, y); // load the chunk
+                        Chunk newChunk = LoadOrGenerateChunk(_worldFolderPath, x, y); // load the chunk
                         LoadedChunks.Add(chunkID, newChunk);
                     }
                 }
@@ -149,16 +150,32 @@ namespace FeloxGame.WorldClasses // rename this later?
 
         // ===== Terrain Generation & Loading =====
 
-        public Chunk LoadOrGenerateChunk(string filePath, int chunkPosX, int chunkPosY)
+        public Chunk LoadOrGenerateChunk(string folderPath, int chunkPosX, int chunkPosY)
         {
+            string filePath = folderPath + $@"/x{chunkPosX}y{chunkPosY}.json";
+            string filePathTest = folderPath + "/x0y0.json"; //test
             if (File.Exists(filePath))
             {
-                return LoadChunk(filePath, chunkPosX, chunkPosY);
+                return LoadChunkNew(filePath);
             }
             else
             {
-                return GenerateChunk(chunkPosX, chunkPosY);
+                //test - disable procedural generation to test chunk loading from existing file
+                Chunk newChunk = LoadChunkNew(filePathTest);
+                newChunk.ChunkID = $"x{chunkPosX}y{chunkPosY}";
+                newChunk.ChunkPosX = chunkPosX;
+                newChunk.ChunkPosY = chunkPosY;
+                return newChunk;
+
+                //return GenerateChunk(chunkPosX, chunkPosY);
             }
+        }
+
+        // Todo: make this functional by actually loading a chunk
+        public Chunk LoadChunkNew(string filePath)
+        {
+            Chunk newChunk = Loading.LoadObject<Chunk>(filePath);
+            return newChunk;
         }
 
         // Todo: make this functional by actually loading a chunk

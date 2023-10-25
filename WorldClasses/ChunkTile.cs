@@ -12,6 +12,7 @@ namespace FeloxGame.WorldClasses
             Metadata = new Dictionary<string, object>();
         }
 
+        [JsonConstructor]
         public ChunkTile(int tileID, Dictionary<string, object> metadata)
         {
             TileID = tileID;

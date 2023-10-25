@@ -205,12 +205,13 @@ namespace FeloxGame
                         
             if (movement.LengthSquared > 1.0f) { movement.Normalize(); }
 
+            // TEST
             if (input.IsKeyPressed(Keys.P))
             {
-                //_player.Inventory.Add(new InventoryClasses.ItemStack("Persimmon", 1));
                 _player.Inventory.AddToSlotIndex(new ItemStack("Persimmon", 1), 0);
             }
 
+            // TEST
             if (input.IsKeyPressed(Keys.O))
             {
                 foreach (var item in _player.Inventory._itemStackList)
@@ -232,6 +233,7 @@ namespace FeloxGame
             if (input.IsKeyPressed(Keys.K))
             {
                 _world.SaveChunk(@"../../../Saves/SampleWorldStructure/ChunkData", 0, 0);
+                Console.WriteLine("Chunk saved");
             }
 
             _player.UpdatePosition(movement, (float)args.Time);

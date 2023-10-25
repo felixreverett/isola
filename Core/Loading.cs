@@ -15,7 +15,7 @@ namespace FeloxGame.Core
         // Yes, this is from my text-based game!
         public static T LoadObject<T>(string filePath)
         {
-            return JsonSerializer.Deserialize<T>(File.ReadAllText(filePath))!;
+            return JsonSerializer.Deserialize<T>(File.ReadAllText(filePath), JsonOptions)!;
         }
 
         public static List<T> LoadAllObjects<T>(string folderPath)
