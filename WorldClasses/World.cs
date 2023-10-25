@@ -156,47 +156,37 @@ namespace FeloxGame.WorldClasses // rename this later?
             string filePathTest = folderPath + "/x0y0.json"; //test
             if (File.Exists(filePath))
             {
-                return LoadChunkNew(filePath);
+                return LoadChunk(filePath);
             }
             else
             {
-                //test - disable procedural generation to test chunk loading from existing file
-                Chunk newChunk = LoadChunkNew(filePathTest);
+                /*Chunk newChunk = LoadChunkNew(filePathTest);
                 newChunk.ChunkID = $"x{chunkPosX}y{chunkPosY}";
                 newChunk.ChunkPosX = chunkPosX;
                 newChunk.ChunkPosY = chunkPosY;
-                return newChunk;
-
-                //return GenerateChunk(chunkPosX, chunkPosY);
+                return newChunk;*/
+                return GenerateChunk(chunkPosX, chunkPosY);
             }
         }
 
-        // Todo: make this functional by actually loading a chunk
-        public Chunk LoadChunkNew(string filePath)
+        /// <summary>
+        /// Deserialises a JSON chunk given a filepath
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        public Chunk LoadChunk(string filePath)
         {
             Chunk newChunk = Loading.LoadObject<Chunk>(filePath);
             return newChunk;
         }
 
-        // Todo: make this functional by actually loading a chunk
-        public Chunk LoadChunk(string filePath, int chunkPosX, int chunkPosY)
-        {
-            string[] rows = File.ReadAllText(filePath).Trim().Replace("\r", "").Split("\n").ToArray();
-            Chunk newChunk = new(chunkPosX, chunkPosY);
-
-            for (int y = 0; y < rows.Length; y++)
-            {
-                string row = rows[y];
-                string[] cols = row.Split(" ");
-                for (int x = 0; x < cols.Length; x++)
-                {
-                    newChunk.SetTile(x, y, new ChunkTile(0)/*cols[x]*/); //todo: fix this
-                }
-            }
-
-            return newChunk;
-        }
-
+        /// <summary>
+        /// Procedurally generates a chunk given chunk coordinates and a seed
+        /// </summary>
+        /// <param name="chunkPosX"></param>
+        /// <param name="chunkPosY"></param>
+        /// <param name="seed"></param>
+        /// <returns></returns>
         public Chunk GenerateChunk(int chunkPosX, int chunkPosY, int seed = 1)
         {
             NoiseMap noiseMap = NoiseGenerator.GenerateNoiseMap(chunkPosX, chunkPosY, 16, Seed, 200f, 4);
@@ -204,6 +194,13 @@ namespace FeloxGame.WorldClasses // rename this later?
             return newChunk;
         }
 
+        // Todo: make this load from a terrain config file
+        /// <summary>
+        /// Applies noisemap to set the values of a chunk.
+        /// </summary>
+        /// <param name="noiseMap"></param>
+        /// <param name="chunk"></param>
+        /// <returns></returns>
         public Chunk ApplyNoiseMap(NoiseMap noiseMap, Chunk chunk)
         {
             for (int x = 0; x < 16; x++)
@@ -242,6 +239,12 @@ namespace FeloxGame.WorldClasses // rename this later?
             return chunk;
         }
 
+        /// <summary>
+        /// Saves a chunk in the specified folder
+        /// </summary>
+        /// <param name="folder"></param>
+        /// <param name="chunkPosX"></param>
+        /// <param name="chunkPosY"></param>
         public void SaveChunk(string folder, int chunkPosX, int chunkPosY)
         {
             // Todo: add error checking
@@ -249,7 +252,12 @@ namespace FeloxGame.WorldClasses // rename this later?
             Loading.SaveObject(chunk, $"{folder}/x{chunkPosX}y{chunkPosY}.json");
         }
 
-        // Updates (code for world interaction)
+        // Todo: Make this update adjacent tiles
+        /// <summary>
+        /// Updates a tile at a position in the world.
+        /// </summary>
+        /// <param name="worldX"></param>
+        /// <param name="worldY"></param>
         public void UpdateTile(int worldX, int worldY) //Todo: add error checking
         {
             int chunkX = worldX >= 0 ? worldX / 16 : worldX % 16 == 0 ? worldX / 16 : worldX / 16 - 1;
@@ -262,6 +270,12 @@ namespace FeloxGame.WorldClasses // rename this later?
             LoadedChunks[$"x{chunkX}y{chunkY}"].SetTile(x, y, new ChunkTile(0)); // sets to grass
         }
 
+        /// <summary>
+        /// Gets a tile at a position in the world by polling the appropriate chunk
+        /// </summary>
+        /// <param name="worldX"></param>
+        /// <param name="worldY"></param>
+        /// <returns></returns>
         public ChunkTile GetTile(int worldX, int worldY)
         {
             int chunkX = worldX >= 0 ? worldX / 16 : worldX % 16 == 0 ? worldX / 16 : worldX / 16 - 1;
@@ -273,7 +287,10 @@ namespace FeloxGame.WorldClasses // rename this later?
             return LoadedChunks[$"x{chunkX}y{chunkY}"].GetTile(x, y);
         }
 
-
+        /// <summary>
+        /// Adds an entity to the world's entity list
+        /// </summary>
+        /// <param name="entity"></param>
         public void AddEntityToWorld(Entity entity)
         {
             LoadedEntityList.Add(entity);

@@ -27,9 +27,10 @@ namespace FeloxGame
         // Camera
         private Camera _camera;
 
-        // world data
+        // world data & config
         private World _world;
         private readonly string tileListFolderPath = @"../../../Resources/Tiles";
+        private Config _config;
 
         // player data
         private Player _player;
@@ -83,6 +84,7 @@ namespace FeloxGame
 
             // World (initialised first as player will reference it)
             _world = new World();
+            _config = new Config(false);
             
             // Player (with reference to _world)
             _player = new Player(new Vector2(0, 0), new Vector2(1, 2), "Player Atlas", _world);
