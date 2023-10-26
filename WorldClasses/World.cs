@@ -16,6 +16,7 @@ namespace FeloxGame.WorldClasses // rename this later?
         public List<Entity> LoadedEntityList { get; set; }
         //private string _worldFolderPath = @"../../../Resources/World/WorldFiles";
         private string _worldFolderPath = @"../../../Saves/SampleWorldStructure/ChunkData";
+        private Config _config = new Config(true); // Todo: make config load from Game1
         public int Seed { get; private set; }
 
         // Rendering
@@ -88,7 +89,8 @@ namespace FeloxGame.WorldClasses // rename this later?
             {
                 if (Math.Abs(chunk.ChunkPosX - chunkX) > player.RenderDistance || Math.Abs(chunk.ChunkPosY - chunkY) > player.RenderDistance)
                 {
-                    LoadedChunks.Remove($"x{chunk.ChunkPosX}y{chunk.ChunkPosY}");
+                    UnloadChunk(_worldFolderPath, chunk.ChunkPosX, chunk.ChunkPosY);
+                    //LoadedChunks.Remove($"x{chunk.ChunkPosX}y{chunk.ChunkPosY}");
                 }
             }
         }
@@ -160,11 +162,6 @@ namespace FeloxGame.WorldClasses // rename this later?
             }
             else
             {
-                /*Chunk newChunk = LoadChunkNew(filePathTest);
-                newChunk.ChunkID = $"x{chunkPosX}y{chunkPosY}";
-                newChunk.ChunkPosX = chunkPosX;
-                newChunk.ChunkPosY = chunkPosY;
-                return newChunk;*/
                 return GenerateChunk(chunkPosX, chunkPosY);
             }
         }
@@ -252,6 +249,37 @@ namespace FeloxGame.WorldClasses // rename this later?
             Loading.SaveObject(chunk, $"{folder}/x{chunkPosX}y{chunkPosY}.json");
         }
 
+        public void UnloadChunk(string folder, int chunkPosX, int chunkPosY)
+        {
+            if (_config.AllowSaving)
+            {
+                UnloadChunkEntities(chunkPosX, chunkPosY);
+                SaveChunk(folder, chunkPosX, chunkPosY);
+            }
+            LoadedChunks.Remove($"x{chunkPosX}y{chunkPosY}");
+        }
+
+        public void UnloadChunkEntities(int chunkPosX, int chunkPosY)
+        {
+            List<Entity> entitiesToRemove = new List<Entity>();
+
+            foreach (Entity entity in LoadedEntityList)
+            {
+                if (GetChunkFromWorldCoordinate((int)Math.Floor(entity.Position.Y)) == chunkPosY
+                    &&
+                    GetChunkFromWorldCoordinate((int)Math.Floor(entity.Position.X)) == chunkPosX)
+                {
+                    entitiesToRemove.Add(entity);
+                }
+            }
+
+            foreach (Entity entity in entitiesToRemove)
+            {
+                LoadedChunks[$"x{chunkPosX}y{chunkPosY}"].ChunkEntities.Add(entity);
+                LoadedEntityList.Remove(entity);
+            }
+        }
+
         // Todo: Make this update adjacent tiles
         /// <summary>
         /// Updates a tile at a position in the world.
@@ -260,14 +288,19 @@ namespace FeloxGame.WorldClasses // rename this later?
         /// <param name="worldY"></param>
         public void UpdateTile(int worldX, int worldY) //Todo: add error checking
         {
-            int chunkX = worldX >= 0 ? worldX / 16 : worldX % 16 == 0 ? worldX / 16 : worldX / 16 - 1;
-            int chunkY = worldY >= 0 ? worldY / 16 : worldY % 16 == 0 ? worldY / 16 : worldY / 16 - 1;
+            int chunkX = GetChunkFromWorldCoordinate(worldX);
+            int chunkY = GetChunkFromWorldCoordinate(worldY);
 
             int x = worldX >= 0 ? worldX % 16 : worldX % 16 == 0 ? 0 : 16 + worldX % 16;
             int y = worldY >= 0 ? worldY % 16 : worldY % 16 == 0 ? 0 : 16 + worldY % 16;
             
             // Todo: prevent this from being hard-coded
             LoadedChunks[$"x{chunkX}y{chunkY}"].SetTile(x, y, new ChunkTile(0)); // sets to grass
+        }
+
+        public int GetChunkFromWorldCoordinate(int worldCoordinate)
+        {
+            return worldCoordinate >= 0 ? worldCoordinate / 16 : worldCoordinate % 16 == 0 ? worldCoordinate / 16 : worldCoordinate / 16 - 1;
         }
 
         /// <summary>

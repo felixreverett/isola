@@ -16,6 +16,7 @@ namespace FeloxGame
             ChunkPosY = chunkPosY;
             ChunkID = $"x{chunkPosX}y{chunkPosY}";
             ChunkTiles = new ChunkTile[16 * 16];
+            //ChunkEntities = new();
         }
 
         public ChunkTile GetTile(int x, int y)
