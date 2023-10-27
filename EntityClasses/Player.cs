@@ -3,7 +3,7 @@ using RectangleF = System.Drawing.RectangleF;
 using OpenTK.Windowing.Common;
 using FeloxGame.EntityClasses;
 using FeloxGame.WorldClasses;
-using FeloxGame.Core;
+using FeloxGame.UtilityClasses;
 
 namespace FeloxGame
 {

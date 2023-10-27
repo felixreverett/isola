@@ -1,6 +1,7 @@
-﻿using FeloxGame.Core.Management;
-using FeloxGame.Core;
+﻿using FeloxGame.UtilityClasses;
+using FeloxGame.Rendering;
 using FeloxGame.InventoryClasses;
+using FeloxGame.UtilityClasses;
 using OpenTK.Mathematics;
 
 namespace FeloxGame.EntityClasses
@@ -31,7 +32,7 @@ namespace FeloxGame.EntityClasses
                 index = matchingItem.TextureIndex;
             }
 
-            TexCoords texCoords = TextureManager.Instance.GetIndexedAtlasCoords(index, 16, 1024, 8);
+            TexCoords texCoords = Utilities.GetIndexedAtlasCoords(index, 16, 1024, 8);
 
             SetTextureCoords(texCoords);
         }

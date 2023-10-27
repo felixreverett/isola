@@ -1,4 +1,4 @@
-﻿using FeloxGame.Core.Rendering;
+﻿using FeloxGame.Rendering;
 using FeloxGame.InventoryClasses;
 
 namespace FeloxGame.GUI

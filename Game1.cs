@@ -1,15 +1,17 @@
 ﻿using FeloxGame.Core.Rendering;
-using FeloxGame.Core;
+using FeloxGame.Rendering;
+using FeloxGame.UtilityClasses;
+using FeloxGame.GameClasses;
+using FeloxGame.UtilityClasses;
+using FeloxGame.WorldClasses;
+using FeloxGame.GUI;
+using FeloxGame.InventoryClasses;
+using FeloxGame.EntityClasses;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Mathematics;
-using FeloxGame.WorldClasses;
-using FeloxGame.Core.Management;
-using FeloxGame.GUI;
-using FeloxGame.InventoryClasses;
-using FeloxGame.EntityClasses;
 
 namespace FeloxGame
 {
@@ -25,12 +27,12 @@ namespace FeloxGame
         private Shader _UIShader;
         
         // Camera
-        private Camera _camera;
+        private GameCamera _camera;
 
         // world data & config
         private World _world;
         private readonly string tileListFolderPath = @"../../../Resources/Tiles";
-        private Config _config;
+        private GameConfig _config;
 
         // player data
         private Player _player;
@@ -84,7 +86,7 @@ namespace FeloxGame
 
             // World (initialised first as player will reference it)
             _world = new World();
-            _config = new Config(false);
+            _config = new GameConfig(false);
             
             // Player (with reference to _world)
             _player = new Player(new Vector2(0, 0), new Vector2(1, 2), "Player Atlas", _world);
@@ -103,7 +105,7 @@ namespace FeloxGame
             _shader.Use(); //do I need this?
 
             // Camera
-            _camera = new Camera(Vector3.UnitZ * 10, Size.X / (float)Size.Y);
+            _camera = new GameCamera(Vector3.UnitZ * 10, Size.X / (float)Size.Y);
 
             //GameCursor
             _cursor = new GameCursor();

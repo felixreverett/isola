@@ -1,6 +1,7 @@
 ﻿using FeloxGame.Core;
-using FeloxGame.Core.Management;
-using FeloxGame.Core.Rendering;
+using FeloxGame.Rendering;
+using FeloxGame.GameClasses;
+using FeloxGame.UtilityClasses;
 using OpenTK.Graphics.OpenGL4;
 using SharpNoise;
 
@@ -16,7 +17,7 @@ namespace FeloxGame.WorldClasses // rename this later?
         public List<Entity> LoadedEntityList { get; set; }
         //private string _worldFolderPath = @"../../../Resources/World/WorldFiles";
         private string _worldFolderPath = @"../../../Saves/SampleWorldStructure/ChunkData";
-        private Config _config = new Config(true); // Todo: make config load from Game1
+        private GameConfig _config = new GameConfig(true); // Todo: make config load from Game1
         public int Seed { get; private set; }
 
         // Rendering
@@ -275,7 +276,7 @@ namespace FeloxGame.WorldClasses // rename this later?
 
             foreach (Entity entity in entitiesToRemove)
             {
-                LoadedChunks[$"x{chunkPosX}y{chunkPosY}"].ChunkEntities.Add(entity);
+                //LoadedChunks[$"x{chunkPosX}y{chunkPosY}"].ChunkEntities.Add(entity);
                 LoadedEntityList.Remove(entity);
             }
         }

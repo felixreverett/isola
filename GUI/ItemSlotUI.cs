@@ -1,5 +1,4 @@
-﻿using FeloxGame.Core.Management;
-using FeloxGame.Core.Rendering;
+﻿using FeloxGame.Rendering;
 
 namespace FeloxGame.GUI
 {

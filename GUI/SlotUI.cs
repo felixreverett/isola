@@ -1,6 +1,5 @@
-﻿using FeloxGame.Core;
-using FeloxGame.Core.Management;
-using FeloxGame.Core.Rendering;
+﻿using FeloxGame.UtilityClasses;
+using FeloxGame.Rendering;
 using FeloxGame.InventoryClasses;
 using OpenTK.Graphics.OpenGL4;
 

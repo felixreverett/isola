@@ -1,6 +1,5 @@
-﻿using FeloxGame.Core;
-using FeloxGame.Core.Management;
-using FeloxGame.Core.Rendering;
+﻿using FeloxGame.Rendering;
+using FeloxGame.UtilityClasses;
 
 namespace FeloxGame
 {

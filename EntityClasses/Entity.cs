@@ -1,8 +1,8 @@
-﻿using FeloxGame.Core.Rendering;
+﻿using FeloxGame.Rendering;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Graphics.OpenGL4;
-using FeloxGame.Core;
+using FeloxGame.UtilityClasses;
 
 namespace FeloxGame
 {
