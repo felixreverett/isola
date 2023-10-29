@@ -3,7 +3,7 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace FeloxGame.Rendering
 {
-    public class VertexArray : IBuffer
+    public class VertexArray : IBuffer, IDisposable
     {
         public int BufferId { get; }
 
@@ -11,8 +11,7 @@ namespace FeloxGame.Rendering
         {
             BufferId = GL.GenVertexArray(); // Gen vertex array
         }
-
-        ~VertexArray()
+        public void Dispose()
         {
             GL.DeleteVertexArray(BufferId);
         }
@@ -41,5 +40,6 @@ namespace FeloxGame.Rendering
         {
             GL.BindVertexArray(0);
         }
+
     }
 }
