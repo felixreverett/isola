@@ -1,39 +1,21 @@
 ﻿using OpenTK.Mathematics;
-using RectangleF = System.Drawing.RectangleF;
 using OpenTK.Windowing.Common;
 using FeloxGame.EntityClasses;
 using FeloxGame.WorldClasses;
 using FeloxGame.UtilityClasses;
+using System.Text.Json.Serialization;
 
 namespace FeloxGame
 {
     public class Player : Entity // ICollidable, 
     {
-        public RectangleF ColRec
-        {
-            get
-            {
-                return new System.Drawing.RectangleF(Position.X - Size.X / 2f, Position.Y - Size.Y / 2f, Size.X, Size.Y);
-            }
-        } // collision rectangle
-        public RectangleF DrawRec
-        {
-            get
-            {
-                RectangleF colRec = ColRec;
-                colRec.X = colRec.X - 5;
-                colRec.Width = colRec.Width + 10;
-                return colRec;
-            }
-        }// draw rectangle
-
         // Properties
-        public Inventory Inventory { get; set; }
-        public float Reach { get; set; }
-        public int RenderDistance { get; set; } = 2;
-        public eFacing Facing { get; set; } = eFacing.South;
-        public World CurrentWorld { get; protected set; }
-        protected float Speed { get; set; } = 5.5f; // Todo: move to constructor
+        [JsonInclude] public Inventory Inventory { get; set; }
+        [JsonInclude] public float Reach { get; set; }
+        [JsonInclude] public int RenderDistance { get; set; } = 2; // todo: move to game config
+        [JsonInclude] public eFacing Facing { get; set; } = eFacing.South;
+        [JsonIgnore] public World CurrentWorld { get; protected set; } // todo: resolve how to set this on laod
+        [JsonInclude] protected float Speed { get; set; } = 5.5f; // Todo: move to constructor
 
         public Player(Vector2 startPos, Vector2 size, string textureAtlasName, World currentWorld)
             : base (startPos, size, textureAtlasName)
@@ -82,6 +64,7 @@ namespace FeloxGame
                     Position = newPosition;
                 }
             }
+            SetPosition(Position);
         }
 
         public void Update(FrameEventArgs args)

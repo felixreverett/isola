@@ -11,6 +11,7 @@ namespace FeloxGame.Rendering
         {
             BufferId = GL.GenVertexArray(); // Gen vertex array
         }
+
         public void Dispose()
         {
             GL.DeleteVertexArray(BufferId);

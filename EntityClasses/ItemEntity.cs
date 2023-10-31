@@ -1,24 +1,20 @@
 ﻿using FeloxGame.UtilityClasses;
 using FeloxGame.Rendering;
 using FeloxGame.InventoryClasses;
-using FeloxGame.UtilityClasses;
 using OpenTK.Mathematics;
+using System.Text.Json.Serialization;
 
 namespace FeloxGame.EntityClasses
 {
     public class ItemEntity : Entity
     {
+        [JsonInclude]
         public ItemStack ItemStack { get; set; }
 
         public ItemEntity(Vector2 position, ItemStack itemStack, string textureAtlasName = "Item Atlas") 
             : base(position, textureAtlasName)
         {
             UpdateItem(itemStack);
-        }
-
-        public void OnLoad()
-        {
-
         }
 
         private void UpdateItem(ItemStack itemStack)
