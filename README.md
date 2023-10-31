@@ -24,6 +24,7 @@ Yes! Here is an ever expanding list of implemented concepts and general coding p
 - **Namespaces**: Organising code into a structured system; Knowing when to group files, but also when not to
 - **[NonSerialized]**: Use of the NonSerialized tag for parts of an object I don't want saved to JSON 
 - **The `out` keyword**: Finding justification for this hitherto less used keyword in my Inventory.cs class
+- **Polymorphic Serialisation**: Using JSON attributes to serialise subclasses of a base class separately.
 - **Procedural world generation**: Use of noise functions to generate an infinite world
 - **Recursion**: I use recursive methods to update and draw my UI system
 - **Reference types**: Using references to objects to enable other options to access their methods without owning that object (e.g., the player is referenced by the World's entity draw call, but is external to that entity list).

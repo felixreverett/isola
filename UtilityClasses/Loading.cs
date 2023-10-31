@@ -10,6 +10,7 @@ namespace FeloxGame.UtilityClasses
         static Loading()
         {
             JsonOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            JsonOptions.Converters.Add(new Vector2JsonConverter());
         }
 
         // Yes, this is from my text-based game!

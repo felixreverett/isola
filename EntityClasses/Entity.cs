@@ -4,6 +4,7 @@ using OpenTK.Windowing.Common;
 using OpenTK.Graphics.OpenGL4;
 using FeloxGame.UtilityClasses;
 using System.Text.Json.Serialization;
+using FeloxGame.EntityClasses;
 
 namespace FeloxGame
 {
@@ -11,6 +12,8 @@ namespace FeloxGame
     /// All entities must have: pos, size,
     /// They should have: texture
     /// </summary>
+    [JsonDerivedType(typeof(ItemEntity))]
+    [JsonDerivedType(typeof(Player))]
     public class Entity
     {
         [JsonInclude] public Vector2 Position { get; set; }
@@ -36,6 +39,14 @@ namespace FeloxGame
         [JsonIgnore] private IndexBuffer _indexBuffer;
 
         // <!----- Constructors ----->
+        [JsonConstructor] public Entity(Vector2 position, Vector2 size)
+        {
+            this.Size = size;
+            this.Position = position;
+            string textureAtlasName = "Item Atlas";
+            this.EntityTextureAtlas = AssetLibrary.TextureAtlasList[textureAtlasName];
+        }
+
         public Entity(Vector2 position, Vector2 size, string textureAtlasName) : this(position, textureAtlasName)
         {
             this.Size = size;

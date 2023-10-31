@@ -91,7 +91,6 @@ namespace FeloxGame.WorldClasses // rename this later?
                 if (Math.Abs(chunk.ChunkPosX - chunkX) > player.RenderDistance || Math.Abs(chunk.ChunkPosY - chunkY) > player.RenderDistance)
                 {
                     UnloadChunk(_worldFolderPath, chunk.ChunkPosX, chunk.ChunkPosY);
-                    //LoadedChunks.Remove($"x{chunk.ChunkPosX}y{chunk.ChunkPosY}");
                 }
             }
         }
@@ -276,7 +275,7 @@ namespace FeloxGame.WorldClasses // rename this later?
 
             foreach (Entity entity in entitiesToRemove)
             {
-                //LoadedChunks[$"x{chunkPosX}y{chunkPosY}"].ChunkEntities.Add(entity);
+                LoadedChunks[$"x{chunkPosX}y{chunkPosY}"].ChunkEntities.Add(entity);
                 LoadedEntityList.Remove(entity);
             }
         }
