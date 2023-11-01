@@ -39,10 +39,8 @@ namespace FeloxGame
         [JsonIgnore] private IndexBuffer _indexBuffer;
 
         // <!----- Constructors ----->
-        [JsonConstructor] public Entity(Vector2 position, Vector2 size)
+        public Entity()
         {
-            this.Size = size;
-            this.Position = position;
             string textureAtlasName = "Item Atlas";
             this.EntityTextureAtlas = AssetLibrary.TextureAtlasList[textureAtlasName];
         }
@@ -95,6 +93,17 @@ namespace FeloxGame
 
             GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * vertices.Length, vertices, BufferUsageHint.DynamicDraw);
             GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0); // Used for drawing Elements
+        }
+
+        public EntitySaveData SaveData()
+        {
+            return new EntitySaveData(Position, Size);
+        }
+
+        public void LoadData(EntitySaveData entitySaveData)
+        {
+            this.Position = entitySaveData.Position;
+            this.Size = entitySaveData.Size;
         }
     }
 }

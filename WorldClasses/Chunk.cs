@@ -1,4 +1,5 @@
-﻿using FeloxGame.WorldClasses;
+﻿using FeloxGame.EntityClasses;
+using FeloxGame.WorldClasses;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -9,7 +10,7 @@ namespace FeloxGame
         public string ChunkID { get; set; } // todo: make private again
         public int ChunkPosX { get; set; } // todo: make private again
         public int ChunkPosY { get; set; } // todo: make private again
-        public List<Entity> ChunkEntities { get; set; }
+        public List<EntitySaveData> ChunkEntitySaveData { get; set; }
         public ChunkTile[] ChunkTiles { get; set; }
 
         public Chunk(int chunkPosX, int chunkPosY)
@@ -18,16 +19,16 @@ namespace FeloxGame
             ChunkPosY = chunkPosY;
             ChunkID = $"x{chunkPosX}y{chunkPosY}";
             ChunkTiles = new ChunkTile[16 * 16];
-            ChunkEntities = new();
+            ChunkEntitySaveData = new();
         }
 
-        [JsonConstructor] public Chunk(int chunkPosX, int chunkPosY, ChunkTile[] chunkTiles, List<Entity> chunkEntities)
+        [JsonConstructor] public Chunk(int chunkPosX, int chunkPosY, ChunkTile[] chunkTiles, List<EntitySaveData> chunkEntitySaveData)
         {
             ChunkPosX = chunkPosX;
             ChunkPosY = chunkPosY;
             ChunkID = $"x{chunkPosX}y{chunkPosY}";
             ChunkTiles = chunkTiles;
-            ChunkEntities = chunkEntities;
+            ChunkEntitySaveData = chunkEntitySaveData;
         }
 
         public ChunkTile GetTile(int x, int y)

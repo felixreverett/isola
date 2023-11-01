@@ -4,6 +4,7 @@ using FeloxGame.GameClasses;
 using FeloxGame.UtilityClasses;
 using OpenTK.Graphics.OpenGL4;
 using SharpNoise;
+using FeloxGame.EntityClasses;
 
 namespace FeloxGame.WorldClasses // rename this later?
 {
@@ -90,7 +91,7 @@ namespace FeloxGame.WorldClasses // rename this later?
             {
                 if (Math.Abs(chunk.ChunkPosX - chunkX) > player.RenderDistance || Math.Abs(chunk.ChunkPosY - chunkY) > player.RenderDistance)
                 {
-                    UnloadChunk(_worldFolderPath, chunk.ChunkPosX, chunk.ChunkPosY);
+                    RemoveChunk(_worldFolderPath, chunk.ChunkPosX, chunk.ChunkPosY);
                 }
             }
         }
@@ -246,20 +247,32 @@ namespace FeloxGame.WorldClasses // rename this later?
         {
             // Todo: add error checking
             Chunk chunk = LoadedChunks[$"x{chunkPosX}y{chunkPosY}"];
+            chunk.ChunkEntitySaveData = UnloadChunkEntities(chunkPosX, chunkPosY);
             Loading.SaveObject(chunk, $"{folder}/x{chunkPosX}y{chunkPosY}.json");
         }
 
-        public void UnloadChunk(string folder, int chunkPosX, int chunkPosY)
+        /// <summary>
+        /// Removes the specified chunk from the loaded chunk list and saves if enabled
+        /// </summary>
+        /// <param name="folder"></param>
+        /// <param name="chunkPosX"></param>
+        /// <param name="chunkPosY"></param>
+        public void RemoveChunk(string folder, int chunkPosX, int chunkPosY)
         {
             if (_config.AllowSaving)
             {
-                UnloadChunkEntities(chunkPosX, chunkPosY);
                 SaveChunk(folder, chunkPosX, chunkPosY);
             }
             LoadedChunks.Remove($"x{chunkPosX}y{chunkPosY}");
         }
 
-        public void UnloadChunkEntities(int chunkPosX, int chunkPosY)
+        /// <summary>
+        /// Removes all entities within the specified chunk and converts them into EntitySaveData
+        /// </summary>
+        /// <param name="chunkPosX"></param>
+        /// <param name="chunkPosY"></param>
+        /// <returns></returns>
+        public List<EntitySaveData> UnloadChunkEntities(int chunkPosX, int chunkPosY)
         {
             List<Entity> entitiesToRemove = new List<Entity>();
 
@@ -273,11 +286,15 @@ namespace FeloxGame.WorldClasses // rename this later?
                 }
             }
 
+            List<EntitySaveData> entitySaveDataList = new List<EntitySaveData>();
+
             foreach (Entity entity in entitiesToRemove)
             {
-                LoadedChunks[$"x{chunkPosX}y{chunkPosY}"].ChunkEntities.Add(entity);
+                entitySaveDataList.Add(entity.SaveData());
                 LoadedEntityList.Remove(entity);
             }
+
+            return entitySaveDataList;
         }
 
         // Todo: Make this update adjacent tiles
