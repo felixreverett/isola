@@ -95,12 +95,12 @@ namespace FeloxGame
             GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0); // Used for drawing Elements
         }
 
-        public EntitySaveData SaveData()
+        public virtual EntitySaveData SaveData()
         {
             return new EntitySaveData(Position, Size);
         }
 
-        public void LoadData(EntitySaveData entitySaveData)
+        public virtual void LoadData(EntitySaveData entitySaveData)
         {
             this.Position = entitySaveData.Position;
             this.Size = entitySaveData.Size;

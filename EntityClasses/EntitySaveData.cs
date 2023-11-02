@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace FeloxGame.EntityClasses
 {
-    public class EntitySaveData
+    public abstract class EntitySaveData
     {
         [JsonInclude] public Vector2 Position { get; set; }
         [JsonInclude] public Vector2 Size { get; set; }
