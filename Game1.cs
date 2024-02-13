@@ -78,7 +78,7 @@ namespace FeloxGame
             // Textures & Assets
             AssetLibrary.TextureAtlasList.Add("Tile Atlas", new IndexedTextureAtlas(1024, 16, 8, "Tiles/Tile Atlas.png", 0, true));
             AssetLibrary.TextureAtlasList.Add("Player Atlas", new TextureAtlas(1024, "Entities/Player.png", 1));
-            AssetLibrary.TextureAtlasList.Add("Inventory Atlas", new PrecisionTextureAtlas(1024, "Inventories/Inventory Atlas.png", 2, 1024, 1024));
+            AssetLibrary.TextureAtlasList.Add("Inventory Atlas", new PrecisionTextureAtlas(1024, "Inventories/1024 UI Atlas x16.png", 2, 1024, 1024));
             AssetLibrary.TextureAtlasList.Add("Item Atlas", new IndexedTextureAtlas(1024, 16, 8, "Items/Item Atlas.png", 3));
             
             AssetLibrary.ItemList = Loading.LoadAllObjects<Item>(itemListFolderPath);
@@ -96,11 +96,11 @@ namespace FeloxGame
 
             // UI systems
             MasterUI = new(Size.X, Size.Y, eAnchor.Middle, 1.0f);
-                MasterUI.Kodomo.Add("Inventory", new InventoryUI(346f, 180f, eAnchor.Middle, 0.5f, true, false, false, 5, 10, 32f, 32f, _player.Inventory));
-                MasterUI.Kodomo["Inventory"].SetTextureCoords(4, 840, 346, 180);
-            MasterUI.Kodomo.Add("Hotbar", new HotbarUI(346f, 40f, eAnchor.Bottom, 0.5f, true, true, false, 1, 10, 32f, 32f, _player.Inventory));
-            MasterUI.Kodomo["Hotbar"].SetTextureCoords(4, 792, 346, 40);
-
+                MasterUI.Kodomo.Add("Inventory", new InventoryUI(196f, 110f, eAnchor.Middle, 0.5f, true, false, false, 5, 10, 16f, 16f, 9f, 6f, 2f, _player.Inventory));
+                MasterUI.Kodomo["Inventory"].SetTextureCoords(0, 0, 196, 110);
+                MasterUI.Kodomo.Add("Hotbar", new HotbarUI(188f, 26f, eAnchor.Bottom, 0.5f, true, true, false, 1, 10, 16f, 16f, 5f, 2f, _player.Inventory));
+                MasterUI.Kodomo["Hotbar"].SetTextureCoords(0, 118, 188, 26);
+            
             // Textures
             _shader.Use(); //do I need this?
 

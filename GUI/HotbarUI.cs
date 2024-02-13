@@ -5,21 +5,36 @@ namespace FeloxGame.GUI
 {
     public class HotbarUI : UI
     {
-        // ItemSlots
+        // fields
         private int _rows;
         private int _cols;
         private float _itemSlotHeight;
         private float _itemSlotWidth;
-
-        // Hard coded for now
-        private float _edgePadding = 4f;
-        private float _itemSlotPadding = 2f;
+        private float _edgePadding;
+        private float _itemSlotPadding;
         Inventory Inventory;
 
+        /// <summary>
+        /// Creates a HotbarUI class to display an associated inventory
+        /// </summary>
+        /// <param name="koWidth">The total width of the UI element</param>
+        /// <param name="koHeight">The total height of the UI element</param>
+        /// <param name="anchor">The eAnchor type</param>
+        /// <param name="scale">The scale of the UI element</param>
+        /// <param name="isDrawable">Whether the UI element will use a texture atlas</param>
+        /// <param name="toggleDraw">Whether the UI element is currently drawn</param>
+        /// <param name="isClickable">Whether the UI element subscribes to Mouse Click events</param>
+        /// <param name="rows">The number of inventory rows</param>
+        /// <param name="cols">the number of inventory columns</param>
+        /// <param name="itemSlotHeight">The height of each item slot</param>
+        /// <param name="itemSlotWidth">The width of each item slot</param>
+        /// <param name="edgePadding">The amount of padding between the edge of the itemslots and the edge of the UI element</param>
+        /// <param name="itemSlotPadding">The amount of padding between item slots</param>
+        /// <param name="inventory">The associated inventory of the UI element</param>
         public HotbarUI
         (
             float koWidth, float koHeight, eAnchor anchor, float scale, bool isDrawable, bool toggleDraw, bool isClickable,
-            int rows, int cols, float itemSlotHeight, float itemSlotWidth, Inventory inventory
+            int rows, int cols, float itemSlotHeight, float itemSlotWidth, float edgePadding, float itemSlotPadding, Inventory inventory
         )
             : base(koWidth, koHeight, anchor, scale, isDrawable, toggleDraw, isClickable)
         {
@@ -27,6 +42,8 @@ namespace FeloxGame.GUI
             this._cols = cols;
             this._itemSlotHeight = itemSlotHeight;
             this._itemSlotWidth = itemSlotWidth;
+            this._edgePadding = edgePadding;
+            this._itemSlotPadding = itemSlotPadding;
             this.Inventory = inventory;
             GenerateKodomo();
         }
