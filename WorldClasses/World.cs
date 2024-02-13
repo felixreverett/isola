@@ -247,7 +247,7 @@ namespace FeloxGame.WorldClasses // rename this later?
         {
             // Todo: add error checking
             Chunk chunk = LoadedChunks[$"x{chunkPosX}y{chunkPosY}"];
-            chunk.ChunkEntitySaveData = UnloadChunkEntities(chunkPosX, chunkPosY);
+            //chunk.ChunkEntitySaveData = UnloadChunkEntities(chunkPosX, chunkPosY);
             Loading.SaveObject(chunk, $"{folder}/x{chunkPosX}y{chunkPosY}.json");
         }
 
@@ -272,7 +272,9 @@ namespace FeloxGame.WorldClasses // rename this later?
         /// <param name="chunkPosX"></param>
         /// <param name="chunkPosY"></param>
         /// <returns></returns>
-        public List<EntitySaveData> UnloadChunkEntities(int chunkPosX, int chunkPosY)
+        
+        
+        /*public List<EntitySaveData> UnloadChunkEntities(int chunkPosX, int chunkPosY)
         {
             List<Entity> entitiesToRemove = new List<Entity>();
 
@@ -295,7 +297,7 @@ namespace FeloxGame.WorldClasses // rename this later?
             }
 
             return entitySaveDataList;
-        }
+        }*/
 
         // Todo: Make this update adjacent tiles
         /// <summary>
