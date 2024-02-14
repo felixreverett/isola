@@ -1,5 +1,6 @@
 ﻿using FeloxGame.Rendering;
 using FeloxGame.InventoryClasses;
+using OpenTK.Windowing.Common;
 
 namespace FeloxGame.GUI
 {
@@ -13,6 +14,8 @@ namespace FeloxGame.GUI
         private float _edgePadding;
         private float _itemSlotPadding;
         Inventory Inventory;
+
+        private int _activeHotbarSlot = 0;
 
         /// <summary>
         /// Creates a HotbarUI class to display an associated inventory
@@ -81,11 +84,21 @@ namespace FeloxGame.GUI
                     slotIndex++;
                 }
             }
+
+            // Add "activeHotbarSlot" kodomo
+            //Kodomo.Add("ActiveHotbarSlot", new ActiveHotbarSlotUI(_itemSlotHeight + 2f, _itemSlotWidth + 2f, eAnchor.None, 1f, true, true, false, 0));
         }
 
         public void SubscribeToInventory(Inventory inventory)
         {
             inventory.InventoryChanged += HandleInventoryChanged;
+        }
+
+        public override void OnMouseWheel(MouseWheelEventArgs e)
+        {
+            Console.WriteLine("Reached the hotbar UI");
+
+            base.OnMouseWheel(e);
         }
 
         private void HandleInventoryChanged(ItemStack[] itemStackList, ItemStack mouseItemStack)

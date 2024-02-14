@@ -38,7 +38,6 @@ namespace FeloxGame.GUI
             }
 
             TexCoords texCoords = ItemAtlas.GetIndexedAtlasCoords(textureIndex);
-            //TextureManager.Instance.GetIndexedAtlasCoords(index, 16, 1024, 8);
 
             SetTextureCoords(texCoords);
         }
@@ -46,7 +45,7 @@ namespace FeloxGame.GUI
         public void SetTextureCoords(TexCoords texCoords)
         {
             // Set texCoords of atlas
-            Vertices[3] = texCoords.MaxX; Vertices[4] = texCoords.MaxY; // (1, 1)
+            Vertices[3]  = texCoords.MaxX; Vertices[4]  = texCoords.MaxY; // (1, 1)
             Vertices[11] = texCoords.MaxX; Vertices[12] = texCoords.MinY; // (1, 0)
             Vertices[19] = texCoords.MinX; Vertices[20] = texCoords.MinY; // (0, 0)
             Vertices[27] = texCoords.MinX; Vertices[28] = texCoords.MaxY; // (0, 1)

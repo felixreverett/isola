@@ -313,6 +313,21 @@ namespace FeloxGame
             }
         }
 
+        protected override void OnMouseWheel(MouseWheelEventArgs e)
+        {
+            base.OnMouseWheel(e);
+            MasterUI.OnMouseWheel(e);
+            
+            if (e.OffsetY > 0)
+            {
+                Console.WriteLine("Mouse scrolled up");
+            }
+            else if (e.OffsetY < 0)
+            {
+                Console.WriteLine("Mouse scrolled down");
+            }
+        }
+
         protected override void OnUnload()
         {
             base.OnUnload();

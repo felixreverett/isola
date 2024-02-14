@@ -2,6 +2,7 @@
 using FeloxGame.Rendering;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
 
 namespace FeloxGame.GUI
 {
@@ -154,6 +155,17 @@ namespace FeloxGame.GUI
             if (this.IsClickable)
             {
                 OnClick();
+            }
+        }
+
+        public virtual void OnMouseWheel(MouseWheelEventArgs e)
+        {
+            if (Kodomo.Count > 0)
+            {
+                foreach (UI ui in Kodomo.Values)
+                {
+                    ui.OnMouseWheel(e);
+                }
             }
         }
 
