@@ -15,8 +15,6 @@ namespace FeloxGame.GUI
         private float _itemSlotPadding;
         Inventory Inventory;
 
-        private int _activeHotbarSlot = 0;
-
         /// <summary>
         /// Creates a HotbarUI class to display an associated inventory
         /// </summary>
@@ -86,7 +84,12 @@ namespace FeloxGame.GUI
             }
 
             // Add "activeHotbarSlot" kodomo
-            //Kodomo.Add("ActiveHotbarSlot", new ActiveHotbarSlotUI(_itemSlotHeight + 2f, _itemSlotWidth + 2f, eAnchor.None, 1f, true, true, false, 0));
+            RPC basePosition = new();
+            basePosition.MinX = _edgePadding - 1f;
+            basePosition.MinY = _edgePadding - 1f;
+            basePosition.MaxX = basePosition.MinX + _itemSlotWidth + 2f;
+            basePosition.MaxY = basePosition.MinY + _itemSlotHeight + 2f;
+            Kodomo.Add("ActiveHotbarSlot", new ActiveHotbarSlotUI(_itemSlotHeight + 2f, _itemSlotWidth + 2f, eAnchor.None, 1f, true, true, false, 0, 152, 18, 18, basePosition, 0, (_cols * _rows - 1), 0));
         }
 
         public void SubscribeToInventory(Inventory inventory)
@@ -96,9 +99,8 @@ namespace FeloxGame.GUI
 
         public override void OnMouseWheel(MouseWheelEventArgs e)
         {
-            Console.WriteLine("Reached the hotbar UI");
-
-            base.OnMouseWheel(e);
+            Kodomo["ActiveHotbarSlot"].OnMouseWheel(e);
+            Kodomo["ActiveHotbarSlot"].SetNDCs(KoWidth, KoHeight, KoNDCs);
         }
 
         private void HandleInventoryChanged(ItemStack[] itemStackList, ItemStack mouseItemStack)
