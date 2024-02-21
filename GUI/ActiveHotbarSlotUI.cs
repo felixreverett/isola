@@ -32,6 +32,7 @@ namespace FeloxGame.GUI
         protected int MinIndex { get; set; }
         protected int MaxIndex { get; set; }
         private RPC BasePosition { get; set; }
+        
 
         public ActiveHotbarSlotUI
         (
@@ -44,8 +45,6 @@ namespace FeloxGame.GUI
             this.BasePosition = basePosition;
             this.MinIndex = minIndex;
             this.MaxIndex = maxIndex;
-            this.KoPosition = new(); // Todo: Why isn't this done in base class UI.cs? Currently has to happen before activeindex is set
-
             this.ActiveIndex = activeIndex;
             base.SetTextureCoords(x, y, textureWidth, textureHeight);
         }

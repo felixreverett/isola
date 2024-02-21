@@ -15,6 +15,8 @@ namespace FeloxGame.GUI
         private float _itemSlotPadding;
         Inventory Inventory;
 
+        public bool ToggleScrolling { get; set; } = true;
+
         /// <summary>
         /// Creates a HotbarUI class to display an associated inventory
         /// </summary>
@@ -51,10 +53,6 @@ namespace FeloxGame.GUI
 
         public void GenerateKodomo()
         {
-            // Set the width and height of a UI Slot
-            float availableWidth = this.KoWidth - 2 * _edgePadding;
-            float availableHeight = this.KoHeight - 2 * _edgePadding;
-            
             int slotIndex = 0;
 
             for (int row = 0; row < _rows; row++)
@@ -99,8 +97,12 @@ namespace FeloxGame.GUI
 
         public override void OnMouseWheel(MouseWheelEventArgs e)
         {
+            // Only run if ActiveHotbarSlotUI is accepting scrollwheel updates?
+            if (ToggleScrolling)
+            {
             Kodomo["ActiveHotbarSlot"].OnMouseWheel(e);
             Kodomo["ActiveHotbarSlot"].SetNDCs(KoWidth, KoHeight, KoNDCs);
+            }
         }
 
         private void HandleInventoryChanged(ItemStack[] itemStackList, ItemStack mouseItemStack)

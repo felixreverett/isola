@@ -17,7 +17,6 @@ namespace FeloxGame.GUI
         protected RPC KoPosition { get; set; }
         protected NDC KoNDCs { get; set; }
 
-
         // Kodomo
         public Dictionary<string, UI> Kodomo { get; set; }
 
@@ -54,6 +53,7 @@ namespace FeloxGame.GUI
             this.AspectRatio = koWidth / koHeight;
             this.Anchor = anchor;
             this.Scale = Math.Clamp(scale, 0.0f, 1.0f);
+            this.KoPosition = new();
             this.KoNDCs = new();
             this.Kodomo = new Dictionary<string, UI>();
             this.IsDrawable = isDrawable;

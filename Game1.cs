@@ -138,14 +138,16 @@ namespace FeloxGame
 
             if (input.IsKeyReleased(Keys.E))
             {
-                toggleInventory = !toggleInventory;
+                toggleInventory = !toggleInventory; // todo: find where this should belong
                 if (toggleInventory)
                 {
                     MasterUI.Kodomo["Inventory"].ToggleDraw = true;
+                    ((HotbarUI)MasterUI.Kodomo["Hotbar"]).ToggleScrolling = false;
                 }
                 else
                 {
                     MasterUI.Kodomo["Inventory"].ToggleDraw = false;
+                    ((HotbarUI)MasterUI.Kodomo["Hotbar"]).ToggleScrolling = true;
                 }
             }
 
@@ -169,7 +171,8 @@ namespace FeloxGame
                 movement.Y -= 1.0f;
             }
 
-            if (input.IsKeyPressed(Keys.Q))
+            // Test - changing anchor
+            if (input.IsKeyPressed(Keys.R))
             {
                 // temporary code to ensure Anchors are working. Will leave for now as debug
                 currentAnchor++;
