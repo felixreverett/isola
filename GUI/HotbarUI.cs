@@ -1,6 +1,7 @@
 ﻿using FeloxGame.Rendering;
 using FeloxGame.InventoryClasses;
 using OpenTK.Windowing.Common;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace FeloxGame.GUI
 {
@@ -15,7 +16,7 @@ namespace FeloxGame.GUI
         private float _itemSlotPadding;
         Inventory Inventory;
 
-        public bool ToggleScrolling { get; set; } = true;
+        public bool ToggleScrolling { get; set; } = true; //todo: improve this name
 
         /// <summary>
         /// Creates a HotbarUI class to display an associated inventory
@@ -102,6 +103,20 @@ namespace FeloxGame.GUI
             {
             Kodomo["ActiveHotbarSlot"].OnMouseWheel(e);
             Kodomo["ActiveHotbarSlot"].SetNDCs(KoWidth, KoHeight, KoNDCs);
+            }
+        }
+
+        public override void OnKeyDown(KeyboardKeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            if (ToggleScrolling)
+            {
+                if (e.Key == Keys.Q)
+                {
+                    int index = ((ActiveHotbarSlotUI)Kodomo["ActiveHotbarSlot"]).ActiveIndex;
+                    Inventory.DropItemAtIndex(index);
+                }
             }
         }
 

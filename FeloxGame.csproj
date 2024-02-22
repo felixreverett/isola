@@ -49,6 +49,7 @@
     <Folder Include="Resources\Items\" />
     <Folder Include="Resources\Tiles\" />
     <Folder Include="Resources\World\WorldFiles\" />
+    <Folder Include="Saves\SampleWorldStructure\ChunkData\" />
   </ItemGroup>
 
 </Project>

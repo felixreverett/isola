@@ -2,6 +2,8 @@
 using FeloxGame.Rendering;
 using FeloxGame.InventoryClasses;
 using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace FeloxGame.GUI
 {
@@ -34,6 +36,11 @@ namespace FeloxGame.GUI
                     ui.OnMouseMove(mouseNDCs);
                 }
             }
+        }
+
+        public override void OnKeyDown(KeyboardKeyEventArgs e)
+        {
+            
         }
 
         // This one updates the NDCs when the parent UI element calls it

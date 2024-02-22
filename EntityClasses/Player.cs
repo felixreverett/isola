@@ -4,6 +4,7 @@ using FeloxGame.EntityClasses;
 using FeloxGame.WorldClasses;
 using FeloxGame.UtilityClasses;
 using System.Text.Json.Serialization;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace FeloxGame
 {
@@ -67,15 +68,42 @@ namespace FeloxGame
             SetPosition(Position);
         }
 
-        public void Update(FrameEventArgs args)
+        public void Update(FrameEventArgs args, KeyboardState keyboardInput)
         {
-            HandleInput(args);
+            HandleInput(args, keyboardInput);
 
             ResolveCollision();
         }
 
-        public void HandleInput(FrameEventArgs args) 
+        public void HandleInput(FrameEventArgs args, KeyboardState keyboardInput) //todo: rename to OnKeyDown and rework
         {
+            // Keyboard movement
+
+            Vector2 movement = Vector2.Zero;
+
+            if (keyboardInput.IsKeyDown(Keys.A) | keyboardInput.IsKeyDown(Keys.Left))
+            {
+                movement.X -= 1.0f;
+            }
+
+            if (keyboardInput.IsKeyDown(Keys.D) | keyboardInput.IsKeyDown(Keys.Right))
+            {
+                movement.X += 1.0f;
+            }
+
+            if (keyboardInput.IsKeyDown(Keys.W) | keyboardInput.IsKeyDown(Keys.Up))
+            {
+                movement.Y += 1.0f;
+            }
+
+            if (keyboardInput.IsKeyDown(Keys.S) | keyboardInput.IsKeyDown(Keys.Down))
+            {
+                movement.Y -= 1.0f;
+            }
+
+            if (movement.LengthSquared > 1.0f) { movement.Normalize(); }
+
+            UpdatePosition(movement, (float)args.Time);
         }
 
         public void ResolveCollision() { }

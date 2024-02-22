@@ -169,5 +169,30 @@ namespace FeloxGame
                 InventoryChanged?.Invoke(_itemStackList, _mouseSlotItemStack);
             }
         }
+
+        public void DropItemAtIndex(int index)
+        {
+            if (_itemStackList[index] != null)
+            {
+            ItemStack itemStack = _itemStackList[index];
+            _itemStackList[index] = null;
+            OwnerPlayer.CurrentWorld.AddEntityToWorld(new ItemEntity(OwnerPlayer.Position, itemStack));
+
+            InventoryChanged?.Invoke(_itemStackList, _mouseSlotItemStack);
+            }
+        }
+
+        public void DropItemAtMouseSlot()
+        {
+            if (_mouseSlotItemStack != null)
+            {
+                ItemStack itemStack = _mouseSlotItemStack;
+                _mouseSlotItemStack = null;
+
+                OwnerPlayer.CurrentWorld.AddEntityToWorld(new ItemEntity(OwnerPlayer.Position, itemStack));
+
+                InventoryChanged?.Invoke(_itemStackList, _mouseSlotItemStack);
+            }
+        }
     }
 }

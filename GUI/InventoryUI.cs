@@ -1,6 +1,8 @@
 ﻿using FeloxGame.Rendering;
 using FeloxGame.InventoryClasses;
 using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace FeloxGame.GUI
 {
@@ -147,6 +149,23 @@ namespace FeloxGame.GUI
             if (this.IsClickable)
             {
                 OnClick();
+            }
+        }
+
+        public override void OnKeyDown(KeyboardKeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            if (e.Key == Keys.Q)
+            {
+                if (Inventory._mouseSlotItemStack != null)
+                {
+                    Inventory.DropItemAtMouseSlot();
+                }
+                else
+                {
+                    // drop if an item is being hovered over?
+                }
             }
         }
 

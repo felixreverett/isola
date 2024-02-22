@@ -9,7 +9,7 @@ namespace FeloxGame.GUI
         private int activeIndex;
         
         // properties
-        protected int ActiveIndex
+        public int ActiveIndex
         {
             get
             {

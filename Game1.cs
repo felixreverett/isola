@@ -2,7 +2,6 @@
 using FeloxGame.Rendering;
 using FeloxGame.UtilityClasses;
 using FeloxGame.GameClasses;
-using FeloxGame.UtilityClasses;
 using FeloxGame.WorldClasses;
 using FeloxGame.GUI;
 using FeloxGame.InventoryClasses;
@@ -32,7 +31,7 @@ namespace FeloxGame
         // world data & config
         private World _world;
         private readonly string tileListFolderPath = @"../../../Resources/Tiles";
-        private GameConfig _config;
+        private GameConfig _config; // todo: implement a game config or integrate into player class
 
         // player data
         private Player _player;
@@ -68,7 +67,7 @@ namespace FeloxGame
                 return;
             }
 
-            _UIShader = new(Shader.ParseShader(@"../../../Resources/Shaders/UIShader.glsl"));
+            _UIShader = new(Shader.ParseShader(@"../../../Resources/Shaders/UIShader.glsl")); // todo: move to UI Load?
             if (!_UIShader.CompileShader())
             {
                 Console.WriteLine("Failed to compile shader.");
@@ -97,12 +96,12 @@ namespace FeloxGame
             // UI systems
             MasterUI = new(Size.X, Size.Y, eAnchor.Middle, 1.0f);
                 MasterUI.Kodomo.Add("Inventory", new InventoryUI(196f, 110f, eAnchor.Middle, 0.5f, true, false, false, 5, 10, 16f, 16f, 9f, 6f, 2f, _player.Inventory));
-                MasterUI.Kodomo["Inventory"].SetTextureCoords(0, 0, 196, 110);
+                MasterUI.Kodomo["Inventory"].SetTextureCoords(0, 0, 196, 110); //todo: set on instantiation
                 MasterUI.Kodomo.Add("Hotbar", new HotbarUI(188f, 26f, eAnchor.Bottom, 0.5f, true, true, false, 1, 10, 16f, 16f, 5f, 2f, _player.Inventory));
-                MasterUI.Kodomo["Hotbar"].SetTextureCoords(0, 118, 188, 26);
-            
+                MasterUI.Kodomo["Hotbar"].SetTextureCoords(0, 118, 188, 26); //todo: set on instantiation
+
             // Textures
-            _shader.Use(); //do I need this?
+            _shader.Use(); //todo: do I need this?
 
             // Camera
             _camera = new GameCamera(Vector3.UnitZ * 10, Size.X / (float)Size.Y);
@@ -114,7 +113,7 @@ namespace FeloxGame
             ((InventoryUI)MasterUI.Kodomo["Inventory"]).SubscribeToInventory(_player.Inventory);
             ((HotbarUI)MasterUI.Kodomo["Hotbar"]).SubscribeToInventory(_player.Inventory);
         }
-        
+
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
             if (!IsFocused) // check to see if the window is focused
@@ -122,21 +121,20 @@ namespace FeloxGame
                 return;
             }
 
-            _player.Update(args);
+            KeyboardState keyboardInput = KeyboardState;
 
-            _world.Update(_player);
+            _world.Update(_player); // World has to be updated at least once before player is first updated
 
-            // Keyboard movement
-            KeyboardState input = KeyboardState;
+            _player.Update(args, keyboardInput);
 
-            Vector2 movement = Vector2.Zero;
+            // keyboard
 
-            if (input.IsKeyDown(Keys.Escape))
+            if (keyboardInput.IsKeyDown(Keys.Escape))
             {
                 Close();
             }
 
-            if (input.IsKeyReleased(Keys.E))
+            if (keyboardInput.IsKeyReleased(Keys.E))
             {
                 toggleInventory = !toggleInventory; // todo: find where this should belong
                 if (toggleInventory)
@@ -151,28 +149,8 @@ namespace FeloxGame
                 }
             }
 
-            if (input.IsKeyDown(Keys.A) | input.IsKeyDown(Keys.Left))
-            {
-                movement.X -= 1.0f;
-            }
-
-            if (input.IsKeyDown(Keys.D) | input.IsKeyDown(Keys.Right))
-            {
-                movement.X += 1.0f;
-            }
-
-            if (input.IsKeyDown(Keys.W) | input.IsKeyDown(Keys.Up))
-            {
-                movement.Y += 1.0f;
-            }
-
-            if (input.IsKeyDown(Keys.S) | input.IsKeyDown(Keys.Down))
-            {
-                movement.Y -= 1.0f;
-            }
-
             // Test - changing anchor
-            if (input.IsKeyPressed(Keys.R))
+            if (keyboardInput.IsKeyPressed(Keys.R))
             {
                 // temporary code to ensure Anchors are working. Will leave for now as debug
                 currentAnchor++;
@@ -209,17 +187,15 @@ namespace FeloxGame
                 }
                 MasterUI.SetNDCs(Size.X, Size.Y, new NDC(-1f, -1f, 1f, 1f));
             }
-                        
-            if (movement.LengthSquared > 1.0f) { movement.Normalize(); }
-
+                       
             // TEST
-            if (input.IsKeyPressed(Keys.P))
+            if (keyboardInput.IsKeyPressed(Keys.P))
             {
                 _player.Inventory.AddToSlotIndex(new ItemStack("Persimmon", 1), 0);
             }
 
             // TEST
-            if (input.IsKeyPressed(Keys.O))
+            if (keyboardInput.IsKeyPressed(Keys.O))
             {
                 foreach (var item in _player.Inventory._itemStackList)
                 {
@@ -231,19 +207,17 @@ namespace FeloxGame
             }
 
             // TEST - spawn entity
-            if (input.IsKeyPressed(Keys.L))
+            if (keyboardInput.IsKeyPressed(Keys.L))
             {
                 _world.AddEntityToWorld(new ItemEntity(_player.Position, new ItemStack("Persimmon", 1)));
             }
 
             // TEST - save chunk
-            if (input.IsKeyPressed(Keys.K))
+            if (keyboardInput.IsKeyPressed(Keys.K))
             {
                 _world.SaveChunk(@"../../../Saves/SampleWorldStructure/ChunkData", 0, 0);
                 Console.WriteLine("Chunk saved");
             }
-
-            _player.UpdatePosition(movement, (float)args.Time);
 
             // Track player with camera
             Vector3 cameraMoveDirection = new Vector3(_player.Position.X - _camera.Position.X, _player.Position.Y - _camera.Position.Y, 0f);
@@ -284,6 +258,15 @@ namespace FeloxGame
             _camera.AspectRatio = (float)e.Width / e.Height;
             _camera.UpdateCameraDimensions();
             MasterUI.OnResize(e.Width, e.Height, new NDC(-1f, -1f, 1f, 1f));
+        }
+
+        // ===== INPUT =====
+
+        protected override void OnKeyDown(KeyboardKeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            MasterUI.OnKeyDown(e);
         }
 
         protected override void OnMouseMove(MouseMoveEventArgs e)
@@ -335,12 +318,5 @@ namespace FeloxGame
             float ndcY = 1.0f - (2.0f * MousePosition.Y) / Size.Y;
             return new Vector2(ndcX, ndcY);
         }
-
-        // Todo: allow this to generate any entity. Might move this, too
-        public void AddEntity()
-        {
-
-        }
-
     }
 }
