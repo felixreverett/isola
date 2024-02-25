@@ -1,6 +1,7 @@
 ﻿using FeloxGame.UtilityClasses;
 using FeloxGame.Rendering;
 using FeloxGame.InventoryClasses;
+using FeloxGame.ItemClasses;
 using OpenTK.Mathematics;
 using System.Text.Json.Serialization;
 

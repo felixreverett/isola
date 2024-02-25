@@ -3,6 +3,7 @@ using FeloxGame.InventoryClasses;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using FeloxGame.WorldClasses;
 
 namespace FeloxGame.GUI
 {
@@ -130,7 +131,7 @@ namespace FeloxGame.GUI
             }
         }
 
-        public override void OnMouseDown(Vector2 mouseNDCs)
+        public override void OnMouseDown(Vector2 mouseNDCs, MouseButtonEventArgs e, World world)
         {
             if (!IsMouseInBounds(mouseNDCs))
             {
@@ -142,7 +143,7 @@ namespace FeloxGame.GUI
             {
                 foreach (UI ui in Kodomo.Values)
                 {
-                    ui.OnMouseDown(mouseNDCs);
+                    ui.OnMouseDown(mouseNDCs, e, world);
                 }
             }
 

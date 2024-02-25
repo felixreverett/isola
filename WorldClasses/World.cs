@@ -1,10 +1,8 @@
-﻿using FeloxGame.Core;
-using FeloxGame.Rendering;
+﻿using FeloxGame.Rendering;
 using FeloxGame.GameClasses;
 using FeloxGame.UtilityClasses;
 using OpenTK.Graphics.OpenGL4;
 using SharpNoise;
-using FeloxGame.EntityClasses;
 
 namespace FeloxGame.WorldClasses // rename this later?
 {
@@ -60,7 +58,6 @@ namespace FeloxGame.WorldClasses // rename this later?
             layout.Add<float>(3); // Positions
             layout.Add<float>(2); // Texture Coords
             layout.Add<float>(3); // Texture Color
-            //layout.Add<float>(1); // Texture Slot
 
             _vertexArray.AddBuffer(_vertexBuffer, layout);
             _indexBuffer = new IndexBuffer(_indices);
@@ -328,7 +325,7 @@ namespace FeloxGame.WorldClasses // rename this later?
         /// <param name="worldX"></param>
         /// <param name="worldY"></param>
         /// <returns></returns>
-        public ChunkTile GetTile(int worldX, int worldY)
+        public ChunkTile GetTile(int worldX, int worldY) //todo: change to bool with data validation and out var
         {
             int chunkX = worldX >= 0 ? worldX / 16 : worldX % 16 == 0 ? worldX / 16 : worldX / 16 - 1;
             int chunkY = worldY >= 0 ? worldY / 16 : worldY % 16 == 0 ? worldY / 16 : worldY / 16 - 1;
@@ -337,6 +334,17 @@ namespace FeloxGame.WorldClasses // rename this later?
             int y = worldY >= 0 ? worldY % 16 : worldY % 16 == 0 ? 0 : 16 + worldY % 16;
 
             return LoadedChunks[$"x{chunkX}y{chunkY}"].GetTile(x, y);
+        }
+
+        /// <summary>
+        /// An overload for GetTile for float inputs
+        /// </summary>
+        /// <param name="worldXf"></param>
+        /// <param name="worldYf"></param>
+        /// <returns></returns>
+        public ChunkTile GetTile(float worldXf, float worldYf)
+        {
+            return GetTile((int)Math.Floor(worldXf), (int)Math.Floor(worldYf));
         }
 
         /// <summary>

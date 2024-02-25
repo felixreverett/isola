@@ -2,6 +2,9 @@
 using FeloxGame.InventoryClasses;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using OpenTK.Mathematics;
+using FeloxGame.UtilityClasses;
+using FeloxGame.WorldClasses;
 
 namespace FeloxGame.GUI
 {
@@ -118,6 +121,30 @@ namespace FeloxGame.GUI
                     Inventory.DropItemAtIndex(index);
                 }
             }
+        }
+
+        /// <summary>
+        /// Runs right- and left-click functionality on any active items, if applicable.
+        /// </summary>
+        /// <param name="mouseNDCs"></param>
+        /// <param name="e"></param>
+        public override void OnMouseDown(Vector2 mouseNDCs, MouseButtonEventArgs e, World world)
+        {
+            base.OnMouseDown(mouseNDCs, e, world);
+
+            int index = ((ActiveHotbarSlotUI)Kodomo["ActiveHotbarSlot"]).ActiveIndex;
+            
+            if (Inventory._itemStackList[index] is not null)
+            {
+                if (e.Button == MouseButton.Right)
+                {
+                    if (AssetLibrary.GetItemFromItemName(Inventory._itemStackList[index].ItemName, out var item))
+                    {
+                        item.OnRightClick(mouseNDCs, world);
+                    }
+                }
+            }
+
         }
 
         private void HandleInventoryChanged(ItemStack[] itemStackList, ItemStack mouseItemStack)

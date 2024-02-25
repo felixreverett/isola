@@ -6,6 +6,7 @@ using FeloxGame.WorldClasses;
 using FeloxGame.GUI;
 using FeloxGame.InventoryClasses;
 using FeloxGame.EntityClasses;
+using FeloxGame.ItemClasses;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
@@ -78,10 +79,10 @@ namespace FeloxGame
             AssetLibrary.TextureAtlasList.Add("Tile Atlas", new IndexedTextureAtlas(1024, 16, 8, "Tiles/Tile Atlas.png", 0, true));
             AssetLibrary.TextureAtlasList.Add("Player Atlas", new TextureAtlas(1024, "Entities/Player.png", 1));
             AssetLibrary.TextureAtlasList.Add("Inventory Atlas", new PrecisionTextureAtlas(1024, "Inventories/1024 UI Atlas x16.png", 2, 1024, 1024));
-            AssetLibrary.TextureAtlasList.Add("Item Atlas", new IndexedTextureAtlas(1024, 16, 8, "Items/Item Atlas.png", 3));
+            AssetLibrary.TextureAtlasList.Add("Item Atlas", new IndexedTextureAtlas(1024, 16, 8, "Items/1024 Item Atlas 16x.png", 3));
             
             AssetLibrary.ItemList = Loading.LoadAllObjects<Item>(itemListFolderPath);
-            AssetLibrary.TileList = Loading.LoadAllObjects<Tile>(tileListFolderPath);
+            AssetLibrary.TileList = Loading.LoadAllObjects<TileData>(tileListFolderPath);
 
             // World (initialised first as player will reference it)
             _world = new World();
@@ -188,13 +189,19 @@ namespace FeloxGame
                 MasterUI.SetNDCs(Size.X, Size.Y, new NDC(-1f, -1f, 1f, 1f));
             }
                        
-            // TEST
+            // TEST - add persimmon to player inventory
             if (keyboardInput.IsKeyPressed(Keys.P))
             {
                 _player.Inventory.AddToSlotIndex(new ItemStack("Persimmon", 1), 0);
             }
 
-            // TEST
+            // Test - add rice seeds to player inventory
+            if (keyboardInput.IsKeyPressed(Keys.I))
+            {
+                _player.Inventory.AddToSlotIndex(new ItemStack("RiceSeeds", 1), 1);
+            }
+
+            // TEST - count items in inventory
             if (keyboardInput.IsKeyPressed(Keys.O))
             {
                 foreach (var item in _player.Inventory._itemStackList)
@@ -281,6 +288,7 @@ namespace FeloxGame
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
             base.OnMouseDown(e);
+
             _cursor.UpdatePosition(MousePosition, _camera.Position, Size, _camera.Width, _camera.Height);
             float distanceFromPlayer = Vector2.Distance(_player.Position, _cursor.Position);
             // debug
@@ -290,12 +298,13 @@ namespace FeloxGame
             if (toggleInventory)
             {
                 // Run if inventory open
-                MasterUI.OnMouseDown(GetMouseNDCs());
+                MasterUI.OnMouseDown(GetMouseNDCs(), e, _world);
             }
             else
             {
                 // Run if inventory not open
                 _world.UpdateTile(_cursor.Rounded(_cursor.Position.X), _cursor.Rounded(_cursor.Position.Y));
+                //MasterUI.Kodomo["Hotbar"].OnMouseDown();
             }
         }
 

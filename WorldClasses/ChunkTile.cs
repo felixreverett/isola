@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using FeloxGame.UtilityClasses;
+using System.Text.Json.Serialization;
 
 namespace FeloxGame.WorldClasses
 {
@@ -17,6 +18,17 @@ namespace FeloxGame.WorldClasses
         {
             TileID = tileID;
             Metadata = metadata;
+        }
+
+        /// <summary>
+        /// Gets the tile name for the tile from the AssetLibrary
+        /// </summary>
+        /// <returns></returns>
+        public string GetTileName()
+        {
+            return AssetLibrary.TileList
+                .Where(tile => tile.TileID == this.TileID)
+                .FirstOrDefault().Name;
         }
     }
 }

@@ -3,7 +3,10 @@ using FeloxGame.UtilityClasses;
 
 namespace FeloxGame
 {
-    public class Tile
+    /// <summary>
+    /// A class used to store static tile information that doesn't need to be repeated in world data
+    /// </summary>
+    public class TileData
     {
         public string Name { get; private set; }
         public int TileID { get; private set; }
@@ -16,7 +19,7 @@ namespace FeloxGame
         public TexCoords TexCoords;
 
 
-        public Tile(string name, int tileID, string textureLocation, int textureIndex, bool isCollidable)
+        public TileData(string name, int tileID, string textureLocation, int textureIndex, bool isCollidable)
         {
             Name = name;
             TileID = tileID;
