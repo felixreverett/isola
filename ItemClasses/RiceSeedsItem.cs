@@ -21,6 +21,9 @@ namespace FeloxGame.ItemClasses
             }
         }
 
-        public override void OnLeftClick() { }
+        public override void OnLeftClick(Vector2 mousePosition, World world)
+        {
+
+        }
     }
 }

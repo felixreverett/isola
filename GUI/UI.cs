@@ -139,24 +139,51 @@ namespace FeloxGame.GUI
             }
         }
 
-        public virtual void OnMouseDown(Vector2 mouseNDCs, MouseButtonEventArgs e, World world)
+        public virtual void OnLeftClick(Vector2 mousePosition, World world)
         {
-            if (!IsMouseInBounds(mouseNDCs))
+            if (!IsMouseInBounds(mousePosition))
             {
-                return;
+                // out of bounds functionality
             }
 
-            if (Kodomo.Count > 0)
+            else
             {
-                foreach (UI ui in Kodomo.Values)
+                if (Kodomo.Count > 0)
                 {
-                    ui.OnMouseDown(mouseNDCs, e, world);
+                    foreach (UI ui in Kodomo.Values)
+                    {
+                        ui.OnLeftClick(mousePosition, world);
+                    }
+                }
+
+                if (this.IsClickable)
+                {
+                    // functionality here
                 }
             }
-                
-            if (this.IsClickable)
+        }
+
+        public virtual void OnRightClick(Vector2 mousePosition, World world)
+        {
+            if (!IsMouseInBounds(mousePosition))
             {
-                OnClick();
+                // out of bounds functionality
+            }
+
+            else
+            {
+                if (Kodomo.Count > 0)
+                {
+                    foreach (UI ui in Kodomo.Values)
+                    {
+                        ui.OnRightClick(mousePosition, world);
+                    }
+                }
+
+                if (this.IsClickable)
+                {
+                    // functionality here
+                }
             }
         }
 
@@ -180,11 +207,6 @@ namespace FeloxGame.GUI
                     ui.OnKeyDown(e);
                 }
             }
-        }
-
-        public virtual void OnClick()
-        {
-            //Console.WriteLine("This has been clicked");
         }
 
         public bool IsMouseInBounds(Vector2 mouseNDCs)

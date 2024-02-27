@@ -131,9 +131,9 @@ namespace FeloxGame.GUI
             }
         }
 
-        public override void OnMouseDown(Vector2 mouseNDCs, MouseButtonEventArgs e, World world)
+        public override void OnLeftClick(Vector2 mousePosition, World world)
         {
-            if (!IsMouseInBounds(mouseNDCs))
+            if (!IsMouseInBounds(mousePosition))
             {
                 OnExternalClick();
                 return;
@@ -143,13 +143,13 @@ namespace FeloxGame.GUI
             {
                 foreach (UI ui in Kodomo.Values)
                 {
-                    ui.OnMouseDown(mouseNDCs, e, world);
+                    ui.OnLeftClick(mousePosition, world);
                 }
             }
 
             if (this.IsClickable)
             {
-                OnClick();
+                // functionality here
             }
         }
 

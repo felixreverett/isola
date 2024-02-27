@@ -81,7 +81,6 @@ namespace FeloxGame
             AssetLibrary.TextureAtlasList.Add("Inventory Atlas", new PrecisionTextureAtlas(1024, "Inventories/1024 UI Atlas x16.png", 2, 1024, 1024));
             AssetLibrary.TextureAtlasList.Add("Item Atlas", new IndexedTextureAtlas(1024, 16, 8, "Items/1024 Item Atlas 16x.png", 3));
             
-            //AssetLibrary.ItemList = Loading.LoadAllObjects<Item>(itemListFolderPath);
             AssetLibrary.InitialiseItemList();
             AssetLibrary.TileList = Loading.LoadAllObjects<TileData>(tileListFolderPath);
 
@@ -281,31 +280,45 @@ namespace FeloxGame
         {
             base.OnMouseMove(e);
 
-            _cursor.UpdatePosition(MousePosition, _camera.Position, Size, _camera.Width, _camera.Height);
+            _cursor.UpdateWorldAndScreenPosition(MousePosition, _camera.Position, Size, _camera.Width, _camera.Height);
 
-            MasterUI.OnMouseMove(GetMouseNDCs());
+            MasterUI.OnMouseMove(_cursor.ScreenPosition);
         }
 
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
             base.OnMouseDown(e);
 
-            _cursor.UpdatePosition(MousePosition, _camera.Position, Size, _camera.Width, _camera.Height);
-            float distanceFromPlayer = Vector2.Distance(_player.Position, _cursor.Position);
+            _cursor.UpdateWorldAndScreenPosition(MousePosition, _camera.Position, Size, _camera.Width, _camera.Height);
+            float distanceFromPlayer = Vector2.Distance(_player.Position, _cursor.WorldPosition);
             // debug
             //Console.WriteLine($"{_cursor.Position.X} => {_cursor.Rounded(_cursor.Position.X)}, {_cursor.Position.Y} => {_cursor.Rounded(_cursor.Position.Y)}");
             //Console.WriteLine($"The cursor is {distanceFromPlayer} units from the player.");
 
+            // if inventory open
             if (toggleInventory)
             {
-                // Run if inventory open
-                MasterUI.OnMouseDown(GetMouseNDCs(), e, _world);
+                // left click
+                if (e.Button == MouseButton.Left)
+                {
+                    MasterUI.OnLeftClick(_cursor.ScreenPosition, _world);
+                }
             }
+
+            // if inventory closed
             else
             {
-                // Run if inventory not open
-                _world.UpdateTile(_cursor.Rounded(_cursor.Position.X), _cursor.Rounded(_cursor.Position.Y));
-                MasterUI.Kodomo["Hotbar"].OnMouseDown(GetMouseNDCs(), e, _world);
+                // left click
+                if (e.Button == MouseButton.Left)
+                {
+                    _world.UpdateTile(_cursor.Rounded(_cursor.WorldPosition.X), _cursor.Rounded(_cursor.WorldPosition.Y));
+                }
+                
+                // right click
+                if (e.Button == MouseButton.Right)
+                {
+                    MasterUI.Kodomo["Hotbar"].OnRightClick(_cursor.WorldPosition, _world);
+                }
             }
         }
 
@@ -319,14 +332,6 @@ namespace FeloxGame
         protected override void OnUnload()
         {
             base.OnUnload();
-        }
-
-        // Todo: move to more relevant location
-        public Vector2 GetMouseNDCs()
-        {
-            float ndcX = (2.0f * MousePosition.X) / Size.X - 1.0f;
-            float ndcY = 1.0f - (2.0f * MousePosition.Y) / Size.Y;
-            return new Vector2(ndcX, ndcY);
         }
     }
 }

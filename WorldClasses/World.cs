@@ -332,7 +332,7 @@ namespace FeloxGame.WorldClasses // rename this later?
 
             int x = worldX >= 0 ? worldX % 16 : worldX % 16 == 0 ? 0 : 16 + worldX % 16;
             int y = worldY >= 0 ? worldY % 16 : worldY % 16 == 0 ? 0 : 16 + worldY % 16;
-
+                        
             return LoadedChunks[$"x{chunkX}y{chunkY}"].GetTile(x, y);
         }
 

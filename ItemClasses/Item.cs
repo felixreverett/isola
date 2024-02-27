@@ -22,6 +22,6 @@ namespace FeloxGame.ItemClasses
             Console.WriteLine("Right button clicked");
         }
 
-        public virtual void OnLeftClick() { }
+        public virtual void OnLeftClick(Vector2 mousePosition, World world) { }
     }
 }

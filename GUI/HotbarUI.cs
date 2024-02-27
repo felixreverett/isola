@@ -123,29 +123,30 @@ namespace FeloxGame.GUI
             }
         }
 
-        /// <summary>
-        /// Runs right- and left-click functionality on any active items, if applicable.
-        /// </summary>
-        /// <param name="mouseNDCs"></param>
-        /// <param name="e"></param>
-        public override void OnMouseDown(Vector2 mouseNDCs, MouseButtonEventArgs e, World world)
+        public override void OnRightClick(Vector2 mouseNDCs, World world)
         {
-            base.OnMouseDown(mouseNDCs, e, world);
-
             int index = ((ActiveHotbarSlotUI)Kodomo["ActiveHotbarSlot"]).ActiveIndex;
             
             if (Inventory._itemStackList[index] is not null)
             {
-                if (e.Button == MouseButton.Right)
+                if (AssetLibrary.GetItemFromItemName(Inventory._itemStackList[index].ItemName, out var item))
                 {
-                    Console.WriteLine("Right click detected in HotbarUI"); // debug
-                    if (AssetLibrary.GetItemFromItemName(Inventory._itemStackList[index].ItemName, out var item))
-                    {
-                        item.OnRightClick(mouseNDCs, world);
-                    }
+                    item!.OnRightClick(mouseNDCs, world);
                 }
             }
+        }
 
+        public override void OnLeftClick(Vector2 mouseNDCs, World world)
+        {
+            int index = ((ActiveHotbarSlotUI)Kodomo["ActiveHotbarSlot"]).ActiveIndex;
+
+            if (Inventory._itemStackList[index] is not null)
+            {
+                if (AssetLibrary.GetItemFromItemName(Inventory._itemStackList[index].ItemName, out var item))
+                {
+                    item!.OnLeftClick(mouseNDCs, world);
+                }
+            }
         }
 
         private void HandleInventoryChanged(ItemStack[] itemStackList, ItemStack mouseItemStack)

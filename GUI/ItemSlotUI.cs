@@ -1,4 +1,6 @@
 ﻿using FeloxGame.Rendering;
+using FeloxGame.WorldClasses;
+using OpenTK.Mathematics;
 
 namespace FeloxGame.GUI
 {
@@ -15,10 +17,12 @@ namespace FeloxGame.GUI
             
         }
 
-        public override void OnClick()
+        public override void OnLeftClick(Vector2 mousePosition, World world)
         {
-            base.Inventory.OnItemSlotClick(ItemSlotID);
+            if (IsMouseInBounds(mousePosition))
+            {
+                base.Inventory.OnItemSlotLeftClick(ItemSlotID);
+            }
         }
-
     }
 }

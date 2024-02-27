@@ -151,9 +151,9 @@ namespace FeloxGame
             InventoryChanged?.Invoke(_itemStackList, _mouseSlotItemStack);
         }
 
-        public void OnItemSlotClick(int slotIndex)
+        public void OnItemSlotLeftClick(int slotIndex)
         {
-            Console.WriteLine($"Slot {slotIndex} was clicked!");
+            Console.WriteLine($"Slot {slotIndex} was left clicked!");
             SwapSlots(slotIndex);
         }
 
