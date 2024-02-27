@@ -81,7 +81,8 @@ namespace FeloxGame
             AssetLibrary.TextureAtlasList.Add("Inventory Atlas", new PrecisionTextureAtlas(1024, "Inventories/1024 UI Atlas x16.png", 2, 1024, 1024));
             AssetLibrary.TextureAtlasList.Add("Item Atlas", new IndexedTextureAtlas(1024, 16, 8, "Items/1024 Item Atlas 16x.png", 3));
             
-            AssetLibrary.ItemList = Loading.LoadAllObjects<Item>(itemListFolderPath);
+            //AssetLibrary.ItemList = Loading.LoadAllObjects<Item>(itemListFolderPath);
+            AssetLibrary.InitialiseItemList();
             AssetLibrary.TileList = Loading.LoadAllObjects<TileData>(tileListFolderPath);
 
             // World (initialised first as player will reference it)
@@ -304,7 +305,7 @@ namespace FeloxGame
             {
                 // Run if inventory not open
                 _world.UpdateTile(_cursor.Rounded(_cursor.Position.X), _cursor.Rounded(_cursor.Position.Y));
-                //MasterUI.Kodomo["Hotbar"].OnMouseDown();
+                MasterUI.Kodomo["Hotbar"].OnMouseDown(GetMouseNDCs(), e, _world);
             }
         }
 

@@ -5,7 +5,7 @@ namespace FeloxGame.UtilityClasses
 {
     public static class AssetLibrary
     {
-        public static List<Item> ItemList;
+        public static List<Item>? ItemList;
 
         public static List<TileData> TileList;
 
@@ -28,7 +28,14 @@ namespace FeloxGame.UtilityClasses
 
         public static void InitialiseItemList()
         {
+            if (ItemList is not null)
+            {
+                return;
+            }
 
+            ItemList = new List<Item>();
+            ItemList.Add(new Item("Persimmon", 0));
+            ItemList.Add(new RiceSeedsItem("RiceSeeds", 42));
         }
     }
 }

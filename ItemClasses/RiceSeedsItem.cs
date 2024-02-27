@@ -5,7 +5,7 @@ namespace FeloxGame.ItemClasses
 {
     public class RiceSeedsItem : Item
     {
-        public RiceSeedsItem(string itemName, int textureIndex, int stackLimit)
+        public RiceSeedsItem(string itemName, int textureIndex, int stackLimit = 999)
             : base(itemName, textureIndex, stackLimit)
         {
             ItemName = itemName;

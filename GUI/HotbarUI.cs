@@ -138,6 +138,7 @@ namespace FeloxGame.GUI
             {
                 if (e.Button == MouseButton.Right)
                 {
+                    Console.WriteLine("Right click detected in HotbarUI"); // debug
                     if (AssetLibrary.GetItemFromItemName(Inventory._itemStackList[index].ItemName, out var item))
                     {
                         item.OnRightClick(mouseNDCs, world);
