@@ -1,7 +1,8 @@
 ﻿using FeloxGame.Rendering;
 using OpenTK.Graphics.OpenGL4;
-using System.Drawing;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace FeloxGame.UtilityClasses
 {
