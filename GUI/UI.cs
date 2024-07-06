@@ -139,7 +139,7 @@ namespace FeloxGame.GUI
             }
         }
 
-        public virtual void OnLeftClick(Vector2 mousePosition, World world)
+        public virtual void OnLeftClick(Vector2 mousePosition, WorldManager world)
         {
             if (!IsMouseInBounds(mousePosition))
             {
@@ -163,7 +163,7 @@ namespace FeloxGame.GUI
             }
         }
 
-        public virtual void OnRightClick(Vector2 mousePosition, World world)
+        public virtual void OnRightClick(Vector2 mousePosition, WorldManager world)
         {
             if (!IsMouseInBounds(mousePosition))
             {

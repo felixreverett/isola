@@ -10,6 +10,7 @@
 *.userosscache
 *.sln.docstates
 FeloxGame Designs/
+Saves/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

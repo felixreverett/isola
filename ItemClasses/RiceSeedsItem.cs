@@ -13,7 +13,7 @@ namespace FeloxGame.ItemClasses
             StackLimit = stackLimit;
         }
 
-        public override void OnRightClick(Vector2 mousePosition, World world)
+        public override void OnRightClick(Vector2 mousePosition, WorldManager world)
         {
             if (world.GetTile(mousePosition.X, mousePosition.Y).GetTileName() == "Grass")
             {
@@ -21,7 +21,7 @@ namespace FeloxGame.ItemClasses
             }
         }
 
-        public override void OnLeftClick(Vector2 mousePosition, World world)
+        public override void OnLeftClick(Vector2 mousePosition, WorldManager world)
         {
 
         }

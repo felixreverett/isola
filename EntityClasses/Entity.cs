@@ -18,6 +18,7 @@ namespace FeloxGame
     {
         [JsonInclude] public Vector2 Position { get; set; }
         [JsonInclude] public Vector2 Size { get; set; } = new Vector2(1f, 1f);
+        public eEntityType EntityType { get; set; }
         [JsonIgnore] protected TextureAtlas EntityTextureAtlas { get; set; }
         
         // <!----- Rendering ----->
@@ -95,15 +96,22 @@ namespace FeloxGame
             GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0); // Used for drawing Elements
         }
 
-        /*public virtual EntitySaveData SaveData()
-        {
-            return new EntitySaveData(Position, Size);
-        }*/
-
         public virtual void LoadData(EntitySaveData entitySaveData)
         {
-            this.Position = entitySaveData.Position;
-            this.Size = entitySaveData.Size;
+            this.Position = (Vector2)entitySaveData.Data[0];
+            this.Size = (Vector2)entitySaveData.Data[1];
+        }
+
+        // prepares entity save data
+        public virtual EntitySaveData GetSaveData()
+        {
+            List<object> Data = new()
+            {
+                Position,
+                Size,
+            };
+
+            return new EntitySaveData(EntityType, Data);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace FeloxGame.GUI
             
         }
 
-        public override void OnLeftClick(Vector2 mousePosition, World world)
+        public override void OnLeftClick(Vector2 mousePosition, WorldManager world)
         {
             if (IsMouseInBounds(mousePosition))
             {

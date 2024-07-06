@@ -1,17 +1,14 @@
-﻿using OpenTK.Mathematics;
-using System.Text.Json.Serialization;
-
-namespace FeloxGame.EntityClasses
+﻿namespace FeloxGame.EntityClasses
 {
-    public abstract class EntitySaveData
+    public class EntitySaveData
     {
-        [JsonInclude] public Vector2 Position { get; set; }
-        [JsonInclude] public Vector2 Size { get; set; }
+        public eEntityType EntityType { get; set; }
+        public List<object> Data { get; set; }
 
-        public EntitySaveData(Vector2 position, Vector2 size)
+        public EntitySaveData(eEntityType EntityType, List<object> data)
         {
-            this.Position = position;
-            this.Size = size;
+            this.EntityType = EntityType;
+            this.Data = data;
         }
     }
 }

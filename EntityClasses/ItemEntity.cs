@@ -43,14 +43,21 @@ namespace FeloxGame.EntityClasses
             vertices[27] = texCoords.MinX; vertices[28] = texCoords.MaxY; // (0, 1)
         }
 
-        /*public override ItemEntitySaveData SaveData()
-        {
-            return new ItemEntitySaveData(Position, Size, ItemStack);
-        }*/
-
         public override void LoadData(EntitySaveData entitySaveData)
         {
             base.LoadData(entitySaveData);
+            this.ItemStack = (ItemStack)entitySaveData.Data[2];
+        }
+
+        public override EntitySaveData GetSaveData()
+        {
+            List<object> Data = new()
+            {
+                Position,
+                Size,
+                ItemStack
+            };
+            return new EntitySaveData(EntityType, Data);
         }
     }
 }

@@ -15,15 +15,16 @@ namespace FeloxGame
         [JsonInclude] public float Reach { get; set; }
         [JsonInclude] public int RenderDistance { get; set; } = 2; // todo: move to game config
         [JsonInclude] public eFacing Facing { get; set; } = eFacing.South;
-        [JsonIgnore] public World CurrentWorld { get; protected set; } // todo: resolve how to set this on laod
+        [JsonIgnore] public WorldManager CurrentWorld { get; protected set; } // todo: resolve how to set this on laod
         [JsonInclude] protected float Speed { get; set; } = 5.5f; // Todo: move to constructor
 
-        public Player(Vector2 startPos, Vector2 size, string textureAtlasName, World currentWorld)
+        public Player(Vector2 startPos, Vector2 size, string textureAtlasName, WorldManager currentWorld)
             : base (startPos, size, textureAtlasName)
         {
             this.Inventory = new Inventory(5, 10, this);
             this.CurrentWorld = currentWorld;
             Reach = 5f;
+            this.EntityType = eEntityType.Player;
         }
 
         public void UpdatePosition(Vector2 movement, float time)

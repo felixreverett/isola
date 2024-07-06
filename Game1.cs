@@ -30,7 +30,7 @@ namespace FeloxGame
         private GameCamera _camera;
 
         // world data & config
-        private World _world;
+        private WorldManager _world;
         private readonly string tileListFolderPath = @"../../../Resources/Tiles";
         private GameConfig _config; // todo: implement a game config or integrate into player class
 
@@ -84,9 +84,9 @@ namespace FeloxGame
             AssetLibrary.InitialiseItemList();
             AssetLibrary.TileList = Loading.LoadAllObjects<TileData>(tileListFolderPath);
 
-            // World (initialised first as player will reference it)
-            _world = new World();
-            _config = new GameConfig(false);
+            // World (initialised before player as player will reference it)
+            _config = new GameConfig(true);
+            _world = new WorldManager(1, _config);
             
             // Player (with reference to _world)
             _player = new Player(new Vector2(0, 0), new Vector2(1, 2), "Player Atlas", _world);
@@ -222,8 +222,8 @@ namespace FeloxGame
             // TEST - save chunk
             if (keyboardInput.IsKeyPressed(Keys.K))
             {
-                _world.SaveChunk(@"../../../Saves/SampleWorldStructure/ChunkData", 0, 0);
-                Console.WriteLine("Chunk saved");
+                _world.Save();
+                Console.WriteLine("Debug: current world saved");
             }
 
             // Track player with camera

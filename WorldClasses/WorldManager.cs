@@ -3,6 +3,7 @@ using FeloxGame.GameClasses;
 using FeloxGame.UtilityClasses;
 using OpenTK.Graphics.OpenGL4;
 using SharpNoise;
+using FeloxGame.EntityClasses;
 
 namespace FeloxGame.WorldClasses // rename this later?
 {
@@ -10,13 +11,14 @@ namespace FeloxGame.WorldClasses // rename this later?
     /// Class to encapsulate everything a "world" would need.
     /// Currently active chunks + chunk loading/saving
     /// </summary>
-    public class World
+    public class WorldManager
     {
+        public string WorldName { get; set; } = "Example";
         public Dictionary<string, Chunk> LoadedChunks { get; private set; }
         public List<Entity> LoadedEntityList { get; set; }
         //private string _worldFolderPath = @"../../../Resources/World/WorldFiles";
-        private string _worldFolderPath = @"../../../Saves/SampleWorldStructure/ChunkData";
-        private GameConfig _config = new GameConfig(true); // Todo: make config load from Game1
+        private string _worldFolderPath = @"../../../Saves/SampleWorldStructure";
+        private GameConfig _config;
         public int Seed { get; private set; }
 
         // Rendering
@@ -39,12 +41,13 @@ namespace FeloxGame.WorldClasses // rename this later?
         private IndexBuffer _indexBuffer;
         private IndexedTextureAtlas WorldTextureAtlas { get; set; }
 
-        public World(int seed = 1)
+        public WorldManager(int seed, GameConfig config)
         {
+            Seed = seed;
+            _config = config;
             LoadedChunks = new Dictionary<string, Chunk>();
             LoadedEntityList = new List<Entity>();
-            Seed = seed;
-            OnLoad();
+            OnLoad(); // todo: this just seems to be for rendering. Change where this happens?
         }
 
         public void OnLoad()
@@ -63,6 +66,7 @@ namespace FeloxGame.WorldClasses // rename this later?
             _indexBuffer = new IndexBuffer(_indices);
         }
 
+        // Updates the rendered world around the player
         public void Update(Player player)
         {
             int worldX = (int)Math.Floor(player.Position.X);
@@ -88,7 +92,7 @@ namespace FeloxGame.WorldClasses // rename this later?
             {
                 if (Math.Abs(chunk.ChunkPosX - chunkX) > player.RenderDistance || Math.Abs(chunk.ChunkPosY - chunkY) > player.RenderDistance)
                 {
-                    RemoveChunk(_worldFolderPath, chunk.ChunkPosX, chunk.ChunkPosY);
+                    UnloadChunk(_worldFolderPath, chunk.ChunkPosX, chunk.ChunkPosY);
                 }
             }
         }
@@ -150,10 +154,10 @@ namespace FeloxGame.WorldClasses // rename this later?
 
         // ===== Terrain Generation & Loading =====
 
-        public Chunk LoadOrGenerateChunk(string folderPath, int chunkPosX, int chunkPosY)
+        public Chunk LoadOrGenerateChunk(string worldFolderPath, int chunkPosX, int chunkPosY)
         {
-            string filePath = folderPath + $@"/x{chunkPosX}y{chunkPosY}.json";
-            string filePathTest = folderPath + "/x0y0.json"; //test
+            string filePath = worldFolderPath + $@"/ChunkData/x{chunkPosX}y{chunkPosY}.json";
+            
             if (File.Exists(filePath))
             {
                 return LoadChunk(filePath);
@@ -164,25 +168,23 @@ namespace FeloxGame.WorldClasses // rename this later?
             }
         }
 
-        /// <summary>
-        /// Deserialises a JSON chunk given a filepath
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <returns></returns>
-        public Chunk LoadChunk(string filePath)
+        // todo: to be renamed into just LoadChunk after implementation
+        private void LoadChunkNew(string filePath)
+        {
+            // 1. Load chunk
+            // 2. Load entities from similarly-named file
+            // 3. Load tileEntities ?
+        }
+                
+        // Deserialises a JSON chunk given a filepath
+        private Chunk LoadChunk(string filePath)
         {
             Chunk newChunk = Loading.LoadObject<Chunk>(filePath);
             return newChunk;
         }
 
-        /// <summary>
-        /// Procedurally generates a chunk given chunk coordinates and a seed
-        /// </summary>
-        /// <param name="chunkPosX"></param>
-        /// <param name="chunkPosY"></param>
-        /// <param name="seed"></param>
-        /// <returns></returns>
-        public Chunk GenerateChunk(int chunkPosX, int chunkPosY, int seed = 1)
+        // Procedurally generates a chunk given chunk coordinates and a seed
+        private Chunk GenerateChunk(int chunkPosX, int chunkPosY, int seed = 1)
         {
             NoiseMap noiseMap = NoiseGenerator.GenerateNoiseMap(chunkPosX, chunkPosY, 16, Seed, 200f, 4);
             Chunk newChunk = ApplyNoiseMap(noiseMap, new Chunk(chunkPosX, chunkPosY));
@@ -190,13 +192,8 @@ namespace FeloxGame.WorldClasses // rename this later?
         }
 
         // Todo: make this load from a terrain config file
-        /// <summary>
-        /// Applies noisemap to set the values of a chunk.
-        /// </summary>
-        /// <param name="noiseMap"></param>
-        /// <param name="chunk"></param>
-        /// <returns></returns>
-        public Chunk ApplyNoiseMap(NoiseMap noiseMap, Chunk chunk)
+        // Applies noisemap to set the values of a chunk.
+        private Chunk ApplyNoiseMap(NoiseMap noiseMap, Chunk chunk)
         {
             for (int x = 0; x < 16; x++)
             {
@@ -234,43 +231,133 @@ namespace FeloxGame.WorldClasses // rename this later?
             return chunk;
         }
 
-        /// <summary>
-        /// Saves a chunk in the specified folder
-        /// </summary>
-        /// <param name="folder"></param>
-        /// <param name="chunkPosX"></param>
-        /// <param name="chunkPosY"></param>
-        public void SaveChunk(string folder, int chunkPosX, int chunkPosY)
+        // ===== Saving & Unloading =====
+
+        public void Save()
         {
-            // Todo: add error checking
-            Chunk chunk = LoadedChunks[$"x{chunkPosX}y{chunkPosY}"];
-            //chunk.ChunkEntitySaveData = UnloadChunkEntities(chunkPosX, chunkPosY);
-            Loading.SaveObject(chunk, $"{folder}/x{chunkPosX}y{chunkPosY}.json");
+            foreach (Chunk c in LoadedChunks.Values)
+            {
+                SaveChunkEntities(_worldFolderPath, c.ChunkPosX, c.ChunkPosY);
+                SaveChunkTiles(_worldFolderPath, c.ChunkPosX, c.ChunkPosY);
+            }
         }
 
-        /// <summary>
-        /// Removes the specified chunk from the loaded chunk list and saves if enabled
-        /// </summary>
-        /// <param name="folder"></param>
-        /// <param name="chunkPosX"></param>
-        /// <param name="chunkPosY"></param>
-        public void RemoveChunk(string folder, int chunkPosX, int chunkPosY)
+        private void UnloadChunk(string worldFolderPath, int chunkPosX, int chunkPosY)
+        {
+            UnloadChunkEntities(worldFolderPath, chunkPosX, chunkPosY);
+            UnloadChunkTiles(worldFolderPath, chunkPosX, chunkPosY);
+        }
+
+        // Unloads entities in the given chunk if there are any
+        private void UnloadChunkEntities(string worldFolderPath, int chunkPosX, int chunkPosY)
+        {
+            if (GetChunkEntities(chunkPosX, chunkPosY, out List<Entity> chunkEntities))
+            {
+                foreach (Entity e in chunkEntities)
+                {
+                    LoadedEntityList.Remove(e);
+                }
+
+                if (_config.AllowSaving)
+                {
+                    List<EntitySaveData> entitySaveDataList = new();
+
+                    // convert entities to entitysavedata
+                    foreach (Entity e in chunkEntities)
+                    {
+                        entitySaveDataList.Add(e.GetSaveData());
+                        Console.WriteLine($"Adding entity {e.EntityType} to save list");
+                    }
+
+                    SaveChunkEntities(worldFolderPath, chunkPosX, chunkPosY, entitySaveDataList);
+                }
+            }
+            else
+            {
+                Console.WriteLine($"No Entities to unload in chunk {chunkPosX}, {chunkPosY}"); //debug
+            }
+        }
+        
+        // Gets list of Chunk entities. Returns true if list count > 0. Excludes the Player Entity
+        private bool GetChunkEntities(int chunkPosX, int chunkPosY, out List<Entity> chunkEntities)
+        {
+            chunkEntities = new List<Entity>();
+            foreach (Entity e in LoadedEntityList)
+            {
+                if (GetChunkFromWorldCoordinate((int)e.Position.X) == chunkPosX && 
+                    GetChunkFromWorldCoordinate((int)e.Position.Y) == chunkPosY &&
+                    e.EntityType != eEntityType.Player)
+                {
+                    chunkEntities.Add(e);
+                }
+            }
+            
+            return chunkEntities.Count > 0;
+        }
+
+        private void SaveChunkEntities(string worldFolderPath, int chunkPosX, int chunkPosY)
+        {
+            if (_config.AllowSaving && GetChunkEntities(chunkPosX, chunkPosY, out List<Entity> chunkEntities))
+            {
+                List<EntitySaveData> entitySaveDataList = new();
+
+                // convert entities to entitysavedata
+                foreach (Entity e in chunkEntities)
+                {
+                    entitySaveDataList.Add(e.GetSaveData());
+                    Console.WriteLine($"Adding entity {e.EntityType} to save list");
+                }
+
+                SaveChunkEntities(worldFolderPath, chunkPosX, chunkPosY, entitySaveDataList);
+                
+                Console.WriteLine($"Saved entities in chunk {chunkPosX}, {chunkPosY}");
+            }
+        }
+
+        public void SaveChunkEntities(string worldFolderPath, int chunkPosX, int chunkPosY, List<EntitySaveData> entitySaveDataList)
+        {
+            Loading.SaveObject(entitySaveDataList, $"{worldFolderPath}/EntityData/x{chunkPosX}y{chunkPosY}.json");
+        }
+
+        // Removes the specified chunk from the loaded chunk list and saves if enabled
+        public void UnloadChunkTiles(string worldFolderPath, int chunkPosX, int chunkPosY)
         {
             if (_config.AllowSaving)
             {
-                SaveChunk(folder, chunkPosX, chunkPosY);
+                SaveChunkTiles(worldFolderPath, chunkPosX, chunkPosY);
             }
             LoadedChunks.Remove($"x{chunkPosX}y{chunkPosY}");
         }
 
-        /// <summary>
-        /// Removes all entities within the specified chunk and converts them into EntitySaveData
-        /// </summary>
-        /// <param name="chunkPosX"></param>
-        /// <param name="chunkPosY"></param>
-        /// <returns></returns>
-        
-        
+        // Saves a chunk and its entities in the specified world folder
+        public void SaveChunkTiles(string worldFolderPath, int chunkPosX, int chunkPosY)
+        {
+            // Todo: add error checking
+            Chunk chunk = LoadedChunks[$"x{chunkPosX}y{chunkPosY}"];
+            Loading.SaveObject(chunk, $"{worldFolderPath}/ChunkData/x{chunkPosX}y{chunkPosY}.json");
+        }
+                
+        // ===== Entity Loading =====
+        /*public static T LoadEntity<T>(eEntityType entityType, object entityData)
+        {
+            switch (entityType)
+            {
+                case eEntityType.Persimmon:
+                    {
+                        return new ItemEntity(entityData);
+                    }
+                case eEntityType.RiceSeeds:
+                    {
+                        return new ItemEntity(entityData);
+                    }
+                default:
+                    {
+                        break;
+                    }
+            }
+        }*/
+
+
         /*public List<EntitySaveData> UnloadChunkEntities(int chunkPosX, int chunkPosY)
         {
             List<Entity> entitiesToRemove = new List<Entity>();
@@ -297,11 +384,8 @@ namespace FeloxGame.WorldClasses // rename this later?
         }*/
 
         // Todo: Make this update adjacent tiles
-        /// <summary>
-        /// Updates a tile at a position in the world.
-        /// </summary>
-        /// <param name="worldX"></param>
-        /// <param name="worldY"></param>
+        // Updates a tile at a position in the world.
+        
         public void UpdateTile(int worldX, int worldY) //Todo: add error checking
         {
             int chunkX = GetChunkFromWorldCoordinate(worldX);

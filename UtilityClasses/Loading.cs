@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using FeloxGame.EntityClasses;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace FeloxGame.UtilityClasses

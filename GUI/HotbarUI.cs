@@ -123,7 +123,7 @@ namespace FeloxGame.GUI
             }
         }
 
-        public override void OnRightClick(Vector2 mouseNDCs, World world)
+        public override void OnRightClick(Vector2 mouseNDCs, WorldManager world)
         {
             int index = ((ActiveHotbarSlotUI)Kodomo["ActiveHotbarSlot"]).ActiveIndex;
             
@@ -136,7 +136,7 @@ namespace FeloxGame.GUI
             }
         }
 
-        public override void OnLeftClick(Vector2 mouseNDCs, World world)
+        public override void OnLeftClick(Vector2 mouseNDCs, WorldManager world)
         {
             int index = ((ActiveHotbarSlotUI)Kodomo["ActiveHotbarSlot"]).ActiveIndex;
 

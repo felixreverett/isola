@@ -23,7 +23,8 @@ Yes! Here is an ever expanding list of implemented concepts and general coding p
 - **Matrix manipulation**: Use and understanding of vectors and matrices to draw the world, player, and UI.
 - **Namespaces**: Organising code into a structured system; Knowing when to group files, but also when not to
 - **[NonSerialized]**: Use of the NonSerialized tag for parts of an object I don't want saved to JSON 
-- **The `out` keyword**: Finding justification for this hitherto less used keyword in my Inventory.cs class
+- **The `out` keyword**: Finding practical applications for this concept in Inventory.cs and WorldManager.cs
+- **Overloading**: Multiple instances of methods depending on where I'm using them (see WorldManager.cs for an example)
 - **Polymorphic Serialisation**: Using JSON attributes to serialise subclasses of a base class separately.
 - **Procedural world generation**: Use of noise functions to generate an infinite world
 - **Recursion**: I use recursive methods to update and draw my UI system

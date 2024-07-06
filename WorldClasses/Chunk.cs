@@ -1,10 +1,12 @@
 ﻿using FeloxGame.EntityClasses;
 using FeloxGame.WorldClasses;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace FeloxGame
 {
+    /// <summary>
+    /// The Chunk and associated behaviour
+    /// </summary>
     public class Chunk
     {
         public string ChunkID { get; set; } // todo: make private again
