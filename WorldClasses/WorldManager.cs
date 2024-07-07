@@ -81,8 +81,7 @@ namespace FeloxGame.WorldClasses // rename this later?
                     string chunkID = $"x{x}y{y}";
                     if (!LoadedChunks.ContainsKey(chunkID))
                     {
-                        Chunk newChunk = LoadOrGenerateChunk(_worldFolderPath, x, y); // load the chunk
-                        LoadedChunks.Add(chunkID, newChunk);
+                        LoadOrGenerateChunk(_worldFolderPath, x, y); // load the chunk
                     }
                 }
             }
@@ -152,43 +151,50 @@ namespace FeloxGame.WorldClasses // rename this later?
             }
         }
 
-        // ===== Terrain Generation & Loading =====
+        // ===== Generation & Loading =====
 
-        public Chunk LoadOrGenerateChunk(string worldFolderPath, int chunkPosX, int chunkPosY)
+        // Handles loading/generating of all aspects of chunk: tiles, entities, tileentities
+        private void LoadOrGenerateChunk(string worldFolderPath, int x, int y)
         {
-            string filePath = worldFolderPath + $@"/ChunkData/x{chunkPosX}y{chunkPosY}.json";
-            
-            if (File.Exists(filePath))
+            string chunkID = $"x{x}y{y}";
+            string chunkTilesFilePath = $@"{worldFolderPath}/ChunkData/{chunkID}.json";
+            string chunkEntityFilePath = $@"{worldFolderPath}/EntityData/{chunkID}.json";
+
+            if (File.Exists(chunkTilesFilePath))
             {
-                return LoadChunk(filePath);
+                LoadChunkTiles(chunkID, chunkTilesFilePath);
+
+                if (File.Exists(chunkEntityFilePath))
+                {
+                    LoadChunkEntities(chunkEntityFilePath);
+                }
             }
             else
             {
-                return GenerateChunk(chunkPosX, chunkPosY);
+                GenerateChunk(chunkID, x, y);
             }
-        }
 
-        // todo: to be renamed into just LoadChunk after implementation
-        private void LoadChunkNew(string filePath)
-        {
-            // 1. Load chunk
-            // 2. Load entities from similarly-named file
-            // 3. Load tileEntities ?
+            // todo: tile entities
+            //string chunkTileEntityFilePath = $@"{worldFolderPath}/TileEntityData/{chunkID}.json";
         }
                 
-        // Deserialises a JSON chunk given a filepath
-        private Chunk LoadChunk(string filePath)
+        private void LoadChunkTiles(string chunkID, string filePath)
         {
-            Chunk newChunk = Loading.LoadObject<Chunk>(filePath);
-            return newChunk;
+            LoadedChunks.Add(chunkID, Loading.LoadObject<Chunk>(filePath));
         }
 
-        // Procedurally generates a chunk given chunk coordinates and a seed
-        private Chunk GenerateChunk(int chunkPosX, int chunkPosY, int seed = 1)
+        private void LoadChunkEntities(string chunkEntityFilePath)
+        {
+            Console.WriteLine("Error: Entity file found but no current implementation of WorldManager.LoadChunkEntities() exists");
+            return;
+        }
+
+        // Procedurally generates a chunk. todo: also generate tileEntities
+        private void GenerateChunk(string chunkID, int chunkPosX, int chunkPosY, int seed = 1)
         {
             NoiseMap noiseMap = NoiseGenerator.GenerateNoiseMap(chunkPosX, chunkPosY, 16, Seed, 200f, 4);
             Chunk newChunk = ApplyNoiseMap(noiseMap, new Chunk(chunkPosX, chunkPosY));
-            return newChunk;
+            LoadedChunks.Add(chunkID, newChunk);
         }
 
         // Todo: make this load from a terrain config file
@@ -320,7 +326,7 @@ namespace FeloxGame.WorldClasses // rename this later?
         }
 
         // Removes the specified chunk from the loaded chunk list and saves if enabled
-        public void UnloadChunkTiles(string worldFolderPath, int chunkPosX, int chunkPosY)
+        private void UnloadChunkTiles(string worldFolderPath, int chunkPosX, int chunkPosY)
         {
             if (_config.AllowSaving)
             {
@@ -330,7 +336,7 @@ namespace FeloxGame.WorldClasses // rename this later?
         }
 
         // Saves a chunk and its entities in the specified world folder
-        public void SaveChunkTiles(string worldFolderPath, int chunkPosX, int chunkPosY)
+        private void SaveChunkTiles(string worldFolderPath, int chunkPosX, int chunkPosY)
         {
             // Todo: add error checking
             Chunk chunk = LoadedChunks[$"x{chunkPosX}y{chunkPosY}"];
@@ -398,7 +404,7 @@ namespace FeloxGame.WorldClasses // rename this later?
             LoadedChunks[$"x{chunkX}y{chunkY}"].SetTile(x, y, new ChunkTile(0)); // sets to grass
         }
 
-        public int GetChunkFromWorldCoordinate(int worldCoordinate)
+        private int GetChunkFromWorldCoordinate(int worldCoordinate)
         {
             return worldCoordinate >= 0 ? worldCoordinate / 16 : worldCoordinate % 16 == 0 ? worldCoordinate / 16 : worldCoordinate / 16 - 1;
         }
