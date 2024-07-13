@@ -1,4 +1,5 @@
 {
+	"EntityType": "ItemEntity",
 	"ItemName": "Persimmon",
-	"TextureIndex": 0
+	"TextureIndex": 1
 }

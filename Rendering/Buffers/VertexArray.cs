@@ -1,4 +1,4 @@
-﻿using FeloxGame.UtilityClasses;
+﻿using FeloxGame.Utilities;
 using OpenTK.Graphics.OpenGL4;
 
 namespace FeloxGame.Rendering
@@ -28,7 +28,7 @@ namespace FeloxGame.Rendering
                 var currentElement = elements[i];
                 GL.EnableVertexAttribArray(i);
                 GL.VertexAttribPointer(i, currentElement.Count, currentElement.Type, currentElement.Normalized, bufferLayout.GetStride(), offset);
-                offset += currentElement.Count * Utilities.GetSizeOfVertexAttribPointerType(currentElement.Type);
+                offset += currentElement.Count * Utilities.Utilities.GetSizeOfVertexAttribPointerType(currentElement.Type);
             }
         }
 

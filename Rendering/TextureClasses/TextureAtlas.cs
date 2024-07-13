@@ -1,4 +1,4 @@
-﻿using FeloxGame.UtilityClasses;
+﻿using FeloxGame.Utilities;
 
 namespace FeloxGame.Rendering
 {

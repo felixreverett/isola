@@ -1,6 +1,6 @@
 ﻿using FeloxGame.Core.Management;
 using FeloxGame.Rendering;
-using FeloxGame.InventoryClasses;
+using FeloxGame.Inventories;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;

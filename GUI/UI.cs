@@ -1,10 +1,10 @@
-﻿using FeloxGame.UtilityClasses;
+﻿using FeloxGame.Utilities;
 using FeloxGame.Rendering;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using FeloxGame.WorldClasses;
+using FeloxGame.World;
 
 namespace FeloxGame.GUI
 {

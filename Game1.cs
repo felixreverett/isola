@@ -1,12 +1,12 @@
 ﻿using FeloxGame.Core.Rendering;
 using FeloxGame.Rendering;
-using FeloxGame.UtilityClasses;
+using FeloxGame.Utilities;
 using FeloxGame.GameClasses;
-using FeloxGame.WorldClasses;
+using FeloxGame.World;
 using FeloxGame.GUI;
-using FeloxGame.InventoryClasses;
-using FeloxGame.EntityClasses;
-using FeloxGame.ItemClasses;
+using FeloxGame.Inventories;
+using FeloxGame.Entities;
+using FeloxGame.Items;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
@@ -89,7 +89,7 @@ namespace FeloxGame
             _world = new WorldManager(1, _config);
             
             // Player (with reference to _world)
-            _player = new Player(new Vector2(0, 0), new Vector2(1, 2), "Player Atlas", _world);
+            _player = new Player(eEntityType.Player, new Vector2(0, 0), new Vector2(1, 2), "Player Atlas", _world);
 
             // Entities
             _world.AddEntityToWorld(_player);
@@ -216,7 +216,7 @@ namespace FeloxGame
             // TEST - spawn entity
             if (keyboardInput.IsKeyPressed(Keys.L))
             {
-                _world.AddEntityToWorld(new ItemEntity(_player.Position, new ItemStack("Persimmon", 1)));
+                _world.AddEntityToWorld(new ItemEntity(eEntityType.ItemEntity, _player.Position, "Persimmon", 1));
             }
 
             // TEST - save chunk

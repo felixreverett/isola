@@ -1,5 +1,5 @@
 ﻿using FeloxGame.Rendering;
-using FeloxGame.WorldClasses;
+using FeloxGame.World;
 using OpenTK.Mathematics;
 
 namespace FeloxGame.GUI
