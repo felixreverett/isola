@@ -1,18 +1,18 @@
 ﻿using FeloxGame.Rendering;
 using FeloxGame.GameClasses;
 using FeloxGame.Utilities;
-using OpenTK.Graphics.OpenGL4;
 using SharpNoise;
 using FeloxGame.Entities;
 using System.Text.Json;
+using OpenTK.Mathematics;
 
-namespace FeloxGame.World // rename this later?
+namespace FeloxGame.World
 {
     /// <summary>
     /// Class to encapsulate everything a "world" would need.
     /// Currently active chunks + chunk loading/saving
     /// </summary>
-    public class WorldManager
+    public class WorldManager : IDrawable
     {
         public string WorldName { get; set; } = "Example";
         public Dictionary<string, Chunk> LoadedChunks { get; private set; }
@@ -21,26 +21,7 @@ namespace FeloxGame.World // rename this later?
         private string _worldFolderPath = @"../../../Saves/SampleWorldStructure";
         private GameConfig _config;
         public int Seed { get; private set; }
-
-        // Rendering
-        private readonly float[] _vertices =
-        {   //Vertices        //texCoords //texColors
-            1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, //top right (1,1)
-            1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, //bottom right (1, 0)
-            0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, //bottom left (0, 0)
-            0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f  //top left (0, 1)
-        };
-
-        private uint[] _indices =
-        {
-            0, 1, 3, // first triangle
-            1, 2, 3  // second triangle
-        };
-
-        private VertexBuffer _vertexBuffer;
-        private VertexArray _vertexArray;
-        private IndexBuffer _indexBuffer;
-        private IndexedTextureAtlas WorldTextureAtlas { get; set; }
+        public SpriteBatch batch { get; private set; }
 
         public WorldManager(int seed, GameConfig config)
         {
@@ -48,26 +29,10 @@ namespace FeloxGame.World // rename this later?
             _config = config;
             LoadedChunks = new Dictionary<string, Chunk>();
             LoadedEntityList = new List<Entity>();
-            OnLoad(); // todo: this just seems to be for rendering. Change where this happens?
+            batch = new SpriteBatch("Tile Atlas");
         }
 
-        public void OnLoad()
-        {
-            WorldTextureAtlas = (IndexedTextureAtlas)AssetLibrary.TextureAtlasList["Tile Atlas"];
-
-            _vertexArray = new();
-            _vertexBuffer = new VertexBuffer(_vertices);
-
-            BufferLayout layout = new();
-            layout.Add<float>(3); // Positions
-            layout.Add<float>(2); // Texture Coords
-            layout.Add<float>(3); // Texture Color
-
-            _vertexArray.AddBuffer(_vertexBuffer, layout);
-            _indexBuffer = new IndexBuffer(_indices);
-        }
-
-        // Updates the rendered world around the player
+        // Updates the world around the player
         public void Update(Player player)
         {
             int worldX = (int)Math.Floor(player.Position.X);
@@ -96,51 +61,29 @@ namespace FeloxGame.World // rename this later?
                 }
             }
         }
-
-        // ===== Rendering =====
-
+        
         public void Draw()
         {
-            WorldTextureAtlas.Texture.Use();
-            _vertexArray.Bind();
-            _vertexBuffer.Bind();
-            _indexBuffer.Bind();
-                        
             DrawChunks();
-
             DrawEntities();
         }
 
         private void DrawChunks()
         {
-            //var Stopwatch = System.Diagnostics.Stopwatch.StartNew();
             foreach (Chunk loadedChunk in LoadedChunks.Values)
             {
-                
                 for (int y = 0; y < 16; y++)
                 {
                     for (int x = 0; x < 16; x++)
                     {
-                        _vertices[0]  = loadedChunk.ChunkPosX * 16 + x + 1; _vertices[1]  = loadedChunk.ChunkPosY * 16 + y + 1; // top right (1, 1)
-                        _vertices[8]  = loadedChunk.ChunkPosX * 16 + x + 1; _vertices[9]  = loadedChunk.ChunkPosY * 16 + y;     // bottom right (1, 0)
-                        _vertices[16] = loadedChunk.ChunkPosX * 16 + x;     _vertices[17] = loadedChunk.ChunkPosY * 16 + y;     // bottom left (0, 0)
-                        _vertices[24] = loadedChunk.ChunkPosX * 16 + x;     _vertices[25] = loadedChunk.ChunkPosY * 16 + y + 1; // top left (0, 1)
+                        Box2 rect = new Box2(loadedChunk.ChunkPosX * 16 + x, loadedChunk.ChunkPosY * 16 + y, loadedChunk.ChunkPosX * 16 + x + 1, loadedChunk.ChunkPosY * 16 + y + 1);
                         
-                        ChunkTile currentTile = loadedChunk.GetTile(x, y);
-                        TexCoords texCoords = AssetLibrary.TileList.Where(t => t.TileID == currentTile.TileID).FirstOrDefault().TexCoords;
-                        
-                        _vertices[3] = texCoords.MaxX; _vertices[4] = texCoords.MaxY;   // (1, 1)
-                        _vertices[11] = texCoords.MaxX; _vertices[12] = texCoords.MinY; // (1, 0)
-                        _vertices[19] = texCoords.MinX; _vertices[20] = texCoords.MinY; // (0, 0)
-                        _vertices[27] = texCoords.MinX; _vertices[28] = texCoords.MaxY; // (0, 1)
+                        TexCoords texCoords = AssetLibrary.TileList.Where(t => t.TileID == loadedChunk.GetTile(x, y).TileID).FirstOrDefault().TexCoords;
 
-                        GL.BufferSubData(BufferTarget.ArrayBuffer, 0, sizeof(float) * _vertices.Length, _vertices);
-                        GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0); // Used for drawing Elements
+                        batch.DrawQuad(rect, texCoords);
                     }
                 }
-                
             }
-            //Console.WriteLine($"This frame: {Stopwatch.Elapsed.TotalMilliseconds}");
         }
 
         private void DrawEntities()
@@ -151,8 +94,6 @@ namespace FeloxGame.World // rename this later?
                 entity.Draw();
             }
         }
-
-        // ===== Generation & Loading =====
 
         // Handles loading/generating of all aspects of chunk: tiles, entities, tileentities
         private void LoadOrGenerateChunk(string worldFolderPath, int x, int y)
