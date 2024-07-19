@@ -21,6 +21,15 @@ namespace FeloxGame.Rendering
             _vertexArray.AddBuffer(_vertexBuffer, layout);
         }
 
+        // Overload to set yDepth
+        public SpriteBatch(string textureAtlas, float yDepth) : this(textureAtlas)
+        {
+            _vertices[2] = yDepth;
+            _vertices[10] = yDepth;
+            _vertices[18] = yDepth;
+            _vertices[26] = yDepth;
+        }
+
         // Defined four corners of the "quad"
         private readonly float[] _vertices =
         {   //Vertices        //texCoords //texColors

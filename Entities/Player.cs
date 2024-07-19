@@ -3,20 +3,20 @@ using OpenTK.Windowing.Common;
 using FeloxGame.Entities;
 using FeloxGame.World;
 using FeloxGame.Utilities;
-using System.Text.Json.Serialization;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using FeloxGame.Rendering;
 
 namespace FeloxGame
 {
-    public class Player : Entity // ICollidable, 
+    public class Player : Entity
     {
         // Properties
-        [JsonInclude] public Inventory Inventory { get; set; }
-        [JsonInclude] public float Reach { get; set; }
-        [JsonInclude] public int RenderDistance { get; set; } = 2; // todo: move to game config
-        [JsonInclude] public eFacing Facing { get; set; } = eFacing.South;
-        [JsonIgnore] public WorldManager CurrentWorld { get; protected set; } // todo: resolve how to set this on laod
-        [JsonInclude] protected float Speed { get; set; } = 5.5f; // Todo: move to constructor
+        public Inventory Inventory { get; set; }
+        public float Reach { get; set; }
+        public int RenderDistance { get; set; } = 2; // todo: move to game config
+        public eFacing Facing { get; set; } = eFacing.South;
+        public WorldManager CurrentWorld { get; protected set; } // todo: resolve how to set this on laod
+        protected float Speed { get; set; } = 5.5f; // Todo: move to constructor
 
         public Player(eEntityType entityType, Vector2 startPos, Vector2 size, string textureAtlasName, WorldManager currentWorld)
             : base (entityType, startPos, textureAtlasName)
@@ -26,6 +26,7 @@ namespace FeloxGame
             Reach = 5f;
             this.EntityType = eEntityType.Player;
             this.Size = size;
+            TexCoords = new TexCoords(0f, 0f, 1f, 1f);
         }
 
         public void UpdatePosition(Vector2 movement, float time)
@@ -67,7 +68,6 @@ namespace FeloxGame
                     Position = newPosition;
                 }
             }
-            SetPosition(Position);
         }
 
         public void Update(FrameEventArgs args, KeyboardState keyboardInput)

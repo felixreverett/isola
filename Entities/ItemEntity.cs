@@ -1,10 +1,7 @@
 ﻿using FeloxGame.Utilities;
-using FeloxGame.Rendering;
-using FeloxGame.Inventories;
 using FeloxGame.Items;
 using OpenTK.Mathematics;
 using System.Text.Json;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FeloxGame.Entities
 {
@@ -20,7 +17,7 @@ namespace FeloxGame.Entities
         {
             this.ItemName = itemName;
             this.Amount = amount;
-            SetItemTexture();
+            SetTexCoords();
         }
 
         // Initialize Entity from save data
@@ -29,21 +26,14 @@ namespace FeloxGame.Entities
         {
             this.ItemName = saveData.ItemName;
             this.Amount = saveData.Amount;
-            SetItemTexture();
+            SetTexCoords();
         }
         
-        private void SetItemTexture()
+        private void SetTexCoords()
         {
             Item matchingItem = AssetLibrary.ItemList.FirstOrDefault(i => i.ItemName == ItemName)!;
             int index = matchingItem == null ? 0 : matchingItem.TextureIndex;
-            
-            TexCoords texCoords = Utilities.Utilities.GetIndexedAtlasCoords(index, 16, 1024, 8);
-            
-            // Set texCoords of atlas
-            vertices[3] =  texCoords.MaxX; vertices[4] =  texCoords.MaxY; // (1, 1)
-            vertices[11] = texCoords.MaxX; vertices[12] = texCoords.MinY; // (1, 0)
-            vertices[19] = texCoords.MinX; vertices[20] = texCoords.MinY; // (0, 0)
-            vertices[27] = texCoords.MinX; vertices[28] = texCoords.MaxY; // (0, 1)
+            TexCoords = Utilities.Utilities.GetIndexedAtlasCoords(index, 16, 1024, 8);
         }
 
         // Export entity save data
