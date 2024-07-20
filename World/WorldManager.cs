@@ -33,7 +33,7 @@ namespace FeloxGame.World
         }
 
         // Updates the world around the player
-        public void Update(Player player)
+        public void Update(PlayerEntity player)
         {
             int worldX = (int)Math.Floor(player.Position.X);
             int worldY = (int)Math.Floor(player.Position.Y);
@@ -140,7 +140,7 @@ namespace FeloxGame.World
                             try
                             {
                                 EntitySaveData saveData = JsonSerializer.Deserialize<EntitySaveData>(entitySaveDataObject.SaveDataString);
-                                Console.WriteLine("Loading new entity to world");
+                                Console.WriteLine("Loading new entity to world"); //debug
                                 AddEntityToWorld(new Entity(saveData));
                             }
                             catch { Console.WriteLine("Loading Error: Could not load Entity"); }
@@ -151,6 +151,7 @@ namespace FeloxGame.World
                             try
                             {
                                 ItemEntitySaveData saveData = JsonSerializer.Deserialize<ItemEntitySaveData>(entitySaveDataObject.SaveDataString);
+                                Console.WriteLine("Loading new item entity to world"); //debug
                                 AddEntityToWorld(new ItemEntity(saveData));
                             }
                             catch { Console.WriteLine("Loading Error: Could not load Item Entity"); }
@@ -167,7 +168,7 @@ namespace FeloxGame.World
         }
 
         // Procedurally generates a chunk. todo: also generate tileEntities
-        private void GenerateChunk(string chunkID, int chunkPosX, int chunkPosY, int seed = 1)
+        private void GenerateChunk(string chunkID, int chunkPosX, int chunkPosY)
         {
             NoiseMap noiseMap = NoiseGenerator.GenerateNoiseMap(chunkPosX, chunkPosY, 16, Seed, 200f, 4);
             Chunk newChunk = ApplyNoiseMap(noiseMap, new Chunk(chunkPosX, chunkPosY));
@@ -297,7 +298,7 @@ namespace FeloxGame.World
             }
         }
 
-        public void SaveChunkEntities(string worldFolderPath, int chunkPosX, int chunkPosY, List<EntitySaveDataObject> entitySaveDataList)
+        private void SaveChunkEntities(string worldFolderPath, int chunkPosX, int chunkPosY, List<EntitySaveDataObject> entitySaveDataList)
         {
             Loading.SaveObject(entitySaveDataList, $"{worldFolderPath}/EntityData/x{chunkPosX}y{chunkPosY}.json");
         }
@@ -322,8 +323,7 @@ namespace FeloxGame.World
 
         // Todo: Make this update adjacent tiles
         // Updates a tile at a position in the world.
-        
-        public void UpdateTile(int worldX, int worldY) //Todo: add error checking
+        public void UpdateTile(int worldX, int worldY)
         {
             int chunkX = GetChunkFromWorldCoordinate(worldX);
             int chunkY = GetChunkFromWorldCoordinate(worldY);
@@ -331,8 +331,14 @@ namespace FeloxGame.World
             int x = worldX >= 0 ? worldX % 16 : worldX % 16 == 0 ? 0 : 16 + worldX % 16;
             int y = worldY >= 0 ? worldY % 16 : worldY % 16 == 0 ? 0 : 16 + worldY % 16;
             
-            // Todo: prevent this from being hard-coded
-            LoadedChunks[$"x{chunkX}y{chunkY}"].SetTile(x, y, new ChunkTile(0)); // sets to grass
+            try
+            {
+                LoadedChunks[$"x{chunkX}y{chunkY}"].SetTile(x, y, new ChunkTile(0)); // todo: make it possible to set any tile
+            }
+            catch
+            {
+                Console.WriteLine($"Error: could not find chunk at world coords ${worldX}, ${worldY} to update");
+            }
         }
 
         private int GetChunkFromWorldCoordinate(int worldCoordinate)

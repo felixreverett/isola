@@ -19,20 +19,16 @@ namespace FeloxGame
         // Initialize Entity from save data
         public Entity(EntitySaveData saveData, string textureAtlasName = "Item Atlas")
         {
-            Console.WriteLine("Loading entity from save data");
-
-            this.Position = new Vector2(saveData.Position[0], saveData.Position[1]);
-            this.Size = new Vector2(saveData.Size[0], saveData.Size[1]);
-            
+            Position = new Vector2(saveData.Position[0], saveData.Position[1]);
+            Size = new Vector2(saveData.Size[0], saveData.Size[1]);
             Batch = new SpriteBatch(textureAtlasName, 0.001f);
         }
 
         // Default constructor
         public Entity(eEntityType entityType, Vector2 position, string textureAtlasName)
         {
-            this.EntityType = entityType;
-            this.Position = position;
-
+            EntityType = entityType;
+            Position = position;
             Batch = new SpriteBatch(textureAtlasName, 0.001f);
         }
         

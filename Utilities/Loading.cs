@@ -12,7 +12,6 @@ namespace FeloxGame.Utilities
         static Loading()
         {
             JsonOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-            JsonOptions.Converters.Add(new Vector2JsonConverter());
         }
 
         public static T LoadObject<T>(string filePath)

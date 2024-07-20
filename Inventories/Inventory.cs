@@ -8,11 +8,11 @@ namespace FeloxGame
     {
         public ItemStack[] _itemStackList;
         public ItemStack _mouseSlotItemStack;
-        public Player OwnerPlayer { get; set; }
+        public PlayerEntity OwnerPlayer { get; set; }
         private int _rows;
         private int _cols;
 
-        public Inventory(int rows, int cols, Player ownerPlayer)
+        public Inventory(int rows, int cols, PlayerEntity ownerPlayer)
         {
             this._rows = rows;
             this._cols = cols;

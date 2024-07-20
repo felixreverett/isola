@@ -35,7 +35,7 @@ namespace FeloxGame
         private GameConfig _config; // todo: implement a game config or integrate into player class
 
         // player data
-        private Player _player;
+        private PlayerEntity _player;
 
         // entity data
         protected List<Entity> _loadedEntityList;
@@ -89,7 +89,7 @@ namespace FeloxGame
             _world = new WorldManager(1, _config);
             
             // Player (with reference to _world)
-            _player = new Player(eEntityType.Player, new Vector2(0, 0), new Vector2(1, 2), "Player Atlas", _world);
+            _player = new PlayerEntity(eEntityType.Player, new Vector2(0, 0), new Vector2(1, 2), "Player Atlas", _world);
 
             // Entities
             _world.AddEntityToWorld(_player);

@@ -8,24 +8,23 @@ using FeloxGame.Rendering;
 
 namespace FeloxGame
 {
-    public class Player : Entity
+    public class PlayerEntity : Entity
     {
-        // Properties
         public Inventory Inventory { get; set; }
         public float Reach { get; set; }
         public int RenderDistance { get; set; } = 2; // todo: move to game config
         public eFacing Facing { get; set; } = eFacing.South;
-        public WorldManager CurrentWorld { get; protected set; } // todo: resolve how to set this on laod
+        public WorldManager CurrentWorld { get; protected set; } // todo: resolve how to set this on load
         protected float Speed { get; set; } = 5.5f; // Todo: move to constructor
 
-        public Player(eEntityType entityType, Vector2 startPos, Vector2 size, string textureAtlasName, WorldManager currentWorld)
+        public PlayerEntity(eEntityType entityType, Vector2 startPos, Vector2 size, string textureAtlasName, WorldManager currentWorld)
             : base (entityType, startPos, textureAtlasName)
         {
-            this.Inventory = new Inventory(5, 10, this);
-            this.CurrentWorld = currentWorld;
+            Inventory = new Inventory(5, 10, this);
+            CurrentWorld = currentWorld;
             Reach = 5f;
-            this.EntityType = eEntityType.Player;
-            this.Size = size;
+            EntityType = eEntityType.Player;
+            Size = size;
             TexCoords = new TexCoords(0f, 0f, 1f, 1f);
         }
 

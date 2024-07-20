@@ -22,12 +22,12 @@ namespace FeloxGame.Rendering
         }
 
         // Overload to set yDepth
-        public SpriteBatch(string textureAtlas, float yDepth) : this(textureAtlas)
+        public SpriteBatch(string textureAtlas, float zDepth) : this(textureAtlas)
         {
-            _vertices[2] = yDepth;
-            _vertices[10] = yDepth;
-            _vertices[18] = yDepth;
-            _vertices[26] = yDepth;
+            _vertices[2] = zDepth;
+            _vertices[10] = zDepth;
+            _vertices[18] = zDepth;
+            _vertices[26] = zDepth;
         }
 
         // Defined four corners of the "quad"
