@@ -33,9 +33,9 @@
             float normalisedOffset = (TextureSize + Padding) / (float)AtlasSize;
             float normalisedTextureSize = TextureSize / (float)AtlasSize;
 
-            texCoords.MinX = (float)column * normalisedOffset;
+            texCoords.MinX = column * normalisedOffset;
             texCoords.MaxX = texCoords.MinX + normalisedTextureSize;
-            texCoords.MinY = (float)row * normalisedOffset;
+            texCoords.MinY = row * normalisedOffset;
             texCoords.MaxY = texCoords.MinY + normalisedTextureSize;
 
             if (UseOffset)

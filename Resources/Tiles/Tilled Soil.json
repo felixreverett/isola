@@ -1,0 +1,7 @@
+{
+	"Name": "Tilled Soil",
+	"TileID": 7,
+	"TextureLocation": "Tilled Soil.png",
+	"TextureIndex": 7,
+	"IsCollidable": false
+}

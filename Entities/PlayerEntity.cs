@@ -12,7 +12,6 @@ namespace FeloxGame
     {
         public Inventory Inventory { get; set; }
         public float Reach { get; set; }
-        public int RenderDistance { get; set; } = 2; // todo: move to game config
         public eFacing Facing { get; set; } = eFacing.South;
         public WorldManager CurrentWorld { get; protected set; } // todo: resolve how to set this on load
         protected float Speed { get; set; } = 5.5f; // Todo: move to constructor

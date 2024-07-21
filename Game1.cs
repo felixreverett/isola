@@ -25,30 +25,20 @@ namespace FeloxGame
         // Shaders
         private Shader _shader;
         private Shader _UIShader;
-        
         // Camera
         private GameCamera _camera;
-
         // world data & config
         private WorldManager _world;
         private readonly string tileListFolderPath = @"../../../Resources/Tiles";
-        private GameConfig _config; // todo: implement a game config or integrate into player class
-
+        private GameConfig _config;
         // player data
         private PlayerEntity _player;
-
-        // entity data
-        protected List<Entity> _loadedEntityList;
-
         // item data
         private readonly string itemListFolderPath = @"../../../Resources/Items";
-
         // Cursor data
         private GameCursor _cursor;
-
-        // Gamestate data UPDATE: reusing this (5 sept)
+        // GameState data
         private bool toggleInventory = false;
-
         // UISystem
         private UI MasterUI { get; set; }
         int currentAnchor = 0; //debug
@@ -57,9 +47,7 @@ namespace FeloxGame
         {
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Blend);
-            //GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.Arb.BlendFuncSeparate(0, BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha, BlendingFactor.SrcAlpha, BlendingFactor.DstAlpha);
-            
 
             _shader = new(Shader.ParseShader(@"../../../Resources/Shaders/TextureWithColorAndTextureSlotAndUniforms.glsl"));
             if (!_shader.CompileShader())
@@ -76,7 +64,7 @@ namespace FeloxGame
             }
 
             // Textures & Assets
-            AssetLibrary.TextureAtlasList.Add("Tile Atlas", new IndexedTextureAtlas(1024, 16, 8, "Tiles/Tile Atlas.png", 0, true));
+            AssetLibrary.TextureAtlasList.Add("Tile Atlas", new IndexedTextureAtlas(1024, 16, 8, "Tiles/1024 Tile Atlas x16.png", 0, true));
             AssetLibrary.TextureAtlasList.Add("Player Atlas", new TextureAtlas(1024, "Entities/Player.png", 1));
             AssetLibrary.TextureAtlasList.Add("Inventory Atlas", new PrecisionTextureAtlas(1024, "Inventories/1024 UI Atlas x16.png", 2, 1024, 1024));
             AssetLibrary.TextureAtlasList.Add("Item Atlas", new IndexedTextureAtlas(1024, 16, 8, "Items/1024 Item Atlas 16x.png", 3));
@@ -85,7 +73,7 @@ namespace FeloxGame
             AssetLibrary.TileList = Loading.LoadAllObjects<TileData>(tileListFolderPath);
 
             // World (initialised before player as player will reference it)
-            _config = new GameConfig(true);
+            _config = new GameConfig(true, 2);
             _world = new WorldManager(1, _config);
             
             // Player (with reference to _world)
@@ -188,7 +176,12 @@ namespace FeloxGame
                 }
                 MasterUI.SetNDCs(Size.X, Size.Y, new NDC(-1f, -1f, 1f, 1f));
             }
-                       
+            // TEST - add hoe to player inventory
+            if (keyboardInput.IsKeyPressed(Keys.U))
+            {
+                _player.Inventory.AddToSlotIndex(new ItemStack("Stone Hoe", 1), 0);
+            }
+
             // TEST - add persimmon to player inventory
             if (keyboardInput.IsKeyPressed(Keys.P))
             {
@@ -311,7 +304,8 @@ namespace FeloxGame
                 // left click
                 if (e.Button == MouseButton.Left)
                 {
-                    _world.UpdateTile(_cursor.Rounded(_cursor.WorldPosition.X), _cursor.Rounded(_cursor.WorldPosition.Y));
+                    //_world.SetTile(_cursor.Rounded(_cursor.WorldPosition.X), _cursor.Rounded(_cursor.WorldPosition.Y), "Grass");
+                    MasterUI.Kodomo["Hotbar"].OnLeftClick(_cursor.WorldPosition, _world);
                 }
                 
                 // right click
