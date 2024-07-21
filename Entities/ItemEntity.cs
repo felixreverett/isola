@@ -31,7 +31,7 @@ namespace FeloxGame.Entities
         
         private void SetTexCoords()
         {
-            Item matchingItem = AssetLibrary.ItemList.FirstOrDefault(i => i.ItemName == ItemName)!;
+            Item? matchingItem = AssetLibrary.ItemList!.FirstOrDefault(i => i.ItemName == ItemName)!;
             int index = matchingItem == null ? 0 : matchingItem.TextureIndex;
             TexCoords = Utilities.Utilities.GetIndexedAtlasCoords(index, 16, 1024, 8);
         }

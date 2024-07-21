@@ -40,9 +40,9 @@ namespace FeloxGame.World
             int chunkX = worldX >= 0 ? worldX / 16 : worldX / 16 - 1;
             int chunkY = worldY >= 0 ? worldY / 16 : worldY / 16 - 1;
             // load chunks around the player
-            for (int x = chunkX - player.RenderDistance; x <= chunkX + player.RenderDistance; x++)
+            for (int x = chunkX - _config.RenderDistance; x <= chunkX + _config.RenderDistance; x++)
             {
-                for (int y = chunkY - player.RenderDistance; y <= chunkY + player.RenderDistance; y++)
+                for (int y = chunkY - _config.RenderDistance; y <= chunkY + _config.RenderDistance; y++)
                 {
                     string chunkID = $"x{x}y{y}";
                     if (!LoadedChunks.ContainsKey(chunkID))
@@ -55,7 +55,7 @@ namespace FeloxGame.World
             // unload chunks around the player
             foreach (Chunk chunk in LoadedChunks.Values)
             {
-                if (Math.Abs(chunk.ChunkPosX - chunkX) > player.RenderDistance || Math.Abs(chunk.ChunkPosY - chunkY) > player.RenderDistance)
+                if (Math.Abs(chunk.ChunkPosX - chunkX) > _config.RenderDistance || Math.Abs(chunk.ChunkPosY - chunkY) > _config.RenderDistance)
                 {
                     UnloadChunk(_worldFolderPath, chunk.ChunkPosX, chunk.ChunkPosY);
                 }
@@ -323,22 +323,30 @@ namespace FeloxGame.World
 
         // Todo: Make this update adjacent tiles
         // Updates a tile at a position in the world.
-        public void UpdateTile(int worldX, int worldY)
+        public void SetTile(int worldX, int worldY, string tileName)
         {
             int chunkX = GetChunkFromWorldCoordinate(worldX);
             int chunkY = GetChunkFromWorldCoordinate(worldY);
 
             int x = worldX >= 0 ? worldX % 16 : worldX % 16 == 0 ? 0 : 16 + worldX % 16;
             int y = worldY >= 0 ? worldY % 16 : worldY % 16 == 0 ? 0 : 16 + worldY % 16;
-            
-            try
+
+            if (AssetLibrary.GetTileIDFromTileName(tileName, out int tileID))
             {
-                LoadedChunks[$"x{chunkX}y{chunkY}"].SetTile(x, y, new ChunkTile(0)); // todo: make it possible to set any tile
+                try
+                {
+                    LoadedChunks[$"x{chunkX}y{chunkY}"].SetTile(x, y, new ChunkTile(tileID));
+                }
+                catch
+                {
+                    Console.WriteLine($"Error: could not find chunk at world coords ${worldX}, ${worldY} to update");
+                }
             }
-            catch
-            {
-                Console.WriteLine($"Error: could not find chunk at world coords ${worldX}, ${worldY} to update");
-            }
+        }
+
+        public void SetTile(float worldXf, float worldYf, string tileName)
+        {
+            SetTile((int)Math.Floor(worldXf), (int)Math.Floor(worldYf), tileName);
         }
 
         private int GetChunkFromWorldCoordinate(int worldCoordinate)

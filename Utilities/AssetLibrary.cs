@@ -7,13 +7,13 @@ namespace FeloxGame.Utilities
     {
         public static List<Item>? ItemList;
 
-        public static List<TileData> TileList;
+        public static List<TileData>? TileList;
 
         public static Dictionary<string, TextureAtlas> TextureAtlasList = new();
 
         public static bool GetItemFromItemName(string itemName, out Item? item)
         {
-            item = ItemList.Where(i => i.ItemName == itemName).FirstOrDefault();
+            item = ItemList!.FirstOrDefault(i => i.ItemName == itemName);
 
             if (item != null)
             {
@@ -26,6 +26,12 @@ namespace FeloxGame.Utilities
             }
         }
 
+        public static bool GetTileIDFromTileName(string tileName, out int tileID)
+        {
+            tileID = TileList.FirstOrDefault(i => i.Name == tileName).TileID;
+            return tileID != -1;
+        }
+
         public static void InitialiseItemList()
         {
             if (ItemList is not null)
@@ -33,9 +39,12 @@ namespace FeloxGame.Utilities
                 return;
             }
 
-            ItemList = new List<Item>();
-            ItemList.Add(new Item("Persimmon", 0));
-            ItemList.Add(new RiceSeedsItem("RiceSeeds", 42));
+            ItemList = new List<Item>
+            {
+                new Item("Persimmon", 1),
+                new RiceSeedsItem("RiceSeeds", 43),
+                new Hoe("Stone Hoe", 84)
+            };
         }
     }
 }

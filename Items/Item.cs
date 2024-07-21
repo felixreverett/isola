@@ -3,6 +3,7 @@ using OpenTK.Mathematics;
 
 namespace FeloxGame.Items
 {
+    // Represents item functionality
     public class Item
     {
         public string ItemName { get; set; }
