@@ -157,6 +157,17 @@ namespace FeloxGame.World
                             catch { Console.WriteLine("Loading Error: Could not load Item Entity"); }
                             break;
                         }
+                    case eEntityType.PlantTileEntity:
+                        {
+                            try
+                            {
+                                PlantTileEntitySaveData saveData = JsonSerializer.Deserialize<PlantTileEntitySaveData>(entitySaveDataObject.SaveDataString);
+                                Console.WriteLine("Loading new plant tile entity to world"); //debug
+                                AddEntityToWorld(new PlantTileEntity(saveData));
+                            }
+                            catch { Console.WriteLine("Loading Error: Could not load Plant Tile Entity"); }
+                            break;
+                        }
                     default:
                         {
                             Console.WriteLine("Error: No entity type found");

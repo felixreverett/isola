@@ -1,11 +1,11 @@
 ﻿using FeloxGame.World;
 using OpenTK.Mathematics;
 
-namespace FeloxGame.Items
+namespace FeloxGame.ItemStaticData
 {
-    public class RiceSeedsItem : Item
+    public class Hoe : Item
     {
-        public RiceSeedsItem(string itemName, int textureIndex, int stackLimit = 999)
+        public Hoe(string itemName, int textureIndex, int stackLimit = 1)
             : base(itemName, textureIndex, stackLimit)
         {
             ItemName = itemName;
@@ -17,7 +17,7 @@ namespace FeloxGame.Items
         {
             if (world.GetTile(mousePosition.X, mousePosition.Y).GetTileName() == "Grass")
             {
-                Console.WriteLine("Right button clicked with rice on grass");
+                world.SetTile(mousePosition.X, mousePosition.Y, "Tilled Soil");
             }
         }
 

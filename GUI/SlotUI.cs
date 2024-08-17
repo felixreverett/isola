@@ -1,7 +1,7 @@
 ﻿using FeloxGame.Utilities;
 using FeloxGame.Rendering;
 using FeloxGame.Inventories;
-using FeloxGame.Items;
+using FeloxGame.ItemStaticData;
 using OpenTK.Graphics.OpenGL4;
 
 namespace FeloxGame.GUI

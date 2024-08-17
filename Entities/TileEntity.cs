@@ -7,39 +7,37 @@ namespace FeloxGame
 {
     public class TileEntity : Entity
     {
-        /* Base class:
-         * EntityType; Position; Size; EntityTextureAtlas; Batch; TexCoords
-         */
-
-        private Vector2 DrawPositionOffset;
+        internal Vector2 DrawPositionOffset { get; set; } = new Vector2(0f, 0f);
 
         // Initialize TileEntity from save data
         public TileEntity(TileEntitySaveData saveData, string textureAtlasName = "TileEntity Atlas")
             : base(saveData)
         {
-            Position = new Vector2((float)Math.Floor(saveData.Position[0]), (float)Math.Floor(saveData.Position[1]));
+            DrawPositionOffset = new Vector2(saveData.DrawPositionOffset[0], saveData.DrawPositionOffset[1]);
+            AlignPosition();
             Size = new Vector2(saveData.Size[0], saveData.Size[1]);
-            Batch = new SpriteBatch(textureAtlasName, 0.001f);
         }
 
         // Default constructor
         public TileEntity(eEntityType entityType, Vector2 position, string textureAtlasName)
+            : base(entityType, position, textureAtlasName)
         {
-            EntityType = entityType;
-            Position = new Vector2((float)Math.Floor(position.X), (float)Math.Floor(position.Y));
-            Batch = new SpriteBatch(textureAtlasName, 0.001f);
+            AlignPosition();
         }
 
-        // TileEntities use integer position but can have an offset for drawing
+        // TileEntities can have an offset for drawing
         public override void Draw()
         {
-            Box2 rect = new Box2(Position.X + DrawPositionOffset.X, Position.Y + DrawPositionOffset.Y, Position.X + DrawPositionOffset.X + Size.X, Position.Y + DrawPositionOffset.Y + Size.Y);
+            Box2 rect = new Box2(
+                Position.X - Size.X / 2f + DrawPositionOffset.X, Position.Y + DrawPositionOffset.Y,
+                Position.X + Size.X / 2f + DrawPositionOffset.X, Position.Y + Size.Y + DrawPositionOffset.Y
+                );
 
             Batch.DrawQuad(rect, TexCoords);
         }
 
         // Export entity save data
-        public virtual EntitySaveDataObject GetSaveData()
+        public override EntitySaveDataObject GetSaveData()
         {
             TileEntitySaveData data = new
                 (
@@ -49,6 +47,11 @@ namespace FeloxGame
                 );
 
             return new EntitySaveDataObject(EntityType, JsonSerializer.Serialize(data));
+        }
+
+        private void AlignPosition()
+        {
+            Position = new Vector2((float)Math.Floor(Position.X) + 0.5f, (float)Math.Floor(Position.Y));
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using FeloxGame.Utilities;
-using FeloxGame.Items;
+using FeloxGame.ItemStaticData;
 using OpenTK.Mathematics;
 using System.Text.Json;
 

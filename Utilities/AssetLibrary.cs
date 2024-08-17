@@ -1,5 +1,5 @@
 ﻿using FeloxGame.Rendering;
-using FeloxGame.Items;
+using FeloxGame.ItemStaticData;
 
 namespace FeloxGame.Utilities
 {

@@ -6,7 +6,6 @@ using FeloxGame.World;
 using FeloxGame.GUI;
 using FeloxGame.Inventories;
 using FeloxGame.Entities;
-using FeloxGame.Items;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;

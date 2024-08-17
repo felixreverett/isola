@@ -10,7 +10,6 @@ namespace FeloxGame
         public eEntityType EntityType { get; set; } = eEntityType.Entity;
         public Vector2 Position { get; set; }
         public Vector2 Size { get; set; } = new Vector2(1f, 1f);
-        protected TextureAtlas EntityTextureAtlas { get; set; }
 
         // Associated rendering
         public SpriteBatch Batch { get; private set; }

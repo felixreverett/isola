@@ -1,7 +1,7 @@
 ﻿using FeloxGame.World;
 using OpenTK.Mathematics;
 
-namespace FeloxGame.Items
+namespace FeloxGame.ItemStaticData
 {
     // Represents item functionality
     public class Item
