@@ -1,16 +1,13 @@
 ﻿using FeloxGame.World;
 using OpenTK.Mathematics;
 
-namespace FeloxGame.ItemStaticData
+namespace FeloxGame.Items
 {
-    public class Hoe : Item
+    public class Item_Hoe : Item
     {
-        public Hoe(string itemName, int textureIndex, int stackLimit = 1)
+        public Item_Hoe(string itemName, int textureIndex, int stackLimit = 1)
             : base(itemName, textureIndex, stackLimit)
         {
-            ItemName = itemName;
-            TextureIndex = textureIndex;
-            StackLimit = stackLimit;
         }
 
         public override void OnRightClick(Vector2 mousePosition, WorldManager world)

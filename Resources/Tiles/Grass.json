@@ -1,7 +1,0 @@
-{
-	"Name": "Grass",
-	"TileID": 0,
-	"TextureLocation": "grass.png",
-	"TextureIndex": 1,
-	"IsCollidable": false
-}

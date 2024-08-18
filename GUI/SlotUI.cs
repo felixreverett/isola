@@ -1,7 +1,7 @@
 ﻿using FeloxGame.Utilities;
 using FeloxGame.Rendering;
 using FeloxGame.Inventories;
-using FeloxGame.ItemStaticData;
+using FeloxGame.Items;
 using OpenTK.Graphics.OpenGL4;
 
 namespace FeloxGame.GUI
@@ -31,7 +31,7 @@ namespace FeloxGame.GUI
         {
             int textureIndex = 0;
 
-            Item matchingItem = AssetLibrary.ItemList.FirstOrDefault(i => i.ItemName == itemStack.ItemName);
+            Items.Item matchingItem = AssetLibrary.ItemList.FirstOrDefault(i => i.ItemName == itemStack.ItemName);
 
             if (matchingItem != null)
             {

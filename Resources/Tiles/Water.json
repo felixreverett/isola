@@ -1,7 +1,0 @@
-{
-	"Name": "Water",
-	"TileID": 2,
-	"TextureLocation": "water.png",
-	"TextureIndex": 3,
-	"IsCollidable": true
-}

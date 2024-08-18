@@ -24,20 +24,23 @@ namespace FeloxGame
         // Shaders
         private Shader _shader;
         private Shader _UIShader;
+        
         // Camera
         private GameCamera _camera;
+        
         // world data & config
         private WorldManager _world;
-        private readonly string tileListFolderPath = @"../../../Resources/Tiles";
         private GameConfig _config;
+        
         // player data
         private PlayerEntity _player;
-        // item data
-        private readonly string itemListFolderPath = @"../../../Resources/Items";
+        
         // Cursor data
         private GameCursor _cursor;
+        
         // GameState data
         private bool toggleInventory = false;
+        
         // UISystem
         private UI MasterUI { get; set; }
         int currentAnchor = 0; //debug
@@ -69,7 +72,7 @@ namespace FeloxGame
             AssetLibrary.TextureAtlasList.Add("Item Atlas", new IndexedTextureAtlas(1024, 16, 8, "Items/1024 Item Atlas 16x.png", 3));
             
             AssetLibrary.InitialiseItemList();
-            AssetLibrary.TileList = Loading.LoadAllObjects<TileData>(tileListFolderPath);
+            AssetLibrary.InitialiseTileList();
 
             // World (initialised before player as player will reference it)
             _config = new GameConfig(true, 2);
@@ -190,7 +193,7 @@ namespace FeloxGame
             // Test - add rice seeds to player inventory
             if (keyboardInput.IsKeyPressed(Keys.I))
             {
-                _player.Inventory.AddToSlotIndex(new ItemStack("RiceSeeds", 1), 1);
+                _player.Inventory.AddToSlotIndex(new ItemStack("Wheat Seeds", 1), 1);
             }
 
             // TEST - count items in inventory
