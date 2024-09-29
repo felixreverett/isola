@@ -5,6 +5,7 @@ using SharpNoise;
 using FeloxGame.Entities;
 using System.Text.Json;
 using OpenTK.Mathematics;
+using System.Diagnostics; //debug
 
 namespace FeloxGame.World
 {
@@ -70,20 +71,34 @@ namespace FeloxGame.World
 
         private void DrawChunks()
         {
+            var timer = new Stopwatch();
+            timer.Start();
             foreach (Chunk loadedChunk in LoadedChunks.Values)
             {
+                batch.Begin();
+
                 for (int y = 0; y < 16; y++)
                 {
                     for (int x = 0; x < 16; x++)
                     {
-                        Box2 rect = new Box2(loadedChunk.ChunkPosX * 16 + x, loadedChunk.ChunkPosY * 16 + y, loadedChunk.ChunkPosX * 16 + x + 1, loadedChunk.ChunkPosY * 16 + y + 1);
+                        Box2 rect = new Box2(
+                            loadedChunk.ChunkPosX * 16 + x,
+                            loadedChunk.ChunkPosY * 16 + y,
+                            loadedChunk.ChunkPosX * 16 + x + 1,
+                            loadedChunk.ChunkPosY * 16 + y + 1);
                         
-                        TexCoords texCoords = AssetLibrary.TileList.Where(t => t.TileID == loadedChunk.GetTile(x, y).TileID).FirstOrDefault().TexCoords;
+                        TexCoords texCoords = AssetLibrary.TileList
+                            .Where(t => t.TileID == loadedChunk.GetTile(x, y).TileID)
+                            .FirstOrDefault().TexCoords;
 
                         batch.DrawQuad(rect, texCoords);
                     }
                 }
+
+                batch.End();
             }
+            timer.Stop();
+            Console.WriteLine($"> Chunk draw cycle took {timer.Elapsed.ToString(@"m\:ss\.fffff")} to run.");
         }
 
         private void DrawEntities()

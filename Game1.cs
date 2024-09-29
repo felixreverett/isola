@@ -75,7 +75,7 @@ namespace FeloxGame
             AssetLibrary.InitialiseTileList();
 
             // World (initialised before player as player will reference it)
-            _config = new GameConfig(true, 2);
+            _config = new GameConfig(true, 10);
             _world = new WorldManager(1, _config);
             
             // Player (with reference to _world)
