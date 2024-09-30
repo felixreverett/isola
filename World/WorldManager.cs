@@ -75,7 +75,7 @@ namespace FeloxGame.World
             timer.Start();
             foreach (Chunk loadedChunk in LoadedChunks.Values)
             {
-                batch.Begin();
+                batch.StartBatch();
 
                 for (int y = 0; y < 16; y++)
                 {
@@ -91,11 +91,11 @@ namespace FeloxGame.World
                             .Where(t => t.TileID == loadedChunk.GetTile(x, y).TileID)
                             .FirstOrDefault().TexCoords;
 
-                        batch.DrawQuad(rect, texCoords);
+                        batch.AddQuadToBatch(rect, texCoords);
                     }
                 }
 
-                batch.End();
+                batch.EndBatch();
             }
             timer.Stop();
             Console.WriteLine($"> Chunk draw cycle took {timer.Elapsed.ToString(@"m\:ss\.fffff")} to run.");

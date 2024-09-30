@@ -34,9 +34,9 @@ namespace FeloxGame
         public virtual void Draw()
         {
             Box2 rect = new Box2(Position.X - Size.X / 2f, Position.Y, Position.X + Size.X / 2f, Position.Y + Size.Y);
-            Batch.Begin(); // todo: render entities with the same spritebatch
-            Batch.DrawQuad(rect, TexCoords);
-            Batch.End(); // todo: render entities with the same spritebatch
+            Batch.StartBatch(); // todo: render entities with the same spritebatch
+            Batch.AddQuadToBatch(rect, TexCoords);
+            Batch.EndBatch(); // todo: render entities with the same spritebatch
         }
 
         // Export entity save data

@@ -33,7 +33,7 @@ namespace FeloxGame
                 Position.X + Size.X / 2f + DrawPositionOffset.X, Position.Y + Size.Y + DrawPositionOffset.Y
                 );
 
-            Batch.DrawQuad(rect, TexCoords);
+            Batch.AddQuadToBatch(rect, TexCoords);
         }
 
         // Export entity save data

@@ -244,6 +244,8 @@ namespace FeloxGame
 
             _world.Draw();
 
+            // todo: after draw, call End on all SpriteBatches to clean up remaining batch?
+
             // ---------- UI ----------
 
             GL.Disable(EnableCap.DepthTest);

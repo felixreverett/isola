@@ -23,25 +23,6 @@ namespace FeloxGame.Rendering
         private IndexBuffer _indexBuffer;
         private TextureAtlas _textureAtlas;
 
-        /*
-        // Defined four corners of the "quad"
-        private readonly float[] _vertices =
-        {   //Vertices        //texCoords //texColors
-            1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, //top right (1,1)
-            1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, //bottom right (1, 0)
-            0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, //bottom left (0, 0)
-            0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f  //top left (0, 1)
-        };
-
-        // Defined vertices of the two triangles of the quad
-        private uint[] _indices =
-        {
-            0, 1, 3, // first triangle
-            1, 2, 3  // second triangle
-        };
-
-        */
-
         public SpriteBatch(string textureAtlas, float zDepth) : this(textureAtlas)
         {
             _zDepthLayer = zDepth;
@@ -77,14 +58,14 @@ namespace FeloxGame.Rendering
             _vertexArray.AddBuffer(_vertexBuffer, layout);
         }
 
-        public void Begin()
+        public void StartBatch()
         {
             _quadCount = 0;
             _vertexCount = 0;
             _indexCount = 0;
         }
 
-        public void End()
+        public void EndBatch()
         {
             _textureAtlas.Texture.Use();
             _vertexArray.Bind();
@@ -97,12 +78,12 @@ namespace FeloxGame.Rendering
             GL.DrawElements(PrimitiveType.Triangles, _indexCount, DrawElementsType.UnsignedInt, 0);
         }
 
-        public void DrawQuad(Box2 rect, TexCoords texCoords)
+        public void AddQuadToBatch(Box2 rect, TexCoords texCoords)
         {
             if (_quadCount >= MaxQuads)
             {
-                End();
-                Begin();
+                EndBatch();
+                StartBatch();
             }
 
             float zDepth = _zDepthLayer;
@@ -152,36 +133,6 @@ namespace FeloxGame.Rendering
 
             _indexCount += 6; // 6 indices per quad
             _quadCount++;
-
-            /*
-            _textureAtlas.Texture.Use();
-            _vertexArray.Bind();
-            _vertexBuffer.Bind();
-            _indexBuffer.Bind();
-
-            SetPositionVertices(rect);
-
-            setTexCoordVertices(texCoords);
-
-            GL.BufferSubData(BufferTarget.ArrayBuffer, 0, sizeof(float) * _vertices.Length, _vertices);
-            GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
-            */
-        }
-
-        private void SetPositionVertices(Box2 rect)
-        {
-            _vertices[0]  = rect.Max.X; _vertices[1] =  rect.Max.Y; // top right (1, 1)
-            _vertices[8]  = rect.Max.X; _vertices[9] =  rect.Min.Y; // bottom right (1, 0)
-            _vertices[16] = rect.Min.X; _vertices[17] = rect.Min.Y; // bottom left (0, 0)
-            _vertices[24] = rect.Min.X; _vertices[25] = rect.Max.Y; // top left (0, 1)
-        }
-
-        private void setTexCoordVertices(TexCoords texCoords)
-        {
-            _vertices[3]  = texCoords.MaxX; _vertices[4]  = texCoords.MaxY; // (1, 1)
-            _vertices[11] = texCoords.MaxX; _vertices[12] = texCoords.MinY; // (1, 0)
-            _vertices[19] = texCoords.MinX; _vertices[20] = texCoords.MinY; // (0, 0)
-            _vertices[27] = texCoords.MinX; _vertices[28] = texCoords.MaxY; // (0, 1)
         }
     }
 }
