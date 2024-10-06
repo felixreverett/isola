@@ -13,7 +13,6 @@ namespace FeloxGame
         public Vector2 Size { get; set; } = new Vector2(1f, 1f);
 
         // Drawing
-        public SpriteBatch Batch { get; private set; }
         public TextureAtlasManager AtlasManager { get; protected set; } = (IndexedTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Item Atlas"];
         protected TexCoords TexCoords { get; set; }
                 

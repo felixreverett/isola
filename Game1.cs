@@ -65,9 +65,7 @@ namespace FeloxGame
                 return;
             }
 
-            // Textures & Assets //todo: deprecate
-            AssetLibrary.TextureAtlasList.Add("Inventory Atlas", new PrecisionTextureAtlas(1024, "1024 UI Atlas x16.png", 2, 1024, 1024));
-            
+            // Asset Loading            
             AssetLibrary.InitialiseTextureAtlasManagerList();
             AssetLibrary.InitialiseItemList();
             AssetLibrary.InitialiseTileList();
