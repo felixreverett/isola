@@ -1,6 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 
-namespace FeloxGame.Rendering
+namespace FeloxGame.Drawing
 {
     public struct BufferElement
     {

@@ -1,6 +1,6 @@
 ﻿using FeloxGame.Utilities;
 
-namespace FeloxGame.Rendering
+namespace FeloxGame.Drawing
 {
     public class TextureAtlas
     {
@@ -16,7 +16,7 @@ namespace FeloxGame.Rendering
             Offset = 0.2f / (AtlasSize * 2);
             UseOffset = useOffset;
 
-            Texture = ResourceManager.Instance.LoadTexture(atlasName, textureUnit);
+            Texture = ResourceManager.Instance.LoadTextureAtlas(atlasName, textureUnit);
         }
     }
 }

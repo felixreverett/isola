@@ -1,4 +1,4 @@
-﻿using FeloxGame.Rendering;
+﻿using FeloxGame.Drawing;
 using OpenTK.Mathematics;
 using FeloxGame.Entities;
 using System.Text.Json;
@@ -10,7 +10,7 @@ namespace FeloxGame
         internal Vector2 DrawPositionOffset { get; set; } = new Vector2(0f, 0f);
 
         // Initialize TileEntity from save data
-        public TileEntity(TileEntitySaveData saveData, string textureAtlasName = "TileEntity Atlas")
+        public TileEntity(TileEntitySaveData saveData)
             : base(saveData)
         {
             DrawPositionOffset = new Vector2(saveData.DrawPositionOffset[0], saveData.DrawPositionOffset[1]);
@@ -19,8 +19,8 @@ namespace FeloxGame
         }
 
         // Default constructor
-        public TileEntity(eEntityType entityType, Vector2 position, string textureAtlasName)
-            : base(entityType, position, textureAtlasName)
+        public TileEntity(eEntityType entityType, Vector2 position)
+            : base(entityType, position)
         {
             AlignPosition();
         }

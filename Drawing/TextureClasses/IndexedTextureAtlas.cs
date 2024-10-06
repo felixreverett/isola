@@ -1,4 +1,4 @@
-﻿namespace FeloxGame.Rendering
+﻿namespace FeloxGame.Drawing
 {
     public class IndexedTextureAtlas : TextureAtlas
     {

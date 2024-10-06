@@ -1,7 +1,7 @@
 ﻿using FeloxGame.Utilities;
 using OpenTK.Graphics.OpenGL4;
 
-namespace FeloxGame.Rendering
+namespace FeloxGame.Drawing
 {
     public class VertexArray : IBuffer, IDisposable
     {

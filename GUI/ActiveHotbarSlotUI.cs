@@ -1,4 +1,4 @@
-﻿using FeloxGame.Rendering;
+﻿using FeloxGame.Drawing;
 using OpenTK.Windowing.Common;
 
 namespace FeloxGame.GUI

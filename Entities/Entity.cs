@@ -1,7 +1,8 @@
-﻿using FeloxGame.Rendering;
+﻿using FeloxGame.Drawing;
 using OpenTK.Mathematics;
 using FeloxGame.Entities;
 using System.Text.Json;
+using FeloxGame.Utilities;
 
 namespace FeloxGame
 {
@@ -11,32 +12,31 @@ namespace FeloxGame
         public Vector2 Position { get; set; }
         public Vector2 Size { get; set; } = new Vector2(1f, 1f);
 
-        // Associated rendering
+        // Drawing
         public SpriteBatch Batch { get; private set; }
+        public TextureAtlasManager AtlasManager { get; protected set; } = (IndexedTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Item Atlas"];
         protected TexCoords TexCoords { get; set; }
                 
         // Initialize Entity from save data
-        public Entity(EntitySaveData saveData, string textureAtlasName = "Item Atlas")
+        public Entity(EntitySaveData saveData)
         {
             Position = new Vector2(saveData.Position[0], saveData.Position[1]);
             Size = new Vector2(saveData.Size[0], saveData.Size[1]);
-            Batch = new SpriteBatch(textureAtlasName, 0.001f);
         }
 
         // Default constructor
-        public Entity(eEntityType entityType, Vector2 position, string textureAtlasName)
+        public Entity(eEntityType entityType, Vector2 position)
         {
             EntityType = entityType;
             Position = position;
-            Batch = new SpriteBatch(textureAtlasName, 0.001f);
         }
         
         public virtual void Draw()
         {
             Box2 rect = new Box2(Position.X - Size.X / 2f, Position.Y, Position.X + Size.X / 2f, Position.Y + Size.Y);
-            Batch.StartBatch(); // todo: render entities with the same spritebatch
-            Batch.AddQuadToBatch(rect, TexCoords);
-            Batch.EndBatch(); // todo: render entities with the same spritebatch
+            AtlasManager.StartBatch(); // todo: render entities with the same spritebatch
+            AtlasManager.AddQuadToBatch(rect, TexCoords);
+            AtlasManager.EndBatch(); // todo: render entities with the same spritebatch
         }
 
         // Export entity save data

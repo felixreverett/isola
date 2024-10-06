@@ -1,5 +1,5 @@
 ﻿using FeloxGame.Utilities;
-using FeloxGame.Rendering;
+using FeloxGame.Drawing;
 using FeloxGame.Inventories;
 using FeloxGame.Items;
 using OpenTK.Graphics.OpenGL4;
@@ -10,7 +10,7 @@ namespace FeloxGame.GUI
     {
         protected int ItemSlotID;
         protected Inventory Inventory;
-        protected IndexedTextureAtlas ItemAtlas = (IndexedTextureAtlas)AssetLibrary.TextureAtlasList["Item Atlas"]; //Todo: redesign this whole system.
+        protected IndexedTextureAtlasManager AtlasManager = (IndexedTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Item Atlas"];
 
         public SlotUI
         (
@@ -31,14 +31,14 @@ namespace FeloxGame.GUI
         {
             int textureIndex = 0;
 
-            Items.Item matchingItem = AssetLibrary.ItemList.FirstOrDefault(i => i.ItemName == itemStack.ItemName);
+            Item matchingItem = AssetLibrary.ItemList.FirstOrDefault(i => i.ItemName == itemStack.ItemName);
 
             if (matchingItem != null)
             {
                 textureIndex = matchingItem.TextureIndex;
             }
 
-            TexCoords texCoords = ItemAtlas.GetIndexedAtlasCoords(textureIndex);
+            TexCoords texCoords = AtlasManager.GetIndexedAtlasCoords(textureIndex);
 
             SetTextureCoords(texCoords);
         }
@@ -56,7 +56,7 @@ namespace FeloxGame.GUI
         {
             if (IsDrawable && ToggleDraw)
             {
-                ItemAtlas.Texture.Use();
+                AtlasManager.Texture.Use();
 
                 _vertexArray.Bind();
                 _vertexBuffer.Bind();

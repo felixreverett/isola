@@ -1,15 +1,15 @@
-﻿namespace FeloxGame.Rendering
+﻿namespace FeloxGame.Drawing
 {
-    public class TexCoords
+    public class NDC
     {
         public float MinX { get; set; } = -1.0f;
         public float MinY { get; set; } = -1.0f;
         public float MaxX { get; set; } = 1.0f;
         public float MaxY { get; set; } = 1.0f;
 
-        public TexCoords() { }
+        public NDC() { }
 
-        public TexCoords(float minX, float minY, float maxX, float maxY)
+        public NDC(float minX, float minY, float maxX, float maxY)
         {
             MinX = minX;
             MinY = minY;

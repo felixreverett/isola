@@ -1,4 +1,4 @@
-﻿using FeloxGame.Rendering;
+﻿using FeloxGame.Drawing;
 using FeloxGame.Utilities;
 
 namespace FeloxGame
@@ -13,9 +13,8 @@ namespace FeloxGame
         public string TextureLocation { get; private set; }
         public int TextureIndex { get; private set; }
         public bool IsCollidable { get; private set; } = false;
-
-        [NonSerialized]
-        protected IndexedTextureAtlas Atlas = (IndexedTextureAtlas)AssetLibrary.TextureAtlasList["Tile Atlas"];
+        
+        protected IndexedTextureAtlasManager AtlasManager = (IndexedTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Tile Atlas"];
         public TexCoords TexCoords;
 
 
@@ -26,7 +25,7 @@ namespace FeloxGame
             TextureLocation = textureLocation;
             TextureIndex = textureIndex;
             IsCollidable = isCollidable;
-            TexCoords = Atlas.GetIndexedAtlasCoords(textureIndex);
+            TexCoords = AtlasManager.GetIndexedAtlasCoords(textureIndex);
         }
 
     }

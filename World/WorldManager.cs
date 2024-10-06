@@ -1,4 +1,4 @@
-﻿using FeloxGame.Rendering;
+﻿using FeloxGame.Drawing;
 using FeloxGame.GameClasses;
 using FeloxGame.Utilities;
 using SharpNoise;
@@ -18,11 +18,10 @@ namespace FeloxGame.World
         public string WorldName { get; set; } = "Example";
         public Dictionary<string, Chunk> LoadedChunks { get; private set; }
         public List<Entity> LoadedEntityList { get; set; }
-        //private string _worldFolderPath = @"../../../Resources/World/WorldFiles";
         private string _worldFolderPath = @"../../../Saves/SampleWorldStructure";
         private GameConfig _config;
         public int Seed { get; private set; }
-        public SpriteBatch batch { get; private set; }
+        public IndexedTextureAtlasManager AtlasManager { get; private set; }
 
         public WorldManager(int seed, GameConfig config)
         {
@@ -30,7 +29,7 @@ namespace FeloxGame.World
             _config = config;
             LoadedChunks = new Dictionary<string, Chunk>();
             LoadedEntityList = new List<Entity>();
-            batch = new SpriteBatch("Tile Atlas");
+            AtlasManager = (IndexedTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Tile Atlas"];
         }
 
         // Updates the world around the player
@@ -75,7 +74,7 @@ namespace FeloxGame.World
             timer.Start();
             foreach (Chunk loadedChunk in LoadedChunks.Values)
             {
-                batch.StartBatch();
+                AtlasManager.StartBatch();
 
                 for (int y = 0; y < 16; y++)
                 {
@@ -91,11 +90,11 @@ namespace FeloxGame.World
                             .Where(t => t.TileID == loadedChunk.GetTile(x, y).TileID)
                             .FirstOrDefault().TexCoords;
 
-                        batch.AddQuadToBatch(rect, texCoords);
+                        AtlasManager.AddQuadToBatch(rect, texCoords);
                     }
                 }
 
-                batch.EndBatch();
+                AtlasManager.EndBatch();
             }
             timer.Stop();
             Console.WriteLine($"> Chunk draw cycle took {timer.Elapsed.ToString(@"m\:ss\.fffff")} to run.");

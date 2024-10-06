@@ -1,4 +1,4 @@
-﻿using FeloxGame.Rendering;
+﻿using FeloxGame.Drawing;
 using FeloxGame.Items;
 
 namespace FeloxGame.Utilities
@@ -9,7 +9,8 @@ namespace FeloxGame.Utilities
 
         public static List<TileData>? TileList;
 
-        public static Dictionary<string, TextureAtlas> TextureAtlasList = new();
+        public static Dictionary<string, TextureAtlas> TextureAtlasList = new(); // todo: deprecate
+        public static Dictionary<string, TextureAtlasManager> TextureAtlasManagerList = new(); //todo: make active
 
         public static bool GetItemFromItemName(string itemName, out Items.Item? item)
         {
@@ -47,6 +48,14 @@ namespace FeloxGame.Utilities
                 // Tools
                 new Item_Hoe("Stone Hoe", 84)
             };
+        }
+
+        public static void InitialiseTextureAtlasManagerList()
+        {
+            TextureAtlasManagerList.Add("Tile Atlas", new IndexedTextureAtlasManager(0, "1024 Tile Atlas x16.png", 1024, 16, 8, true, 0.0f));
+            TextureAtlasManagerList.Add("Player Atlas", new PrecisionTextureAtlasManager(1, "Player.png", 1024, 1024, 1024, false, 0.001f));
+            //TextureAtlasManagerList.Add("Inventory Atlas", new PrecisionTextureAtlasManager(2, "1024 UI Atlas x16.png", 1024, 1024, 1024, false));
+            TextureAtlasManagerList.Add("Item Atlas", new IndexedTextureAtlasManager(3, "1024 Item Atlas 16x.png", 1024, 16, 8, false, 0.001f));
         }
 
         public static void InitialiseTileList()

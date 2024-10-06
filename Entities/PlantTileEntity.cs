@@ -16,8 +16,8 @@ namespace FeloxGame
         }
 
         // Default constructor
-        public PlantTileEntity(eEntityType entityType, Vector2 position, string textureAtlasName, int growthStage = 0)
-            : base(entityType, position, textureAtlasName)
+        public PlantTileEntity(eEntityType entityType, Vector2 position, int growthStage = 0)
+            : base(entityType, position)
         {
             GrowthStage = growthStage;
         }

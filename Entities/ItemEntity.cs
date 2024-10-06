@@ -11,8 +11,8 @@ namespace FeloxGame.Entities
         public int Amount { get; set; }
 
         // Initialize entity otherwise
-        public ItemEntity(eEntityType entityType, Vector2 position, string itemName, int amount, string textureAtlasName = "Item Atlas") 
-            : base(entityType, position, textureAtlasName)
+        public ItemEntity(eEntityType entityType, Vector2 position, string itemName, int amount) 
+            : base(entityType, position)
         {
             this.ItemName = itemName;
             this.Amount = amount;

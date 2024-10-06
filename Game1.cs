@@ -1,5 +1,5 @@
 ﻿using FeloxGame.Core.Rendering;
-using FeloxGame.Rendering;
+using FeloxGame.Drawing;
 using FeloxGame.Utilities;
 using FeloxGame.GameClasses;
 using FeloxGame.World;
@@ -22,8 +22,8 @@ namespace FeloxGame
         }
         
         // Shaders
-        private Shader _shader;
-        private Shader _UIShader;
+        private Shader WorldShader;
+        private Shader UIShader;
         
         // Camera
         private GameCamera _camera;
@@ -51,26 +51,24 @@ namespace FeloxGame
             GL.Enable(EnableCap.Blend);
             GL.Arb.BlendFuncSeparate(0, BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha, BlendingFactor.SrcAlpha, BlendingFactor.DstAlpha);
 
-            _shader = new(Shader.ParseShader(@"../../../Resources/Shaders/TextureWithColorAndTextureSlotAndUniforms.glsl"));
-            if (!_shader.CompileShader())
+            WorldShader = new(Shader.ParseShader(@"../../../Resources/Shaders/TextureWithColorAndTextureSlotAndUniforms.glsl"));
+            if (!WorldShader.CompileShader())
             {
                 Console.WriteLine("Failed to compile shader.");
                 return;
             }
 
-            _UIShader = new(Shader.ParseShader(@"../../../Resources/Shaders/UIShader.glsl")); // todo: move to UI Load?
-            if (!_UIShader.CompileShader())
+            UIShader = new(Shader.ParseShader(@"../../../Resources/Shaders/UIShader.glsl")); // todo: move to UI Load?
+            if (!UIShader.CompileShader())
             {
                 Console.WriteLine("Failed to compile shader.");
                 return;
             }
 
-            // Textures & Assets
-            AssetLibrary.TextureAtlasList.Add("Tile Atlas", new IndexedTextureAtlas(1024, 16, 8, "Tiles/1024 Tile Atlas x16.png", 0, true));
-            AssetLibrary.TextureAtlasList.Add("Player Atlas", new TextureAtlas(1024, "Entities/Player.png", 1));
-            AssetLibrary.TextureAtlasList.Add("Inventory Atlas", new PrecisionTextureAtlas(1024, "Inventories/1024 UI Atlas x16.png", 2, 1024, 1024));
-            AssetLibrary.TextureAtlasList.Add("Item Atlas", new IndexedTextureAtlas(1024, 16, 8, "Items/1024 Item Atlas 16x.png", 3));
+            // Textures & Assets //todo: deprecate
+            AssetLibrary.TextureAtlasList.Add("Inventory Atlas", new PrecisionTextureAtlas(1024, "1024 UI Atlas x16.png", 2, 1024, 1024));
             
+            AssetLibrary.InitialiseTextureAtlasManagerList();
             AssetLibrary.InitialiseItemList();
             AssetLibrary.InitialiseTileList();
 
@@ -79,7 +77,7 @@ namespace FeloxGame
             _world = new WorldManager(1, _config);
             
             // Player (with reference to _world)
-            _player = new PlayerEntity(eEntityType.Player, new Vector2(0, 0), new Vector2(1, 2), "Player Atlas", _world);
+            _player = new PlayerEntity(eEntityType.Player, new Vector2(0, 0), new Vector2(1, 2), _world);
 
             // Entities
             _world.AddEntityToWorld(_player);
@@ -92,7 +90,7 @@ namespace FeloxGame
                 MasterUI.Kodomo["Hotbar"].SetTextureCoords(0, 118, 188, 26); //todo: set on instantiation
 
             // Textures
-            _shader.Use(); //todo: do I need this?
+            WorldShader.Use(); //todo: do I need this?
 
             // Camera
             _camera = new GameCamera(Vector3.UnitZ * 10, Size.X / (float)Size.Y);
@@ -235,12 +233,12 @@ namespace FeloxGame
 
             // ---------- WORLD & Entities ----------
 
-            _shader.Use();
+            WorldShader.Use();
 
             // matrices for camera
-            _shader.SetMatrix4("model", Matrix4.Identity);
-            _shader.SetMatrix4("view", _camera.GetViewMatrix());
-            _shader.SetMatrix4("projection", _camera.GetProjectionMatrix());
+            WorldShader.SetMatrix4("model", Matrix4.Identity);
+            WorldShader.SetMatrix4("view", _camera.GetViewMatrix());
+            WorldShader.SetMatrix4("projection", _camera.GetProjectionMatrix());
 
             _world.Draw();
 
@@ -249,7 +247,7 @@ namespace FeloxGame
             // ---------- UI ----------
 
             GL.Disable(EnableCap.DepthTest);
-            _UIShader.Use();
+            UIShader.Use();
             MasterUI.Draw();
 
             SwapBuffers();

@@ -1,4 +1,4 @@
-﻿using FeloxGame.Rendering;
+﻿using FeloxGame.Drawing;
 
 namespace FeloxGame.Utilities
 {
@@ -24,9 +24,9 @@ namespace FeloxGame.Utilities
             }
         }
 
-        public Texture2D LoadTexture(string textureName, int textureUnit)
+        public Texture2D LoadTextureAtlas(string atlasFileName, int textureUnit)
         {
-            string texturePath = @"../../../Resources/Textures/" + textureName;
+            string texturePath = @"../../../Resources/TextureAtlases/" + atlasFileName;
             _textureCache.TryGetValue(texturePath, out var value);
             if (value is not null)
             {
