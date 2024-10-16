@@ -17,7 +17,7 @@ namespace FeloxGame
     public class Game1 : GameWindow
     {
         public Game1(int width, int height, string title)
-            : base(GameWindowSettings.Default, new NativeWindowSettings() { Size = (width, height), Title = title, NumberOfSamples = 24 })
+            : base(GameWindowSettings.Default, new NativeWindowSettings() { ClientSize = (width, height), Title = title, NumberOfSamples = 24 })
         {
         }
         
@@ -84,7 +84,7 @@ namespace FeloxGame
             _world.AddEntityToWorld(_player);
 
             // UI systems
-            MasterUI = new(Size.X, Size.Y, eAnchor.Middle, 1.0f);
+            MasterUI = new(ClientSize.X, ClientSize.Y, eAnchor.Middle, 1.0f);
                 MasterUI.Kodomo.Add("Inventory", new InventoryUI(196f, 110f, eAnchor.Middle, 0.5f, true, false, false, 5, 10, 16f, 16f, 9f, 6f, 2f, _player.Inventory));
                 MasterUI.Kodomo["Inventory"].SetTextureCoords(0, 0, 196, 110); //todo: set on instantiation
                 MasterUI.Kodomo.Add("Hotbar", new HotbarUI(188f, 26f, eAnchor.Bottom, 0.5f, true, true, false, 1, 10, 16f, 16f, 5f, 2f, _player.Inventory));
@@ -94,7 +94,7 @@ namespace FeloxGame
             WorldShader.Use(); //todo: do I need this?
 
             // Camera
-            _camera = new GameCamera(Vector3.UnitZ * 10, Size.X / (float)Size.Y);
+            _camera = new GameCamera(Vector3.UnitZ * 10, ClientSize.X / (float)ClientSize.Y);
 
             //GameCursor
             _cursor = new GameCursor();
@@ -175,7 +175,7 @@ namespace FeloxGame
                         MasterUI.Kodomo["Inventory"].Anchor = eAnchor.BottomLeft;
                         break;
                 }
-                MasterUI.SetNDCs(Size.X, Size.Y, new NDC(-1f, -1f, 1f, 1f));
+                MasterUI.SetNDCs(ClientSize.X, ClientSize.Y, new NDC(-1f, -1f, 1f, 1f));
             }
             // TEST - add hoe to player inventory
             if (keyboardInput.IsKeyPressed(Keys.U))
@@ -276,7 +276,7 @@ namespace FeloxGame
         {
             base.OnMouseMove(e);
 
-            _cursor.UpdateWorldAndScreenPosition(MousePosition, _camera.Position, Size, _camera.Width, _camera.Height);
+            _cursor.UpdateWorldAndScreenPosition(MousePosition, _camera.Position, ClientSize, _camera.Width, _camera.Height);
 
             MasterUI.OnMouseMove(_cursor.ScreenPosition);
         }
@@ -285,7 +285,7 @@ namespace FeloxGame
         {
             base.OnMouseDown(e);
 
-            _cursor.UpdateWorldAndScreenPosition(MousePosition, _camera.Position, Size, _camera.Width, _camera.Height);
+            _cursor.UpdateWorldAndScreenPosition(MousePosition, _camera.Position, ClientSize, _camera.Width, _camera.Height);
             float distanceFromPlayer = Vector2.Distance(_player.Position, _cursor.WorldPosition);
             // debug
             //Console.WriteLine($"{_cursor.Position.X} => {_cursor.Rounded(_cursor.Position.X)}, {_cursor.Position.Y} => {_cursor.Rounded(_cursor.Position.Y)}");

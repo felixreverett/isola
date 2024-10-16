@@ -97,13 +97,7 @@ namespace FeloxGame.GUI
 
         public virtual void SetTextureCoords(float x, float y, float textureWidth, float textureHeight)
         {
-            this.TextureCoordinates = AtlasManager.GetPrecisionAtlasCoords(x, y, textureWidth, textureHeight);
-
-            /* Set texCoords of atlas
-            Vertices[3]  = TextureCoordinates.MaxX; Vertices[4]  = TextureCoordinates.MaxY; // (1, 1)
-            Vertices[11] = TextureCoordinates.MaxX; Vertices[12] = TextureCoordinates.MinY; // (1, 0)
-            Vertices[19] = TextureCoordinates.MinX; Vertices[20] = TextureCoordinates.MinY; // (0, 0)
-            Vertices[27] = TextureCoordinates.MinX; Vertices[28] = TextureCoordinates.MaxY; // (0, 1)*/
+            TextureCoordinates = AtlasManager.GetPrecisionAtlasCoords(x, y, textureWidth, textureHeight);
         }
 
         public void OnResize(float oyaWidth, float oyaHeight, NDC oyaNDCs)
@@ -213,14 +207,6 @@ namespace FeloxGame.GUI
             KoNDCs.MinX = ((KoPosition.MinX / oyaWidth) * (oyaNDCs.MaxX - oyaNDCs.MinX) + oyaNDCs.MinX);
             KoNDCs.MaxY = ((KoPosition.MaxY / oyaHeight) * (oyaNDCs.MaxY - oyaNDCs.MinY) + oyaNDCs.MinY);
             KoNDCs.MinY = ((KoPosition.MinY / oyaHeight) * (oyaNDCs.MaxY - oyaNDCs.MinY) + oyaNDCs.MinY);
-
-            // Set screen position
-            /*
-            Vertices[0]  = KoNDCs.MaxX; Vertices[1]  = KoNDCs.MaxY; // ( 1,  1)
-            Vertices[8]  = KoNDCs.MaxX; Vertices[9]  = KoNDCs.MinY; // ( 1, -1)
-            Vertices[16] = KoNDCs.MinX; Vertices[17] = KoNDCs.MinY; // (-1, -1)
-            Vertices[24] = KoNDCs.MinX; Vertices[25] = KoNDCs.MaxY; // (-1,  1)
-            */
 
             if (Kodomo.Count > 0)
             {

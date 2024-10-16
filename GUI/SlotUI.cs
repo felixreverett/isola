@@ -39,25 +39,11 @@ namespace FeloxGame.GUI
             }
 
             TextureCoordinates = AtlasManager.GetIndexedAtlasCoords(textureIndex);
-
-            //SetTextureCoords(texCoords);
         }
-
-        /*
-        public void SetTextureCoords(TexCoords texCoords)
-        {
-            // Set texCoords of atlas
-            
-            Vertices[3]  = texCoords.MaxX; Vertices[4]  = texCoords.MaxY; // (1, 1)
-            Vertices[11] = texCoords.MaxX; Vertices[12] = texCoords.MinY; // (1, 0)
-            Vertices[19] = texCoords.MinX; Vertices[20] = texCoords.MinY; // (0, 0)
-            Vertices[27] = texCoords.MinX; Vertices[28] = texCoords.MaxY; // (0, 1)
-            
-        }
-        */
-        
+              
         public override void Draw()
         {
+            // todo: find a way to draw more than one at a time
             if (IsDrawable && ToggleDraw)
             {
                 Box2 rect = new Box2(KoNDCs.MinX, KoNDCs.MinY, KoNDCs.MaxX, KoNDCs.MaxY);

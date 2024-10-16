@@ -1,9 +1,6 @@
-﻿using FeloxGame.Core.Management;
-using FeloxGame.Drawing;
-using FeloxGame.Inventories;
+﻿using FeloxGame.Drawing;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
-using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace FeloxGame.GUI
 {
@@ -57,14 +54,6 @@ namespace FeloxGame.GUI
             KoNDCs.MinX = MouseNDCs.X - NDCDimensions.X / 2.0f;
             KoNDCs.MaxY = MouseNDCs.Y + NDCDimensions.Y / 2.0f;
             KoNDCs.MinY = MouseNDCs.Y - NDCDimensions.Y / 2.0f;
-            
-            /*
-            // Set screen position
-            Vertices[0] = KoNDCs.MaxX; Vertices[1] = KoNDCs.MaxY; // ( 1,  1)
-            Vertices[8] = KoNDCs.MaxX; Vertices[9] = KoNDCs.MinY; // ( 1, -1)
-            Vertices[16] = KoNDCs.MinX; Vertices[17] = KoNDCs.MinY; // (-1, -1)
-            Vertices[24] = KoNDCs.MinX; Vertices[25] = KoNDCs.MaxY; // (-1,  1)
-            */
         }
 
     }
