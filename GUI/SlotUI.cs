@@ -2,7 +2,7 @@
 using FeloxGame.Drawing;
 using FeloxGame.Inventories;
 using FeloxGame.Items;
-using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 
 namespace FeloxGame.GUI
 {
@@ -38,32 +38,32 @@ namespace FeloxGame.GUI
                 textureIndex = matchingItem.TextureIndex;
             }
 
-            TexCoords texCoords = AtlasManager.GetIndexedAtlasCoords(textureIndex);
+            TextureCoordinates = AtlasManager.GetIndexedAtlasCoords(textureIndex);
 
-            SetTextureCoords(texCoords);
+            //SetTextureCoords(texCoords);
         }
 
+        /*
         public void SetTextureCoords(TexCoords texCoords)
         {
             // Set texCoords of atlas
+            
             Vertices[3]  = texCoords.MaxX; Vertices[4]  = texCoords.MaxY; // (1, 1)
             Vertices[11] = texCoords.MaxX; Vertices[12] = texCoords.MinY; // (1, 0)
             Vertices[19] = texCoords.MinX; Vertices[20] = texCoords.MinY; // (0, 0)
             Vertices[27] = texCoords.MinX; Vertices[28] = texCoords.MaxY; // (0, 1)
+            
         }
-
+        */
+        
         public override void Draw()
         {
             if (IsDrawable && ToggleDraw)
             {
-                AtlasManager.Texture.Use();
-
-                _vertexArray.Bind();
-                _vertexBuffer.Bind();
-                _indexBuffer.Bind();
-
-                GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * Vertices.Length, Vertices, BufferUsageHint.DynamicDraw);
-                GL.DrawElements(PrimitiveType.Triangles, Indices.Length, DrawElementsType.UnsignedInt, 0); // Used for drawing Elements
+                Box2 rect = new Box2(KoNDCs.MinX, KoNDCs.MinY, KoNDCs.MaxX, KoNDCs.MaxY);
+                AtlasManager.StartBatch();
+                AtlasManager.AddQuadToBatch(rect, TextureCoordinates);
+                AtlasManager.EndBatch();
             }
 
             if (Kodomo.Count != 0 && ToggleDraw)
@@ -74,5 +74,6 @@ namespace FeloxGame.GUI
                 }
             }
         }
+        
     }
 }

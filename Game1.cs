@@ -65,9 +65,12 @@ namespace FeloxGame
                 return;
             }
 
-            // Asset Loading            
+            // Asset Loading
+             
             AssetLibrary.InitialiseTextureAtlasManagerList();
+
             AssetLibrary.InitialiseItemList();
+
             AssetLibrary.InitialiseTileList();
 
             // World (initialised before player as player will reference it)

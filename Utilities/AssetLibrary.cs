@@ -6,11 +6,8 @@ namespace FeloxGame.Utilities
     public static class AssetLibrary
     {
         public static List<Item>? ItemList;
-
         public static List<TileData>? TileList;
-
-        public static Dictionary<string, TextureAtlas> TextureAtlasList = new(); // todo: deprecate
-        public static Dictionary<string, TextureAtlasManager> TextureAtlasManagerList = new(); //todo: make active
+        public static Dictionary<string, TextureAtlasManager> TextureAtlasManagerList = new();
 
         public static bool GetItemFromItemName(string itemName, out Item? item)
         {
@@ -54,9 +51,7 @@ namespace FeloxGame.Utilities
         {
             TextureAtlasManagerList.Add("Tile Atlas", new IndexedTextureAtlasManager(0, "1024 Tile Atlas x16.png", 1024, 16, 8, true, 0.0f));
             TextureAtlasManagerList.Add("Player Atlas", new PrecisionTextureAtlasManager(1, "Player.png", 1024, 1024, 1024, false, 0.001f));
-            //TextureAtlasManagerList.Add("Inventory Atlas", new PrecisionTextureAtlasManager(2, "1024 UI Atlas x16.png", 1024, 1024, 1024, false));
-            // temporary (Oct 2024)
-            TextureAtlasList.Add("Inventory Atlas", new PrecisionTextureAtlas(1024, "1024 UI Atlas x16.png", 2, 1024, 1024));
+            TextureAtlasManagerList.Add("Inventory Atlas", new PrecisionTextureAtlasManager(2, "1024 UI Atlas x16.png", 1024, 1024, 1024, false));
             TextureAtlasManagerList.Add("Item Atlas", new IndexedTextureAtlasManager(3, "1024 Item Atlas 16x.png", 1024, 16, 8, false, 0.001f));
         }
 

@@ -1,5 +1,12 @@
 # FeloxGame
 
+## Major features:
+- Procedural terrain system
+- Dynamic UI tree
+- Graphics programming
+	- Fragment and vertex shader programming
+	- Sprite batching
+
 ## What is this project?
 - This is my first game project, building from a helpful GameEngine.TK project and the OpenTK learn documentation online.
 

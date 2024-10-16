@@ -7,7 +7,7 @@ using FeloxGame.World;
 
 namespace FeloxGame.GUI
 {
-    public class UI
+    public class UI : IDrawable
     {
         // Position
         public eAnchor Anchor { get; set; }
@@ -17,13 +17,15 @@ namespace FeloxGame.GUI
         protected float Scale { get; set; }
         protected RPC KoPosition { get; set; }
         protected NDC KoNDCs { get; set; }
+        protected TexCoords TextureCoordinates { get; set; }
 
         // Kodomo
         public Dictionary<string, UI> Kodomo { get; set; }
 
         // Rendering
-        protected PrecisionTextureAtlas InventoryAtlas { get; set; }
+        protected virtual PrecisionTextureAtlasManager AtlasManager { get; set; }
 
+        /*
         protected float[] Vertices =
         {
             //Vertices          //texCoords //texColors       
@@ -36,15 +38,15 @@ namespace FeloxGame.GUI
         {
             0, 1, 3, // first triangle
             1, 2, 3  // second triangle
-        };
+        };*/
         protected bool IsDrawable { get; set; }
         public bool ToggleDraw { get; set; }
 
         protected bool IsClickable { get; set; }
 
-        protected VertexBuffer _vertexBuffer;
-        protected VertexArray _vertexArray;
-        protected IndexBuffer _indexBuffer;
+        //protected VertexBuffer _vertexBuffer;
+        //protected VertexArray _vertexArray;
+        //protected IndexBuffer _indexBuffer;
 
         // Constructor
         public UI(float koWidth, float koHeight, eAnchor anchor, float scale, bool isDrawable = false, bool toggleDraw = true, bool isClickable = false)
@@ -67,21 +69,10 @@ namespace FeloxGame.GUI
         {
             if (IsDrawable)
             {
-                if (this.InventoryAtlas is null)
+                if (this.AtlasManager is null)
                 {
-                    this.InventoryAtlas = (PrecisionTextureAtlas)AssetLibrary.TextureAtlasList["Inventory Atlas"];
+                    this.AtlasManager = (PrecisionTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Inventory Atlas"];
                 }
-
-                _vertexArray = new();
-                _vertexBuffer = new VertexBuffer(Vertices);
-
-                BufferLayout layout = new();
-                layout.Add<float>(3); // Positions
-                layout.Add<float>(2); // Texture Coords
-                layout.Add<float>(3); // Texture Color
-
-                _vertexArray.AddBuffer(_vertexBuffer, layout);
-                _indexBuffer = new IndexBuffer(Indices);
             }
         }
 
@@ -89,14 +80,10 @@ namespace FeloxGame.GUI
         {
             if (IsDrawable && ToggleDraw)
             {
-                InventoryAtlas.Texture.Use();
-
-                _vertexArray.Bind();
-                _vertexBuffer.Bind();
-                _indexBuffer.Bind();
-
-                GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * Vertices.Length, Vertices, BufferUsageHint.DynamicDraw);
-                GL.DrawElements(PrimitiveType.Triangles, Indices.Length, DrawElementsType.UnsignedInt, 0); // Used for drawing Elements
+                Box2 rect = new Box2(KoNDCs.MinX, KoNDCs.MinY, KoNDCs.MaxX, KoNDCs.MaxY);
+                AtlasManager.StartBatch();
+                AtlasManager.AddQuadToBatch(rect, TextureCoordinates);
+                AtlasManager.EndBatch();
             }
             
             if (Kodomo.Count != 0 && ToggleDraw)
@@ -110,13 +97,13 @@ namespace FeloxGame.GUI
 
         public virtual void SetTextureCoords(float x, float y, float textureWidth, float textureHeight)
         {
-            TexCoords inventoryCoords = InventoryAtlas.GetPrecisionAtlasCoords(x, y, textureWidth, textureHeight);
+            this.TextureCoordinates = AtlasManager.GetPrecisionAtlasCoords(x, y, textureWidth, textureHeight);
 
-            // Set texCoords of atlas
-            Vertices[3]  = inventoryCoords.MaxX; Vertices[4]  = inventoryCoords.MaxY; // (1, 1)
-            Vertices[11] = inventoryCoords.MaxX; Vertices[12] = inventoryCoords.MinY; // (1, 0)
-            Vertices[19] = inventoryCoords.MinX; Vertices[20] = inventoryCoords.MinY; // (0, 0)
-            Vertices[27] = inventoryCoords.MinX; Vertices[28] = inventoryCoords.MaxY; // (0, 1)
+            /* Set texCoords of atlas
+            Vertices[3]  = TextureCoordinates.MaxX; Vertices[4]  = TextureCoordinates.MaxY; // (1, 1)
+            Vertices[11] = TextureCoordinates.MaxX; Vertices[12] = TextureCoordinates.MinY; // (1, 0)
+            Vertices[19] = TextureCoordinates.MinX; Vertices[20] = TextureCoordinates.MinY; // (0, 0)
+            Vertices[27] = TextureCoordinates.MinX; Vertices[28] = TextureCoordinates.MaxY; // (0, 1)*/
         }
 
         public void OnResize(float oyaWidth, float oyaHeight, NDC oyaNDCs)
@@ -228,10 +215,12 @@ namespace FeloxGame.GUI
             KoNDCs.MinY = ((KoPosition.MinY / oyaHeight) * (oyaNDCs.MaxY - oyaNDCs.MinY) + oyaNDCs.MinY);
 
             // Set screen position
+            /*
             Vertices[0]  = KoNDCs.MaxX; Vertices[1]  = KoNDCs.MaxY; // ( 1,  1)
             Vertices[8]  = KoNDCs.MaxX; Vertices[9]  = KoNDCs.MinY; // ( 1, -1)
             Vertices[16] = KoNDCs.MinX; Vertices[17] = KoNDCs.MinY; // (-1, -1)
             Vertices[24] = KoNDCs.MinX; Vertices[25] = KoNDCs.MaxY; // (-1,  1)
+            */
 
             if (Kodomo.Count > 0)
             {

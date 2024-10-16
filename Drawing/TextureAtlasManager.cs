@@ -17,7 +17,7 @@ namespace FeloxGame.Drawing
         private int _indexCount;
         private int _quadCount;
 
-        private float _zDepthLayer;
+        private float _zDepthLayer = 0;
 
         private VertexBuffer _vertexBuffer;
         private VertexArray _vertexArray;
