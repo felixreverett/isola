@@ -1,4 +1,4 @@
-# FeloxGame
+﻿# FeloxGame README
 
 ## Major features:
 - Procedural terrain system
@@ -7,18 +7,19 @@
 	- Fragment and vertex shader programming
 	- Sprite batching
 
+## Commit messages
+- ✨ New Feature
+- ⚙️ Progress/tweaks
+- 🧹 Code rework/refactor
+- 📖 Other (e.g. documentation)
+
 ## What is this project?
 - This is my first game project, building from a helpful GameEngine.TK project and the OpenTK learn documentation online.
 
 ## What am I trying to achieve?
-- I'm using this to improve my programming experience...
-- ...But I've been interested in procedural terrain generation for years.
-- I would really very much like to get good at coding :)
+I'm using this to improve my programming experience, but I've been interested in procedural terrain generation for years.
 
-## Are you actually learning to code through this?
-Yes! Here is an ever expanding list of implemented concepts and general coding practices I have added to my game.
-
-### __Coding Practices & Concepts__:
+### __Coding Practices & Concepts Learned Through This Project__:
 *recursion | enums | perlin noise | class inheritance | matrices | GLSL*
 - **Constructors**: I've found a use of multiple constructors to enable setting default values for non compile-time constants. I've strengthened my understanding of the syntax of subclass constructors.
 - **enums**: Finding opportunities to use them
@@ -37,6 +38,3 @@ Yes! Here is an ever expanding list of implemented concepts and general coding p
 - **Recursion**: I use recursive methods to update and draw my UI system
 - **Reference types**: Using references to objects to enable other options to access their methods without owning that object (e.g., the player is referenced by the World's entity draw call, but is external to that entity list).
 - **Tree structures**: I have developed a tree structure to draw all UI objects within their parent objects
-
-## How much time have you put into this project?
-- I'm keeping an estimate of the different stages in learning to code. I'll get back to you on that.
