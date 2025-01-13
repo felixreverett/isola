@@ -1,87 +1,85 @@
-﻿using FeloxGame.Entities;
-using FeloxGame.Inventories;
+﻿using FeloxGame.Inventories;
 
 namespace FeloxGame
 {
     // Inventory items will only be accessed through methods like .Add() and .Remove()
+    // The basic inventory class for universal inventory functionality
+    // Should be an inventory "instance" which is only instantiated/loaded when accessed by the player, and is saved when closed (05/01/25)
     public class Inventory
     {
-        public ItemStack[] _itemStackList;
-        public ItemStack _mouseSlotItemStack;
-        public PlayerEntity OwnerPlayer { get; set; }
-        private int _rows;
-        private int _cols;
+        public ItemStack[] ItemStackList { get; set; }
+        public int Rows { get; private set; }
+        public int Cols { get; private set; }
 
-        public Inventory(int rows, int cols, PlayerEntity ownerPlayer)
+        public Inventory(int rows, int cols)
         {
-            this._rows = rows;
-            this._cols = cols;
-            this._itemStackList = new ItemStack[rows * cols];
-            OwnerPlayer = ownerPlayer;
+            Rows = rows;
+            Cols = cols;
+            ItemStackList = new ItemStack[rows * cols];
         }
 
-        public event Action<ItemStack[], ItemStack> InventoryChanged;
-
-        public void Add(ItemStack itemStack)
+        public void AddItemStack(ItemStack itemStack)
         {
-            var matchingItemStack = _itemStackList.FirstOrDefault(i => i is not null && i.ItemName == itemStack.ItemName);
+            ItemStack matchingItemStack = ItemStackList.FirstOrDefault(i => i.ItemName == itemStack.ItemName);
             
-            if (matchingItemStack is null)
+            if (matchingItemStack.Equals(default(ItemStack)))
             {
-                if (FirstFreeIndex(out var index))
+                if (GetFirstFreeIndex(out var index))
                 {
-                    _itemStackList[index] = itemStack;
+                    ItemStackList[index] = itemStack;
                 }
             }
             else
             {
                 matchingItemStack.Amount += itemStack.Amount;
             }
-
-            InventoryChanged?.Invoke(_itemStackList, _mouseSlotItemStack);
         }
 
-        public void Remove(ItemStack itemStack)
+        public void RemoveItemStack(ItemStack itemStack)
         {
-            var matchingItemStack = _itemStackList.FirstOrDefault(i => i.ItemName == itemStack.ItemName);
+            ItemStack matchingItemStack = ItemStackList.FirstOrDefault(i => i.ItemName == itemStack.ItemName);
 
-            if ( matchingItemStack is null)
+            if (matchingItemStack.Equals(default(ItemStack)))
             {
                 throw new ArgumentException("Error. Attempted to remove an item not in the inventory");
             }
+
             else if (matchingItemStack.Amount > itemStack.Amount)
             {
                 matchingItemStack.Amount -= itemStack.Amount;
             }
+
             else if (matchingItemStack.Amount == itemStack.Amount)
             {
-                int index = Array.IndexOf(_itemStackList, matchingItemStack);
-                _itemStackList[index] = null;
+                int index = Array.IndexOf(ItemStackList, matchingItemStack);
+                ItemStackList[index] = default(ItemStack);
             }
+
             else if (matchingItemStack.Amount < itemStack.Amount)
             {
                 throw new ArgumentException("Error. Tried to remove more items than in inventory");
             }
-
-            InventoryChanged?.Invoke(_itemStackList, _mouseSlotItemStack);
         }
 
         public void AddToSlotIndex(ItemStack itemStack, int slotIndex)
         {
-            if (_itemStackList[slotIndex] is null)
+            if (ItemStackList[slotIndex].Equals(default(ItemStack)))
             {
-                _itemStackList[slotIndex] = itemStack;
+                ItemStackList[slotIndex] = itemStack;
             }
 
-            InventoryChanged?.Invoke(_itemStackList, _mouseSlotItemStack);
+            else
+            {
+                // do nothing
+            }
         }
 
-        public bool FirstFreeIndex(out int index)
+        public bool GetFirstFreeIndex(out int index)
         {
             index = -1;
-            for (int i = 0; i < _itemStackList.Length; i++)
+            for (int i = 0; i < ItemStackList.Length; i++)
             {
-                if (_itemStackList[i] is null)
+                if (ItemStackList[i].Equals(default(ItemStack)))
                 {
                     index = i;
                     return true;
@@ -96,101 +94,15 @@ namespace FeloxGame
             switch (sortType)
             {
                 case eSortType.Alphabetical:
-                    sortedItems = _itemStackList.OrderBy(i => i.ItemName).ToArray();
-                    _itemStackList = sortedItems;
+                    sortedItems = ItemStackList.OrderBy(i => i.ItemName).ToArray();
+                    ItemStackList = sortedItems;
                     break;
                 case eSortType.Amount:
-                    sortedItems = _itemStackList.OrderBy(i => i.Amount).ThenBy(i => i.ItemName).ToArray();
+                    sortedItems = ItemStackList.OrderBy(i => i.Amount).ThenBy(i => i.ItemName).ToArray();
                     break;
                 case eSortType.Category:
                     // not yet implemented
                     break;
-            }
-
-            InventoryChanged?.Invoke(_itemStackList, _mouseSlotItemStack);
-        }
-
-        // Todo: improve this method to solve the identified issues
-        public void SwapSlots(int slotIndex)
-        {
-            if (_itemStackList[slotIndex] is not null)
-            {
-                // if both slots have itemstacks
-                if (_mouseSlotItemStack is not null)
-                {
-                    // if items are the same, merge them to slot
-                    if (_itemStackList[slotIndex].ItemName == _mouseSlotItemStack.ItemName)
-                    {
-                        // This will not work with stack limits.
-                        _itemStackList[slotIndex].Amount += _mouseSlotItemStack.Amount;
-                        _mouseSlotItemStack = null;
-                    }
-                    // if items are not the same, swap them
-                    else
-                    {
-                        ItemStack temporaryItemStack = _mouseSlotItemStack;
-                        _mouseSlotItemStack = _itemStackList[slotIndex];
-                        _itemStackList[slotIndex] = temporaryItemStack;
-                    }
-                }
-                // if only the itemslot has an itemstack
-                else
-                {
-                    _mouseSlotItemStack = _itemStackList[slotIndex];
-                    _itemStackList[slotIndex] = null;
-                }
-            }
-            // if only the mouseSlot has an itemstack
-            else if (_mouseSlotItemStack is not null)
-            {
-                _itemStackList[slotIndex] = _mouseSlotItemStack;
-                _mouseSlotItemStack = null;
-            }
-
-            InventoryChanged?.Invoke(_itemStackList, _mouseSlotItemStack);
-        }
-
-        public void OnItemSlotLeftClick(int slotIndex)
-        {
-            Console.WriteLine($"Slot {slotIndex} was left clicked!");
-            SwapSlots(slotIndex);
-        }
-
-        public void OnExternalClick()
-        {
-            if (_mouseSlotItemStack != null)
-            {
-                ItemStack itemStack = _mouseSlotItemStack;
-                _mouseSlotItemStack = null;
-                // Add a new item entity at the player's location
-                OwnerPlayer.CurrentWorld.AddEntityToWorld(new ItemEntity(eEntityType.ItemEntity, OwnerPlayer.Position, itemStack.ItemName, itemStack.Amount));
-                
-                InventoryChanged?.Invoke(_itemStackList, _mouseSlotItemStack);
-            }
-        }
-
-        public void DropItemAtIndex(int index)
-        {
-            if (_itemStackList[index] != null)
-            {
-            ItemStack itemStack = _itemStackList[index];
-            _itemStackList[index] = null;
-            OwnerPlayer.CurrentWorld.AddEntityToWorld(new ItemEntity(eEntityType.ItemEntity, OwnerPlayer.Position, itemStack.ItemName, itemStack.Amount));
-
-            InventoryChanged?.Invoke(_itemStackList, _mouseSlotItemStack);
-            }
-        }
-
-        public void DropItemAtMouseSlot()
-        {
-            if (_mouseSlotItemStack != null)
-            {
-                ItemStack itemStack = _mouseSlotItemStack;
-                _mouseSlotItemStack = null;
-
-                OwnerPlayer.CurrentWorld.AddEntityToWorld(new ItemEntity(eEntityType.ItemEntity, OwnerPlayer.Position, itemStack.ItemName, itemStack.Amount));
-
-                InventoryChanged?.Invoke(_itemStackList, _mouseSlotItemStack);
             }
         }
     }

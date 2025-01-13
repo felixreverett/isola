@@ -1,43 +1,47 @@
 ﻿using FeloxGame.Drawing;
+using FeloxGame.Inventories;
+using FeloxGame.Items;
+using FeloxGame.Utilities;
 using OpenTK.Mathematics;
-using OpenTK.Windowing.Common;
 
 namespace FeloxGame.GUI
 {
-    public class MouseSlotUI : SlotUI
+    public class MouseSlotUI : UI
     {
         private Vector2 MouseNDCs { get; set; }
         protected Vector2 NDCDimensions;
+        protected PlayerEntity OwnerPlayer;
+        protected new IndexedTextureAtlasManager AtlasManager = (IndexedTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Item Atlas"];
 
         public MouseSlotUI
         (
             float koWidth, float koHeight, eAnchor anchor, float scale, bool isDrawable, bool toggleDraw, bool isClickable,
-            int itemSlotID, Inventory inventory, RPC koPosition
+            PlayerEntity ownerPlayer
         )
-            : base(koWidth, koHeight, anchor, scale, isDrawable, toggleDraw, isClickable,
-                  itemSlotID, inventory, koPosition)
+            : base(koWidth, koHeight, anchor, scale, isDrawable, toggleDraw, isClickable)
         {
-            //UpdateItem(new ItemStack("Persimmon", 1));
-            //ToggleDraw = true;
+            OwnerPlayer = ownerPlayer;
         }
+
+        public void UpdateItem(ItemStack itemStack)
+        {
+            int textureIndex = 0;
+
+            Item matchingItem = AssetLibrary.ItemList.FirstOrDefault(i => i.ItemName == itemStack.ItemName);
+
+            if (matchingItem != null)
+            {
+                textureIndex = matchingItem.TextureIndex;
+            }
+
+            TextureCoordinates = AtlasManager.GetIndexedAtlasCoords(textureIndex);
+        }
+
 
         public override void OnMouseMove(Vector2 mouseNDCs)
         {
             MouseNDCs = mouseNDCs;
             SetNDCs();
-
-            if (Kodomo.Count > 0)
-            {
-                foreach (UI ui in Kodomo.Values)
-                {
-                    ui.OnMouseMove(mouseNDCs);
-                }
-            }
-        }
-
-        public override void OnKeyDown(KeyboardKeyEventArgs e)
-        {
-            
         }
 
         // This one updates the NDCs when the parent UI element calls it

@@ -1,6 +1,5 @@
 ﻿using FeloxGame.Utilities;
 using FeloxGame.Drawing;
-using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using FeloxGame.World;
@@ -25,28 +24,10 @@ namespace FeloxGame.GUI
         // Rendering
         protected virtual PrecisionTextureAtlasManager AtlasManager { get; set; }
 
-        /*
-        protected float[] Vertices =
-        {
-            //Vertices          //texCoords //texColors       
-             1.0f,  1.0f, 0.3f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, //top right (1,1)
-             1.0f, -1.0f, 0.3f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, //bottom right (1, 0)
-            -1.0f, -1.0f, 0.3f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, //bottom left (0, 0)
-            -1.0f,  1.0f, 0.3f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f  //top left (0, 1)
-        };
-        protected uint[] Indices =
-        {
-            0, 1, 3, // first triangle
-            1, 2, 3  // second triangle
-        };*/
         protected bool IsDrawable { get; set; }
         public bool ToggleDraw { get; set; }
 
         protected bool IsClickable { get; set; }
-
-        //protected VertexBuffer _vertexBuffer;
-        //protected VertexArray _vertexArray;
-        //protected IndexBuffer _indexBuffer;
 
         // Constructor
         public UI(float koWidth, float koHeight, eAnchor anchor, float scale, bool isDrawable = false, bool toggleDraw = true, bool isClickable = false)

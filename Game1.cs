@@ -85,10 +85,10 @@ namespace FeloxGame
 
             // UI systems
             MasterUI = new(ClientSize.X, ClientSize.Y, eAnchor.Middle, 1.0f);
-                MasterUI.Kodomo.Add("Inventory", new InventoryUI(196f, 110f, eAnchor.Middle, 0.5f, true, false, false, 5, 10, 16f, 16f, 9f, 6f, 2f, _player.Inventory));
-                MasterUI.Kodomo["Inventory"].SetTextureCoords(0, 0, 196, 110); //todo: set on instantiation
-                MasterUI.Kodomo.Add("Hotbar", new HotbarUI(188f, 26f, eAnchor.Bottom, 0.5f, true, true, false, 1, 10, 16f, 16f, 5f, 2f, _player.Inventory));
+                MasterUI.Kodomo.Add("Hotbar", new HotbarUI(188f, 26f, eAnchor.Bottom, 0.5f, true, true, false, 1, 10, 16f, 16f, 5f, 2f, _player.Inventory, _player));
                 MasterUI.Kodomo["Hotbar"].SetTextureCoords(0, 118, 188, 26); //todo: set on instantiation
+                MasterUI.Kodomo.Add("Inventory", new PlayerInvUI(196f, 110f, eAnchor.Middle, 0.5f, true, false, false, _player.Inventory, (HotbarUI)MasterUI.Kodomo["Hotbar"], _player));
+                MasterUI.Kodomo["Inventory"].SetTextureCoords(0, 0, 196, 110); //todo: set on instantiation
 
             // Textures
             WorldShader.Use(); //todo: do I need this?
@@ -98,10 +98,6 @@ namespace FeloxGame
 
             //GameCursor
             _cursor = new GameCursor();
-
-            // Events
-            ((InventoryUI)MasterUI.Kodomo["Inventory"]).SubscribeToInventory(_player.Inventory);
-            ((HotbarUI)MasterUI.Kodomo["Hotbar"]).SubscribeToInventory(_player.Inventory);
         }
 
         protected override void OnUpdateFrame(FrameEventArgs args)
@@ -122,6 +118,20 @@ namespace FeloxGame
             if (keyboardInput.IsKeyDown(Keys.Escape))
             {
                 Close();
+            }
+
+            // Drop functionality
+            if (keyboardInput.IsKeyPressed(Keys.Q))
+            {
+                if (toggleInventory)
+                {
+                    // if mouseslot contains an itemstack, drop it all
+                    // else, if an item is below the cursor, drop one of that item
+                }
+                else
+                {
+                    //_player.Inventory.DropItemAtIndex();
+                }
             }
 
             if (keyboardInput.IsKeyReleased(Keys.E))
@@ -198,9 +208,9 @@ namespace FeloxGame
             // TEST - count items in inventory
             if (keyboardInput.IsKeyPressed(Keys.O))
             {
-                foreach (var item in _player.Inventory._itemStackList)
+                foreach (var item in _player.Inventory.ItemStackList)
                 {
-                    if (item != null)
+                    if (!item.Equals(default(ItemStack)))
                     {
                         Console.WriteLine($"{item.ItemName}: {item.Amount}");
                     }

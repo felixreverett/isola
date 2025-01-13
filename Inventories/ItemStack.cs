@@ -1,6 +1,6 @@
 ﻿namespace FeloxGame.Inventories
 {
-    public class ItemStack
+    public struct ItemStack
     {
         public string ItemName { get; set; }
         public int Amount { get; set; }
@@ -20,11 +20,6 @@
         public List<object> GetSaveData()
         {
             return new List<object>() { ItemName, Amount };
-        }
-
-        public virtual void Use()
-        {
-            //
         }
     }
 }

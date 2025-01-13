@@ -5,6 +5,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Mathematics;
 using FeloxGame.Utilities;
 using FeloxGame.World;
+using FeloxGame.Entities;
 
 namespace FeloxGame.GUI
 {
@@ -18,6 +19,7 @@ namespace FeloxGame.GUI
         private float _edgePadding;
         private float _itemSlotPadding;
         Inventory Inventory;
+        private PlayerEntity OwnerPlayer;
 
         public bool ToggleScrolling { get; set; } = true; //todo: improve this name
 
@@ -41,7 +43,7 @@ namespace FeloxGame.GUI
         public HotbarUI
         (
             float koWidth, float koHeight, eAnchor anchor, float scale, bool isDrawable, bool toggleDraw, bool isClickable,
-            int rows, int cols, float itemSlotHeight, float itemSlotWidth, float edgePadding, float itemSlotPadding, Inventory inventory
+            int rows, int cols, float itemSlotHeight, float itemSlotWidth, float edgePadding, float itemSlotPadding, Inventory inventory, PlayerEntity ownerPlayer
         )
             : base(koWidth, koHeight, anchor, scale, isDrawable, toggleDraw, isClickable)
         {
@@ -52,6 +54,7 @@ namespace FeloxGame.GUI
             this._edgePadding = edgePadding;
             this._itemSlotPadding = itemSlotPadding;
             this.Inventory = inventory;
+            this.OwnerPlayer = ownerPlayer;
             GenerateKodomo();
         }
 
@@ -79,7 +82,7 @@ namespace FeloxGame.GUI
                     koPosition.MaxX = koPosition.MinX + _itemSlotWidth;
                     koPosition.MaxY = koPosition.MinY + _itemSlotHeight;
 
-                    Kodomo.Add($"{slotIndex}", new ItemSlotUI(_itemSlotWidth, _itemSlotHeight, eAnchor.None, 1f, true, false, false, slotIndex, Inventory, koPosition));
+                    Kodomo.Add($"{slotIndex}", new SlotUI(_itemSlotWidth, _itemSlotHeight, eAnchor.None, 1f, true, false, false, slotIndex, Inventory, koPosition, OwnerPlayer));
 
                     slotIndex++;
                 }
@@ -94,18 +97,13 @@ namespace FeloxGame.GUI
             Kodomo.Add("ActiveHotbarSlot", new ActiveHotbarSlotUI(_itemSlotHeight + 2f, _itemSlotWidth + 2f, eAnchor.None, 1f, true, true, false, 0, 152, 18, 18, basePosition, 0, (_cols * _rows - 1), 0));
         }
 
-        public void SubscribeToInventory(Inventory inventory)
-        {
-            inventory.InventoryChanged += HandleInventoryChanged;
-        }
-
         public override void OnMouseWheel(MouseWheelEventArgs e)
         {
             // Only run if ActiveHotbarSlotUI is accepting scrollwheel updates?
             if (ToggleScrolling)
             {
-            Kodomo["ActiveHotbarSlot"].OnMouseWheel(e);
-            Kodomo["ActiveHotbarSlot"].SetNDCs(KoWidth, KoHeight, KoNDCs);
+                Kodomo["ActiveHotbarSlot"].OnMouseWheel(e);
+                Kodomo["ActiveHotbarSlot"].SetNDCs(KoWidth, KoHeight, KoNDCs);
             }
         }
 
@@ -115,10 +113,16 @@ namespace FeloxGame.GUI
 
             if (ToggleScrolling)
             {
+                // drop item into world if item exists at slot
                 if (e.Key == Keys.Q)
                 {
                     int index = ((ActiveHotbarSlotUI)Kodomo["ActiveHotbarSlot"]).ActiveIndex;
-                    Inventory.DropItemAtIndex(index);
+                    ItemStack itemStack = Inventory.ItemStackList[index];
+                    if (!itemStack.Equals(default(ItemStack)))
+                    {
+                        OwnerPlayer.CurrentWorld.AddEntityToWorld(new ItemEntity(eEntityType.ItemEntity, OwnerPlayer.Position, itemStack.ItemName, itemStack.Amount));
+                        HandleInventoryChanged();
+                    }
                 }
             }
         }
@@ -127,9 +131,9 @@ namespace FeloxGame.GUI
         {
             int index = ((ActiveHotbarSlotUI)Kodomo["ActiveHotbarSlot"]).ActiveIndex;
             
-            if (Inventory._itemStackList[index] is not null)
+            if (!Inventory.ItemStackList[index].Equals(default(ItemStack)))
             {
-                if (AssetLibrary.GetItemFromItemName(Inventory._itemStackList[index].ItemName, out var item))
+                if (AssetLibrary.GetItemFromItemName(Inventory.ItemStackList[index].ItemName, out var item))
                 {
                     item!.OnRightClick(mouseNDCs, world);
                 }
@@ -140,23 +144,24 @@ namespace FeloxGame.GUI
         {
             int index = ((ActiveHotbarSlotUI)Kodomo["ActiveHotbarSlot"]).ActiveIndex;
 
-            if (Inventory._itemStackList[index] is not null)
+            if (!Inventory.ItemStackList[index].Equals(default(ItemStack)))
             {
-                if (AssetLibrary.GetItemFromItemName(Inventory._itemStackList[index].ItemName, out var item))
+                if (AssetLibrary.GetItemFromItemName(Inventory.ItemStackList[index].ItemName, out var item))
                 {
                     item!.OnLeftClick(mouseNDCs, world);
                 }
             }
+            HandleInventoryChanged();
         }
 
-        private void HandleInventoryChanged(ItemStack[] itemStackList, ItemStack mouseItemStack)
+        private void HandleInventoryChanged()
         {
             for (int i = 0; i < _rows * _cols; i++)
             {
-                if (itemStackList[i] != null)
+                if (!Inventory.ItemStackList[i].Equals(default(ItemStack)))
                 {
                     Kodomo[$"{i}"].ToggleDraw = true;
-                    ((ItemSlotUI)Kodomo[$"{i}"]).UpdateItem(itemStackList[i]);
+                    ((SlotUI)Kodomo[$"{i}"]).UpdateItem(Inventory.ItemStackList[i]);
                 }
                 else
                 {

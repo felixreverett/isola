@@ -3,6 +3,7 @@ using FeloxGame.Drawing;
 using FeloxGame.Inventories;
 using FeloxGame.Items;
 using OpenTK.Mathematics;
+using FeloxGame.World;
 
 namespace FeloxGame.GUI
 {
@@ -10,18 +11,21 @@ namespace FeloxGame.GUI
     {
         protected int ItemSlotID;
         protected Inventory Inventory;
-        protected IndexedTextureAtlasManager AtlasManager = (IndexedTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Item Atlas"];
+        protected PlayerEntity OwnerPlayer;
+        protected new IndexedTextureAtlasManager AtlasManager;
 
         public SlotUI
         (
             float koWidth, float koHeight, eAnchor anchor, float scale, bool isDrawable, bool toggleDraw, bool isClickable,
-            int itemSlotID, Inventory inventory, RPC koPosition
+            int itemSlotID, Inventory inventory, RPC koPosition, PlayerEntity ownerPlayer
         )
             : base(koWidth, koHeight, anchor, scale, isDrawable, toggleDraw, isClickable)
         {
-            this.ItemSlotID = itemSlotID;
-            this.Inventory = inventory;
-            this.KoPosition = koPosition;
+            ItemSlotID = itemSlotID;
+            Inventory = inventory;
+            OwnerPlayer = ownerPlayer;
+            KoPosition = koPosition;
+            AtlasManager = (IndexedTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Item Atlas"];
         }
 
         /// <summary>
@@ -40,26 +44,16 @@ namespace FeloxGame.GUI
 
             TextureCoordinates = AtlasManager.GetIndexedAtlasCoords(textureIndex);
         }
-              
-        public override void Draw()
-        {
-            // todo: find a way to draw more than one at a time
-            if (IsDrawable && ToggleDraw)
-            {
-                Box2 rect = new Box2(KoNDCs.MinX, KoNDCs.MinY, KoNDCs.MaxX, KoNDCs.MaxY);
-                AtlasManager.StartBatch();
-                AtlasManager.AddQuadToBatch(rect, TextureCoordinates);
-                AtlasManager.EndBatch();
-            }
 
-            if (Kodomo.Count != 0 && ToggleDraw)
+        public override void OnLeftClick(Vector2 mousePosition, WorldManager world)
+        {
+            // Swap slots
+            if (IsMouseInBounds(mousePosition))
             {
-                foreach (UI ui in Kodomo.Values)
-                {
-                    ui.Draw();
-                }
+                ItemStack itemStack = OwnerPlayer.Inventory.ItemStackList[ItemSlotID];
+                OwnerPlayer.Inventory.ItemStackList[ItemSlotID] = OwnerPlayer.Inventory.MouseSlotItemStack;
+                OwnerPlayer.Inventory.MouseSlotItemStack = itemStack;
             }
         }
-        
     }
 }

@@ -10,7 +10,7 @@ namespace FeloxGame
 {
     public class PlayerEntity : Entity
     {
-        public Inventory Inventory { get; set; }
+        public PlayerInventory Inventory { get; set; }
         public float Reach { get; set; }
         public eFacing Facing { get; set; } = eFacing.South;
         public WorldManager CurrentWorld { get; protected set; } // todo: resolve how to set this on load
@@ -19,7 +19,7 @@ namespace FeloxGame
         public PlayerEntity(eEntityType entityType, Vector2 startPos, Vector2 size, WorldManager currentWorld)
             : base (entityType, startPos)
         {
-            Inventory = new Inventory(5, 10, this);
+            Inventory = new PlayerInventory(5, 10);
             CurrentWorld = currentWorld;
             Reach = 5f;
             EntityType = eEntityType.Player;
