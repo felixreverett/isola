@@ -10,6 +10,7 @@
 ## Commit messages
 - ✨ New Feature
 - ⚙️ Progress/tweaks
+- 🐛 Bug fix
 - 🧹 Code rework/refactor
 - 📖 Other (e.g. documentation)
 
