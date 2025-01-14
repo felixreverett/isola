@@ -142,5 +142,17 @@ namespace FeloxGame.Drawing
             _indexCount += 6; // 6 indices per quad
             _quadCount++;
         }
+
+        public virtual TexCoords GetIndexedAtlasCoords(int textureIndex)
+        {
+            Console.WriteLine("I'm a " + this.GetType().ToString());
+            throw new NotImplementedException();
+        }
+
+        public virtual TexCoords GetPrecisionAtlasCoords(float x, float y, float textureWidth, float textureHeight)
+        {
+            Console.WriteLine("I'm a " + this.GetType().ToString());
+            throw new NotImplementedException();
+        }
     }
 }

@@ -22,7 +22,7 @@ namespace FeloxGame.GUI
         public Dictionary<string, UI> Kodomo { get; set; }
 
         // Rendering
-        protected virtual PrecisionTextureAtlasManager AtlasManager { get; set; }
+        protected virtual TextureAtlasManager AtlasManager { get; set; }
 
         protected bool IsDrawable { get; set; }
         public bool ToggleDraw { get; set; }
@@ -50,9 +50,9 @@ namespace FeloxGame.GUI
         {
             if (IsDrawable)
             {
-                if (this.AtlasManager is null)
+                if (AtlasManager is null)
                 {
-                    this.AtlasManager = (PrecisionTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Inventory Atlas"];
+                    AtlasManager = AssetLibrary.TextureAtlasManagerList["Inventory Atlas"];
                 }
             }
         }

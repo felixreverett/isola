@@ -18,7 +18,7 @@
             MaxIndex = RowColumnLength * RowColumnLength - 1;
         }
 
-        public TexCoords GetIndexedAtlasCoords(int textureIndex)
+        public override TexCoords GetIndexedAtlasCoords(int textureIndex)
         {
             if (textureIndex > MaxIndex)
             {

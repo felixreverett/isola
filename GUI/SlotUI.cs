@@ -12,7 +12,6 @@ namespace FeloxGame.GUI
         protected int ItemSlotID;
         protected Inventory Inventory;
         protected PlayerEntity OwnerPlayer;
-        protected new IndexedTextureAtlasManager AtlasManager;
 
         public SlotUI
         (
@@ -25,12 +24,9 @@ namespace FeloxGame.GUI
             Inventory = inventory;
             OwnerPlayer = ownerPlayer;
             KoPosition = koPosition;
-            AtlasManager = (IndexedTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Item Atlas"];
+            AtlasManager = AssetLibrary.TextureAtlasManagerList["Item Atlas"];
         }
 
-        /// <summary>
-        /// Updates information about the item at this item slot. 
-        /// </summary>
         public void UpdateItem(ItemStack itemStack)
         {
             int textureIndex = 0;

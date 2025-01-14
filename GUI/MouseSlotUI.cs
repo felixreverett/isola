@@ -11,7 +11,6 @@ namespace FeloxGame.GUI
         private Vector2 MouseNDCs { get; set; }
         protected Vector2 NDCDimensions;
         protected PlayerEntity OwnerPlayer;
-        protected new IndexedTextureAtlasManager AtlasManager = (IndexedTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Item Atlas"];
 
         public MouseSlotUI
         (
@@ -21,6 +20,7 @@ namespace FeloxGame.GUI
             : base(koWidth, koHeight, anchor, scale, isDrawable, toggleDraw, isClickable)
         {
             OwnerPlayer = ownerPlayer;
+            AtlasManager = AssetLibrary.TextureAtlasManagerList["Item Atlas"];
         }
 
         public void UpdateItem(ItemStack itemStack)

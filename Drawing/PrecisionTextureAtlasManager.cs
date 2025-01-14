@@ -13,7 +13,7 @@
             AtlasHeight = atlasHeight;
         }
 
-        public TexCoords GetPrecisionAtlasCoords(float x, float y, float textureWidth, float textureHeight)
+        public override TexCoords GetPrecisionAtlasCoords(float x, float y, float textureWidth, float textureHeight)
         {
             //todo: add bounds error checking?
             TexCoords texCoords = new TexCoords();
