@@ -121,7 +121,6 @@ namespace FeloxGame.GUI
                     if (!itemStack.Equals(default(ItemStack)))
                     {
                         OwnerPlayer.CurrentWorld.AddEntityToWorld(new ItemEntity(eEntityType.ItemEntity, OwnerPlayer.Position, itemStack.ItemName, itemStack.Amount));
-                        HandleInventoryChanged();
                     }
                 }
             }
@@ -149,23 +148,6 @@ namespace FeloxGame.GUI
                 if (AssetLibrary.GetItemFromItemName(Inventory.ItemStackList[index].ItemName, out var item))
                 {
                     item!.OnLeftClick(mouseNDCs, world);
-                }
-            }
-            HandleInventoryChanged();
-        }
-
-        private void HandleInventoryChanged()
-        {
-            for (int i = 0; i < _rows * _cols; i++)
-            {
-                if (!Inventory.ItemStackList[i].Equals(default(ItemStack)))
-                {
-                    Kodomo[$"{i}"].ToggleDraw = true;
-                    ((SlotUI)Kodomo[$"{i}"]).UpdateItem(Inventory.ItemStackList[i]);
-                }
-                else
-                {
-                    Kodomo[$"{i}"].ToggleDraw = false;
                 }
             }
         }

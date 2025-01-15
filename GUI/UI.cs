@@ -76,6 +76,17 @@ namespace FeloxGame.GUI
             }
         }
 
+        public virtual void Update()
+        {
+            if (Kodomo.Count != 0)
+            {
+                foreach (UI ui in Kodomo.Values)
+                {
+                    ui.Update();
+                }
+            }
+        }
+
         public virtual void SetTextureCoords(float x, float y, float textureWidth, float textureHeight)
         {
             TextureCoordinates = AtlasManager.GetPrecisionAtlasCoords(x, y, textureWidth, textureHeight);

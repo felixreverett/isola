@@ -24,21 +24,19 @@ namespace FeloxGame.GUI
         public PlayerInvUI
         (
             float koWidth, float koHeight, eAnchor anchor, float scale, bool isDrawable, bool toggleDraw, bool isClickable,
-            PlayerInventory playerInventory, HotbarUI hotbarUI, PlayerEntity ownerPlayer
+            PlayerInventory playerInventory, PlayerEntity ownerPlayer
         ) : base
         (
             koWidth, koHeight, anchor, scale, isDrawable, toggleDraw, isClickable
         )
         {
             this.Inventory = playerInventory;
-            this.HotbarUI = hotbarUI;
             this.OwnerPlayer = ownerPlayer;
             GenerateUISlots();
         }
 
         // Fields
         PlayerInventory Inventory;
-        HotbarUI HotbarUI;
         PlayerEntity OwnerPlayer;
 
         private void GenerateUISlots()
@@ -91,33 +89,6 @@ namespace FeloxGame.GUI
             Kodomo.Add("mouseSlot", new MouseSlotUI(itemSlotWidth, itemSlotHeight, eAnchor.None, 1f, true, false, true, OwnerPlayer));
         }
 
-        private void HandleInventoryChanged()
-        {
-            for (int i = 0; i < Inventory.Rows * Inventory.Cols; i++)
-            {
-                if (!Inventory.ItemStackList[i].Equals(default(ItemStack)))
-                {
-                    Kodomo[$"{i}"].ToggleDraw = true;
-                    ((SlotUI)Kodomo[$"{i}"]).UpdateItem(Inventory.ItemStackList[i]);
-                }
-                else
-                {
-                    Kodomo[$"{i}"].ToggleDraw = false;
-                }
-            }
-
-            if (!Inventory.MouseSlotItemStack.Equals(default(ItemStack)))
-            {
-                Kodomo["mouseSlot"].ToggleDraw = true;
-                ((MouseSlotUI)Kodomo["mouseSlot"]).UpdateItem(Inventory.MouseSlotItemStack);
-            }
-            
-            else
-            {
-                Kodomo["mouseSlot"].ToggleDraw = false;
-            }
-        }
-
         public override void OnLeftClick(Vector2 mousePosition, WorldManager world)
         {
             if (!IsMouseInBounds(mousePosition))
@@ -138,8 +109,6 @@ namespace FeloxGame.GUI
             {
                 // functionality here
             }
-
-            HandleInventoryChanged();
         }
 
         public override void OnKeyDown(KeyboardKeyEventArgs e)
@@ -160,8 +129,6 @@ namespace FeloxGame.GUI
                     // drop if an item is being hovered over?
                 }
             }
-
-            HandleInventoryChanged();
         }
 
         public void OnExternalClick()
@@ -172,8 +139,6 @@ namespace FeloxGame.GUI
                 Inventory.MouseSlotItemStack = default(ItemStack);
                 OwnerPlayer.CurrentWorld.AddEntityToWorld(new ItemEntity(eEntityType.ItemEntity, OwnerPlayer.Position, itemStack.ItemName, itemStack.Amount));
             }
-
-            HandleInventoryChanged();
         }
     }
 }

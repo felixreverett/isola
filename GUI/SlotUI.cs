@@ -27,18 +27,30 @@ namespace FeloxGame.GUI
             AtlasManager = AssetLibrary.TextureAtlasManagerList["Item Atlas"];
         }
 
-        public void UpdateItem(ItemStack itemStack)
+        public override void Update()
         {
-            int textureIndex = 0;
+            ItemStack itemStack = OwnerPlayer.Inventory.ItemStackList[ItemSlotID];
 
-            Item matchingItem = AssetLibrary.ItemList.FirstOrDefault(i => i.ItemName == itemStack.ItemName);
-
-            if (matchingItem != null)
+            if (itemStack.Equals(default(ItemStack)))
             {
-                textureIndex = matchingItem.TextureIndex;
+                ToggleDraw = false;
             }
-
-            TextureCoordinates = AtlasManager.GetIndexedAtlasCoords(textureIndex);
+            else
+            {
+                int textureIndex = 0;
+                Item matchingItem = AssetLibrary.ItemList.FirstOrDefault(i => i.ItemName == itemStack.ItemName);
+                if (matchingItem != null)
+                {
+                    textureIndex = matchingItem.TextureIndex;
+                    TextureCoordinates = AtlasManager.GetIndexedAtlasCoords(textureIndex);
+                }
+                else
+                {
+                    Console.WriteLine($"Error: No matching item found in library with name {itemStack.ItemName}. Using default texture 0.");
+                }
+                ToggleDraw = true;
+            }
+            base.Update();
         }
 
         public override void OnLeftClick(Vector2 mousePosition, WorldManager world)
