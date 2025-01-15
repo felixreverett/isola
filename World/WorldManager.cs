@@ -70,8 +70,8 @@ namespace FeloxGame.World
 
         private void DrawChunks()
         {
-            var timer = new Stopwatch();
-            timer.Start();
+            //var timer = new Stopwatch();
+            //timer.Start();
             foreach (Chunk loadedChunk in LoadedChunks.Values)
             {
                 AtlasManager.StartBatch();
@@ -96,8 +96,8 @@ namespace FeloxGame.World
 
                 AtlasManager.EndBatch();
             }
-            timer.Stop();
-            Console.WriteLine($"> Chunk draw cycle took {timer.Elapsed.ToString(@"m\:ss\.fffff")} to run.");
+            //timer.Stop();
+            //Console.WriteLine($"> Chunk draw cycle took {timer.Elapsed.ToString(@"m\:ss\.fffff")} to run.");
         }
 
         private void DrawEntities()

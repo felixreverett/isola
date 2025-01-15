@@ -87,7 +87,7 @@ namespace FeloxGame
             MasterUI = new(ClientSize.X, ClientSize.Y, eAnchor.Middle, 1.0f);
                 MasterUI.Kodomo.Add("Hotbar", new HotbarUI(188f, 26f, eAnchor.Bottom, 0.5f, true, true, false, 1, 10, 16f, 16f, 5f, 2f, _player.Inventory, _player));
                 MasterUI.Kodomo["Hotbar"].SetTextureCoords(0, 118, 188, 26); //todo: set on instantiation
-                MasterUI.Kodomo.Add("Inventory", new PlayerInvUI(196f, 110f, eAnchor.Middle, 0.5f, true, false, false, _player.Inventory, (HotbarUI)MasterUI.Kodomo["Hotbar"], _player));
+                MasterUI.Kodomo.Add("Inventory", new PlayerInvUI(196f, 110f, eAnchor.Middle, 0.5f, true, false, false, _player.Inventory, _player));
                 MasterUI.Kodomo["Inventory"].SetTextureCoords(0, 0, 196, 110); //todo: set on instantiation
 
             // Textures
@@ -113,8 +113,9 @@ namespace FeloxGame
 
             _player.Update(args, keyboardInput);
 
-            // keyboard
+            MasterUI.Update();
 
+            // keyboard
             if (keyboardInput.IsKeyDown(Keys.Escape))
             {
                 Close();
