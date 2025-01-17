@@ -59,8 +59,17 @@ namespace FeloxGame.GUI
             if (IsMouseInBounds(mousePosition))
             {
                 ItemStack itemStack = OwnerPlayer.Inventory.ItemStackList[ItemSlotID];
-                OwnerPlayer.Inventory.ItemStackList[ItemSlotID] = OwnerPlayer.Inventory.MouseSlotItemStack;
-                OwnerPlayer.Inventory.MouseSlotItemStack = itemStack;
+
+                if (itemStack.ItemName == OwnerPlayer.Inventory.MouseSlotItemStack.ItemName)
+                {
+                    OwnerPlayer.Inventory.ItemStackList[ItemSlotID].Amount += OwnerPlayer.Inventory.MouseSlotItemStack.Amount;
+                    OwnerPlayer.Inventory.MouseSlotItemStack = default(ItemStack);
+                }
+                else
+                {
+                    OwnerPlayer.Inventory.ItemStackList[ItemSlotID] = OwnerPlayer.Inventory.MouseSlotItemStack;
+                    OwnerPlayer.Inventory.MouseSlotItemStack = itemStack;
+                }
             }
         }
     }
