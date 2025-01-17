@@ -113,13 +113,24 @@ namespace FeloxGame.GUI
 
             if (ToggleScrolling)
             {
-                // drop item into world if item exists at slot
+                // drop one item into world if item exists at slot
                 if (e.Key == Keys.Q)
                 {
                     int index = ((ActiveHotbarSlotUI)Kodomo["ActiveHotbarSlot"]).ActiveIndex;
+
                     ItemStack itemStack = Inventory.ItemStackList[index];
+
                     if (!itemStack.Equals(default(ItemStack)))
                     {
+                        if (itemStack.Amount == 1)
+                        {
+                            Inventory.ItemStackList[index] = default(ItemStack);
+                        }
+                        else
+                        {
+                            Inventory.ItemStackList[index].Amount -= 1;
+                        }
+
                         OwnerPlayer.CurrentWorld.AddEntityToWorld(new ItemEntity(eEntityType.ItemEntity, OwnerPlayer.Position, itemStack.ItemName, itemStack.Amount));
                     }
                 }
