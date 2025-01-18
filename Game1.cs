@@ -206,6 +206,12 @@ namespace FeloxGame
                 _player.Inventory.AddToSlotIndex(new ItemStack("Wheat Seeds", 1), 1);
             }
 
+            // Test - add chest to player inventory
+            if (keyboardInput.IsKeyPressed(Keys.RightBracket))
+            {
+                _player.Inventory.AddToSlotIndex(new ItemStack("Wood Chest", 1), 2);
+            }
+
             // TEST - count items in inventory
             if (keyboardInput.IsKeyPressed(Keys.O))
             {

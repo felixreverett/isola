@@ -43,7 +43,9 @@ namespace FeloxGame.Utilities
                 // Seeds
                 new Item_Seeds_WheatSeeds("Wheat Seeds", 43),
                 // Tools
-                new Item_Hoe("Stone Hoe", 84)
+                new Item_Hoe("Stone Hoe", 84),
+                // Chests
+                new Item_WoodChest("Wood Chest", 126)
             };
         }
 

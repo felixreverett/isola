@@ -1,5 +1,4 @@
-﻿using FeloxGame.Drawing;
-using OpenTK.Mathematics;
+﻿using OpenTK.Mathematics;
 using FeloxGame.Entities;
 using System.Text.Json;
 
@@ -19,7 +18,7 @@ namespace FeloxGame
         }
 
         // Default constructor
-        public TileEntity(eEntityType entityType, Vector2 position)
+        public TileEntity(eEntityType entityType, Vector2 position, Vector2 drawPositionOffset)
             : base(entityType, position)
         {
             AlignPosition();
