@@ -18,6 +18,13 @@ namespace FeloxGame
             ItemStackList = new ItemStack[rows * cols];
         }
 
+        // Todo: Review if not implemented
+        public Inventory(int rows, int cols, ItemStack[] itemStackList)
+            : this(rows, cols)
+        {
+            ItemStackList = itemStackList;
+        }
+
         public void AddItemStack(ItemStack itemStack)
         {
             ItemStack matchingItemStack = ItemStackList.FirstOrDefault(i => i.ItemName == itemStack.ItemName);

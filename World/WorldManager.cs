@@ -171,15 +171,25 @@ namespace FeloxGame.World
                             catch { Console.WriteLine("Loading Error: Could not load Item Entity"); }
                             break;
                         }
-                    case eEntityType.PlantTileEntity:
+                    case eEntityType.TileEntity_Plant:
                         {
                             try
                             {
-                                PlantTileEntitySaveData saveData = JsonSerializer.Deserialize<PlantTileEntitySaveData>(entitySaveDataObject.SaveDataString);
+                                TileEntity_Plant_SaveData saveData = JsonSerializer.Deserialize<TileEntity_Plant_SaveData>(entitySaveDataObject.SaveDataString);
                                 Console.WriteLine("Loading new plant tile entity to world"); //debug
-                                AddEntityToWorld(new PlantTileEntity(saveData));
+                                AddEntityToWorld(new TileEntity_Plant(saveData));
                             }
                             catch { Console.WriteLine("Loading Error: Could not load Plant Tile Entity"); }
+                            break;
+                        }
+                    case eEntityType.TileEntity_Chest:
+                        {
+                            try
+                            {
+                                TileEntity_Chest_SaveData saveData = JsonSerializer.Deserialize<TileEntity_Chest_SaveData>(entitySaveDataObject.SaveDataString);
+                                AddEntityToWorld(new TileEntity_Chest(saveData));
+                            }
+                            catch { Console.WriteLine("Loading Error: Could not load Chest Tile Entity."); }
                             break;
                         }
                     default:

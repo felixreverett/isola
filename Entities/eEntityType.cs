@@ -6,7 +6,8 @@
         Player,
         ItemEntity,
         TileEntity,
-        PlantTileEntity,
+        TileEntity_Chest,
+        TileEntity_Plant,
         Persimmon,
         RiceSeeds
     }
