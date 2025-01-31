@@ -55,6 +55,7 @@ namespace FeloxGame.Utilities
             TextureAtlasManagerList.Add("Player Atlas", new PrecisionTextureAtlasManager(1, "Player.png", 1024, 1024, 1024, false, 0.001f));
             TextureAtlasManagerList.Add("Inventory Atlas", new PrecisionTextureAtlasManager(2, "1024 UI Atlas x16.png", 1024, 1024, 1024, false));
             TextureAtlasManagerList.Add("Item Atlas", new IndexedTextureAtlasManager(3, "1024 Item Atlas 16x.png", 1024, 16, 8, false, 0.001f));
+            // Todo: add entity atlas here
         }
 
         public static void InitialiseTileList()

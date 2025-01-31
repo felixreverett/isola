@@ -1,4 +1,5 @@
-﻿using OpenTK.Mathematics;
+﻿using FeloxGame.Utilities;
+using OpenTK.Mathematics;
 using System.Text.Json;
 
 namespace FeloxGame.Entities
@@ -10,12 +11,23 @@ namespace FeloxGame.Entities
             : base(entityType, position, drawPositionOffset)
         {
             Inventory = new Inventory(5, 10);
+            SetTexCoords();
         }
 
         public TileEntity_Chest(TileEntity_Chest_SaveData saveData)
             : base(saveData)
         {
             Inventory = saveData.Inventory;
+            SetTexCoords();
+        }
+
+        // Todo: adjust to use entityatlas
+        private void SetTexCoords()
+        {
+            Items.Item? matchingItem = AssetLibrary.ItemList!.FirstOrDefault(i => i.ItemName == "Wood Chest")!;
+            int index = matchingItem == null ? 0 : matchingItem.TextureIndex;
+            Console.WriteLine($"Setting texcoords of new Chest Tile Entity from atlas index {index}");
+            TexCoords = Utilities.Utilities.GetIndexedAtlasCoords(index, 16, 1024, 8);
         }
 
         public override EntitySaveDataObject GetSaveData()

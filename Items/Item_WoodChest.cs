@@ -1,4 +1,5 @@
-﻿using FeloxGame.World;
+﻿using FeloxGame.Entities;
+using FeloxGame.World;
 using OpenTK.Mathematics;
 
 namespace FeloxGame.Items
@@ -12,7 +13,8 @@ namespace FeloxGame.Items
 
         public override void OnRightClick(Vector2 mousePosition, WorldManager world)
         {
-            Console.WriteLine($"Right button clicked with {ItemName} on Tilled Soil");
+            Console.WriteLine($"Adding new {ItemName} to world.");
+            world.AddEntityToWorld(new TileEntity_Chest(eEntityType.TileEntity_Chest, mousePosition, new Vector2(0.5f, 0f)));
         }
 
         public override void OnLeftClick(Vector2 mousePosition, WorldManager world)

@@ -118,21 +118,7 @@ namespace FeloxGame
             // keyboard
             if (keyboardInput.IsKeyDown(Keys.Escape))
             {
-                Close();
-            }
-
-            // Drop functionality
-            if (keyboardInput.IsKeyPressed(Keys.Q))
-            {
-                if (toggleInventory)
-                {
-                    // if mouseslot contains an itemstack, drop it all
-                    // else, if an item is below the cursor, drop one of that item
-                }
-                else
-                {
-                    //_player.Inventory.DropItemAtIndex();
-                }
+                //Close();
             }
 
             if (keyboardInput.IsKeyReleased(Keys.E))
