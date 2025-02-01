@@ -88,7 +88,7 @@ namespace FeloxGame.World
                         
                         TexCoords texCoords = AssetLibrary.TileList
                             .Where(t => t.TileID == loadedChunk.GetTile(x, y).TileID)
-                            .FirstOrDefault().TexCoords;
+                            .First().TexCoords;
 
                         AtlasManager.AddQuadToBatch(rect, texCoords);
                     }
