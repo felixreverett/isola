@@ -50,7 +50,7 @@ namespace FeloxGame
 
         private void AlignPosition()
         {
-            Position = new Vector2((float)Math.Floor(Position.X) + 0.5f, (float)Math.Floor(Position.Y));
+            Position = new Vector2((float)Math.Floor(Position.X), (float)Math.Floor(Position.Y));
         }
     }
 }

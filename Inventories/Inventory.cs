@@ -1,11 +1,13 @@
 ﻿using FeloxGame.Inventories;
+using FeloxGame.Saving;
+using System.Text.Json.Serialization;
 
 namespace FeloxGame
 {
     // Inventory items will only be accessed through methods like .Add() and .Remove()
     // The basic inventory class for universal inventory functionality
     // Should be an inventory "instance" which is only instantiated/loaded when accessed by the player, and is saved when closed (05/01/25)
-    public class Inventory
+    public class Inventory //: ISaveable
     {
         public ItemStack[] ItemStackList { get; set; }
         public int Rows { get; private set; }
@@ -18,7 +20,7 @@ namespace FeloxGame
             ItemStackList = new ItemStack[rows * cols];
         }
 
-        // Todo: Review if not implemented
+        [JsonConstructor]
         public Inventory(int rows, int cols, ItemStack[] itemStackList)
             : this(rows, cols)
         {
@@ -112,5 +114,16 @@ namespace FeloxGame
                     break;
             }
         }
+
+        /*
+        public InventorySaveData GetSaveData()
+        {
+            return new InventorySaveData
+            (
+                Rows,
+                Cols,
+                new Dictionary<string, int>
+            );
+        }*/
     }
 }

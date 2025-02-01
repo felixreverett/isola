@@ -3,10 +3,11 @@ using OpenTK.Mathematics;
 using FeloxGame.Entities;
 using System.Text.Json;
 using FeloxGame.Utilities;
+using FeloxGame.Saving;
 
 namespace FeloxGame
 {
-    public class Entity : IDrawable
+    public class Entity : IDrawable, ISaveable<EntitySaveDataObject>
     {
         public eEntityType EntityType { get; set; } = eEntityType.Entity;
         public Vector2 Position { get; set; }

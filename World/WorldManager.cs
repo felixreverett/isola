@@ -187,9 +187,13 @@ namespace FeloxGame.World
                             try
                             {
                                 TileEntity_Chest_SaveData saveData = JsonSerializer.Deserialize<TileEntity_Chest_SaveData>(entitySaveDataObject.SaveDataString);
+                                Console.WriteLine("Successfully loaded Chest save data"); //debug
                                 AddEntityToWorld(new TileEntity_Chest(saveData));
                             }
-                            catch { Console.WriteLine("Loading Error: Could not load Chest Tile Entity."); }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Loading Error: Could not load Chest Tile Entity. Exception: {ex}.");
+                            }
                             break;
                         }
                     default:
