@@ -184,6 +184,7 @@ namespace FeloxGame.World
                         }
                     case eEntityType.TileEntity_Chest:
                         {
+                            Console.WriteLine("Trying to load Chest Entity into world.");
                             try
                             {
                                 TileEntity_Chest_SaveData saveData = JsonSerializer.Deserialize<TileEntity_Chest_SaveData>(entitySaveDataObject.SaveDataString);
@@ -289,7 +290,7 @@ namespace FeloxGame.World
                     foreach (Entity e in chunkEntities)
                     {
                         entitySaveDataList.Add(e.GetSaveData());
-                        Console.WriteLine($"Adding entity {e.EntityType} to save list");
+                        Console.WriteLine($"Adding entity {e.GetType} to save list");
                     }
 
                     SaveChunkEntities(worldFolderPath, chunkPosX, chunkPosY, entitySaveDataList);
@@ -309,7 +310,7 @@ namespace FeloxGame.World
             {
                 if (GetChunkFromWorldCoordinate((int)e.Position.X) == chunkPosX && 
                     GetChunkFromWorldCoordinate((int)e.Position.Y) == chunkPosY &&
-                    e.EntityType != eEntityType.Player)
+                    e is not PlayerEntity)
                 {
                     chunkEntities.Add(e);
                 }
@@ -328,7 +329,7 @@ namespace FeloxGame.World
                 foreach (Entity e in chunkEntities)
                 {
                     entitySaveDataList.Add(e.GetSaveData());
-                    Console.WriteLine($"Adding entity {e.EntityType} to save list");
+                    Console.WriteLine($"Adding entity {e.GetType} to save list");
                 }
 
                 SaveChunkEntities(worldFolderPath, chunkPosX, chunkPosY, entitySaveDataList);

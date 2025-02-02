@@ -6,13 +6,12 @@ namespace FeloxGame.Entities
 {
     public class ItemEntity : Entity
     {
-        public new eEntityType EntityType = eEntityType.ItemEntity;
         public string ItemName { get; set; }
         public int Amount { get; set; }
 
         // Initialize entity otherwise
-        public ItemEntity(eEntityType entityType, Vector2 position, string itemName, int amount) 
-            : base(entityType, position)
+        public ItemEntity(Vector2 position, string itemName, int amount) 
+            : base(position)
         {
             this.ItemName = itemName;
             this.Amount = amount;
@@ -46,7 +45,7 @@ namespace FeloxGame.Entities
                     Amount                                      // 3
                 );
 
-            return new EntitySaveDataObject(EntityType, JsonSerializer.Serialize(data));
+            return new EntitySaveDataObject(eEntityType.ItemEntity, JsonSerializer.Serialize(data));
         }
     }
 }

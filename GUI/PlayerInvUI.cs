@@ -122,7 +122,7 @@ namespace FeloxGame.GUI
                     // Drop item on mouse slot
                     ItemStack itemStack = Inventory.MouseSlotItemStack;
                     Inventory.MouseSlotItemStack = default(ItemStack);
-                    OwnerPlayer.CurrentWorld.AddEntityToWorld(new ItemEntity(eEntityType.ItemEntity, OwnerPlayer.Position, itemStack.ItemName, itemStack.Amount));
+                    OwnerPlayer.CurrentWorld.AddEntityToWorld(new ItemEntity(OwnerPlayer.Position, itemStack.ItemName, itemStack.Amount));
                 }
                 else
                 {
@@ -137,7 +137,7 @@ namespace FeloxGame.GUI
             {
                 ItemStack itemStack = Inventory.MouseSlotItemStack;
                 Inventory.MouseSlotItemStack = default(ItemStack);
-                OwnerPlayer.CurrentWorld.AddEntityToWorld(new ItemEntity(eEntityType.ItemEntity, OwnerPlayer.Position, itemStack.ItemName, itemStack.Amount));
+                OwnerPlayer.CurrentWorld.AddEntityToWorld(new ItemEntity(OwnerPlayer.Position, itemStack.ItemName, itemStack.Amount));
             }
         }
     }

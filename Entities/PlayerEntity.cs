@@ -16,13 +16,12 @@ namespace FeloxGame
         public WorldManager CurrentWorld { get; protected set; } // todo: resolve how to set this on load
         protected float Speed { get; set; } = 5.5f; // Todo: move to constructor
 
-        public PlayerEntity(eEntityType entityType, Vector2 startPos, Vector2 size, WorldManager currentWorld)
-            : base (entityType, startPos)
+        public PlayerEntity(Vector2 startPos, Vector2 size, WorldManager currentWorld)
+            : base (startPos)
         {
             Inventory = new PlayerInventory(5, 10);
             CurrentWorld = currentWorld;
             Reach = 5f;
-            EntityType = eEntityType.Player;
             Size = size;
             TexCoords = new TexCoords(0f, 0f, 1f, 1f);
             AtlasManager = (PrecisionTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Player Atlas"];

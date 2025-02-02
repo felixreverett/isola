@@ -18,8 +18,8 @@ namespace FeloxGame
         }
 
         // Default constructor
-        public TileEntity(eEntityType entityType, Vector2 position, Vector2 drawPositionOffset)
-            : base(entityType, position)
+        public TileEntity(Vector2 position, Vector2 drawPositionOffset)
+            : base(position)
         {
             AlignPosition();
         }
@@ -32,7 +32,9 @@ namespace FeloxGame
                 Position.X + Size.X / 2f + DrawPositionOffset.X, Position.Y + Size.Y + DrawPositionOffset.Y
                 );
 
+            AtlasManager.StartBatch();
             AtlasManager.AddQuadToBatch(rect, TexCoords);
+            AtlasManager.EndBatch();
         }
 
         // Export entity save data
@@ -45,12 +47,12 @@ namespace FeloxGame
                     new float[] { DrawPositionOffset.X, DrawPositionOffset.Y }  // 2
                 );
 
-            return new EntitySaveDataObject(EntityType, JsonSerializer.Serialize(data));
+            return new EntitySaveDataObject(eEntityType.TileEntity, JsonSerializer.Serialize(data));
         }
 
         private void AlignPosition()
         {
-            Position = new Vector2((float)Math.Floor(Position.X), (float)Math.Floor(Position.Y));
+            Position = new Vector2((float)Math.Floor(Position.X) + 0.5f, (float)Math.Floor(Position.Y));
         }
     }
 }

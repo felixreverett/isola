@@ -6,18 +6,18 @@ namespace FeloxGame.Entities
 {
     public class TileEntity_Chest : TileEntity
     {
-        public Inventory Inventory { get; set; }
-        public TileEntity_Chest(eEntityType entityType, Vector2 position, Vector2 drawPositionOffset)
-            : base(entityType, position, drawPositionOffset)
+        //public Inventory Inventory { get; set; }
+        public TileEntity_Chest(Vector2 position, Vector2 drawPositionOffset)
+            : base(position, drawPositionOffset)
         {
-            Inventory = new Inventory(5, 10);
+            //Inventory = new Inventory(5, 10);
             SetTexCoords();
         }
 
         public TileEntity_Chest(TileEntity_Chest_SaveData saveData)
             : base(saveData)
         {
-            Inventory = saveData.Inventory;
+            //Inventory = saveData.Inventory;
             SetTexCoords();
         }
 
@@ -36,11 +36,11 @@ namespace FeloxGame.Entities
                 (
                     new float[] { Position.X, Position.Y },                     // 0
                     new float[] { Size.X, Size.Y },                             // 1
-                    new float[] { DrawPositionOffset.X, DrawPositionOffset.Y }, // 2
-                    Inventory                                                   // 3
+                    new float[] { DrawPositionOffset.X, DrawPositionOffset.Y } /*,*/ // 2
+                    /*Inventory */                                                  // 3
                 );
 
-            return new EntitySaveDataObject(EntityType, JsonSerializer.Serialize(data));
+            return new EntitySaveDataObject(eEntityType.TileEntity_Chest, JsonSerializer.Serialize(data));
         }
     }
 }

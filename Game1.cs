@@ -78,7 +78,7 @@ namespace FeloxGame
             _world = new WorldManager(1, _config);
             
             // Player (with reference to _world)
-            _player = new PlayerEntity(eEntityType.Player, new Vector2(0, 0), new Vector2(1, 2), _world);
+            _player = new PlayerEntity(new Vector2(0, 0), new Vector2(1, 2), _world);
 
             // Entities
             _world.AddEntityToWorld(_player);
@@ -213,7 +213,7 @@ namespace FeloxGame
             // TEST - spawn entity
             if (keyboardInput.IsKeyPressed(Keys.L))
             {
-                _world.AddEntityToWorld(new ItemEntity(eEntityType.ItemEntity, _player.Position, "Persimmon", 1));
+                _world.AddEntityToWorld(new ItemEntity(_player.Position, "Persimmon", 1));
             }
 
             // TEST - save chunk

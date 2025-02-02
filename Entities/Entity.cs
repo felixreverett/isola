@@ -9,7 +9,6 @@ namespace FeloxGame
 {
     public class Entity : IDrawable, ISaveable<EntitySaveDataObject>
     {
-        public eEntityType EntityType { get; set; } = eEntityType.Entity;
         public Vector2 Position { get; set; }
         public Vector2 Size { get; set; } = new Vector2(1f, 1f);
 
@@ -25,9 +24,8 @@ namespace FeloxGame
         }
 
         // Default constructor
-        public Entity(eEntityType entityType, Vector2 position)
+        public Entity(Vector2 position)
         {
-            EntityType = entityType;
             Position = position;
         }
         
@@ -48,7 +46,7 @@ namespace FeloxGame
                     new float[] { Size.X, Size.Y }              // 1
                 );
 
-            return new EntitySaveDataObject(EntityType, JsonSerializer.Serialize(data));
+            return new EntitySaveDataObject(eEntityType.Entity, JsonSerializer.Serialize(data));
         }
     }
 }

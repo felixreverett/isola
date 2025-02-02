@@ -16,8 +16,8 @@ namespace FeloxGame
         }
 
         // Default constructor
-        public TileEntity_Plant(eEntityType entityType, Vector2 position, Vector2 drawPositionOffset, int growthStage = 0)
-            : base(entityType, position, drawPositionOffset)
+        public TileEntity_Plant(Vector2 position, Vector2 drawPositionOffset, int growthStage = 0)
+            : base(position, drawPositionOffset)
         {
             GrowthStage = growthStage;
         }
@@ -33,7 +33,7 @@ namespace FeloxGame
                     GrowthStage                                                 // 3
                 );
 
-            return new EntitySaveDataObject(EntityType, JsonSerializer.Serialize(data));
+            return new EntitySaveDataObject(eEntityType.TileEntity_Plant, JsonSerializer.Serialize(data));
         }
     }
 }

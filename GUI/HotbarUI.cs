@@ -131,7 +131,7 @@ namespace FeloxGame.GUI
                             Inventory.ItemStackList[index].Amount -= 1;
                         }
 
-                        OwnerPlayer.CurrentWorld.AddEntityToWorld(new ItemEntity(eEntityType.ItemEntity, OwnerPlayer.Position, itemStack.ItemName, itemStack.Amount));
+                        OwnerPlayer.CurrentWorld.AddEntityToWorld(new ItemEntity(OwnerPlayer.Position, itemStack.ItemName, itemStack.Amount));
                     }
                 }
             }
