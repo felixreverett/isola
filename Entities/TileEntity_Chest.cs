@@ -6,18 +6,18 @@ namespace FeloxGame.Entities
 {
     public class TileEntity_Chest : TileEntity
     {
-        //public Inventory Inventory { get; set; }
+        public Inventory Inventory { get; set; }
         public TileEntity_Chest(Vector2 position, Vector2 drawPositionOffset)
             : base(position, drawPositionOffset)
         {
-            //Inventory = new Inventory(5, 10);
+            Inventory = new Inventory(5, 10);
             SetTexCoords();
         }
 
         public TileEntity_Chest(TileEntity_Chest_SaveData saveData)
             : base(saveData)
         {
-            //Inventory = saveData.Inventory;
+            Inventory = saveData.Inventory;
             SetTexCoords();
         }
 
@@ -26,7 +26,6 @@ namespace FeloxGame.Entities
         {
             Items.Item? matchingItem = AssetLibrary.ItemList!.FirstOrDefault(i => i.ItemName == "Wood Chest")!;
             int index = matchingItem == null ? 0 : matchingItem.TextureIndex;
-            Console.WriteLine($"Setting texcoords of new Chest Tile Entity from atlas index {index}");
             TexCoords = Utilities.Utilities.GetIndexedAtlasCoords(index, 16, 1024, 8);
         }
 
@@ -36,8 +35,8 @@ namespace FeloxGame.Entities
                 (
                     new float[] { Position.X, Position.Y },                     // 0
                     new float[] { Size.X, Size.Y },                             // 1
-                    new float[] { DrawPositionOffset.X, DrawPositionOffset.Y } /*,*/ // 2
-                    /*Inventory */                                                  // 3
+                    new float[] { DrawPositionOffset.X, DrawPositionOffset.Y }, // 2
+                    Inventory                                                   // 3
                 );
 
             return new EntitySaveDataObject(eEntityType.TileEntity_Chest, JsonSerializer.Serialize(data));

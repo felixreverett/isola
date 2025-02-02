@@ -141,6 +141,8 @@ namespace FeloxGame.World
 
         private void LoadChunkEntities(string chunkEntityFilePath)
         {
+            Console.WriteLine("=== Loading entities into world from chunk ==="); // debug
+            
             // 1. Deserialize file into a list of "EntitySaveDataObject"s
             List<EntitySaveDataObject> entitySaveDataList = Loading.LoadObject<List<EntitySaveDataObject>>(chunkEntityFilePath);
 
@@ -154,10 +156,10 @@ namespace FeloxGame.World
                             try
                             {
                                 EntitySaveData saveData = JsonSerializer.Deserialize<EntitySaveData>(entitySaveDataObject.SaveDataString);
-                                Console.WriteLine("Loading new entity to world"); //debug
                                 AddEntityToWorld(new Entity(saveData));
+                                Console.WriteLine("Loaded new Entity into world"); //debug
                             }
-                            catch { Console.WriteLine("Loading Error: Could not load Entity"); }
+                            catch { Console.WriteLine("Error: failed to load Entity"); }
                             break;
                         }
                     case eEntityType.ItemEntity:
@@ -165,10 +167,10 @@ namespace FeloxGame.World
                             try
                             {
                                 ItemEntitySaveData saveData = JsonSerializer.Deserialize<ItemEntitySaveData>(entitySaveDataObject.SaveDataString);
-                                Console.WriteLine("Loading new item entity to world"); //debug
                                 AddEntityToWorld(new ItemEntity(saveData));
+                                Console.WriteLine("Loaded new item entity into world"); //debug
                             }
-                            catch { Console.WriteLine("Loading Error: Could not load Item Entity"); }
+                            catch { Console.WriteLine("Error: failed to load Item Entity"); }
                             break;
                         }
                     case eEntityType.TileEntity_Plant:
@@ -176,20 +178,19 @@ namespace FeloxGame.World
                             try
                             {
                                 TileEntity_Plant_SaveData saveData = JsonSerializer.Deserialize<TileEntity_Plant_SaveData>(entitySaveDataObject.SaveDataString);
-                                Console.WriteLine("Loading new plant tile entity to world"); //debug
                                 AddEntityToWorld(new TileEntity_Plant(saveData));
+                                Console.WriteLine("Loaded new Plant Tile Entity into world"); //debug
                             }
-                            catch { Console.WriteLine("Loading Error: Could not load Plant Tile Entity"); }
+                            catch { Console.WriteLine("Error: failed to load Plant Tile Entity"); }
                             break;
                         }
                     case eEntityType.TileEntity_Chest:
                         {
-                            Console.WriteLine("Trying to load Chest Entity into world.");
                             try
                             {
                                 TileEntity_Chest_SaveData saveData = JsonSerializer.Deserialize<TileEntity_Chest_SaveData>(entitySaveDataObject.SaveDataString);
-                                Console.WriteLine("Successfully loaded Chest save data"); //debug
                                 AddEntityToWorld(new TileEntity_Chest(saveData));
+                                Console.WriteLine("Loaded new Chest Tile Entity into world"); //debug
                             }
                             catch (Exception ex)
                             {
@@ -204,7 +205,7 @@ namespace FeloxGame.World
                         }
                 }
             }
-            
+            Console.WriteLine("=== All saved entities loaded from chunk ===");
         }
 
         // Procedurally generates a chunk. todo: also generate tileEntities
