@@ -16,76 +16,72 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Resources\Shaders\UIShader.glsl">
+    <None Update="resources\shaders\UIShader.glsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\TextureAtlases\1024 Item Atlas 16x.png">
+    <None Update="resources\TextureAtlases\1024 Item Atlas 16x.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\TextureAtlases\1024 Tile Atlas x16.png">
+    <None Update="resources\TextureAtlases\1024 Tile Atlas x16.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\TextureAtlases\1024 UI Atlas x16.png">
+    <None Update="resources\TextureAtlases\1024 UI Atlas x16.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\TextureAtlases\Player.png">
+    <None Update="resources\TextureAtlases\Player.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Textures\Entities\Player.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Shaders\TextureWithColorAndTextureSlotAndUniforms.glsl">
+    <None Update="resources\shaders\TextureWithColorAndTextureSlotAndUniforms.glsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Textures\awesomeface.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Textures\grass.png">
+    <None Update="resources\Textures\grass.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Textures\Items\Item Atlas.png">
+    <None Update="resources\Textures\Items\Item Atlas.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Textures\sand.png">
+    <None Update="resources\Textures\sand.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Textures\TileAtlas.png">
+    <None Update="resources\Textures\TileAtlas.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Textures\Tiles\Tile Atlas.png">
+    <None Update="resources\Textures\Tiles\Tile Atlas.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Textures\Tiles\Tilled Soil.png">
+    <None Update="resources\Textures\Tiles\Tilled Soil.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Textures\wall.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Textures\water.png">
+    <None Update="resources\Textures\water.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Textures\water_2.png">
+    <None Update="resources\Textures\water_2.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Textures\water_3.png">
+    <None Update="resources\Textures\water_3.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Textures\water_4.png">
+    <None Update="resources\Textures\water_4.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Textures\WorldTextures.png">
+    <None Update="resources\Textures\WorldTextures.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\TileEntities\Wheat.json">
+    <None Update="resources\TileEntities\Wheat.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\World\worldTest.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Resources\World\WorldFiles\" />
     <Folder Include="Saves\SampleWorldStructure\ChunkData\" />
   </ItemGroup>
 
