@@ -4,7 +4,7 @@
     {
         static void Main(string[] args)
         {
-            Game1 game = new Game1(1280, 720, "Isola");
+            Game1 game = new Game1(1920, 1080, "Isola");
             game.Run();
         }
     }
