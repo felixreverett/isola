@@ -27,7 +27,12 @@ namespace FeloxGame.GameClasses
         /// Methods
         public Matrix4 GetViewMatrix()
         {
-            return Matrix4.CreateTranslation(-Position);
+            // 2025-Aug: this change snaps the camera to the pixel grid
+            float roundedPositionX = (float)Math.Round(Position.X * 16) / 16f;
+            float roundedPositionY = (float)Math.Round(Position.Y * 16) / 16f;
+            float roundedPositionZ = (float)Math.Round(Position.Z * 16) / 16f;
+            Vector3 roundedPosition = new Vector3(roundedPositionX, roundedPositionY, roundedPositionZ);
+            return Matrix4.CreateTranslation(-roundedPosition);
         }
 
         public Matrix4 GetProjectionMatrix()

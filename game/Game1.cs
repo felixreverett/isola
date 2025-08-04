@@ -32,8 +32,8 @@ namespace FeloxGame
         private GameCamera _camera;
         private FrameBuffer _fbo;
 
-        private const int VIRTUAL_WIDTH = 1920;
-        private const int VIRTUAL_HEIGHT = 1080;
+        private const int VIRTUAL_WIDTH = 640; // 1920 or 640
+        private const int VIRTUAL_HEIGHT = 360;// 1080 or 360
         
         // world data & config
         private WorldManager _world;
@@ -244,7 +244,7 @@ namespace FeloxGame
 
             // Track player with camera
             Vector3 cameraMoveDirection = new Vector3(_player.Position.X - _camera.Position.X, _player.Position.Y - _camera.Position.Y, 0f);
-            _camera.Position += cameraMoveDirection * 0.05f;
+            _camera.Position += (cameraMoveDirection * 0.05f);
         }
 
         protected override void OnRenderFrame(FrameEventArgs args)
