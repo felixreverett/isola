@@ -12,6 +12,7 @@ using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Mathematics;
 using FeloxGame.engine.graphics.Buffers;
+using FeloxGame.engine.graphics;
 
 namespace FeloxGame
 {
@@ -22,33 +23,15 @@ namespace FeloxGame
         {
         }
         
-        // Shaders
+        // Shaders & Camera
         private Shader WorldShader;
         private Shader UIShader;
         private Shader ScreenQuadShader;
-
-        private float[] _quadVertices =
-        {
-            // Positions    // Texture Coordinates
-            -1.0f,  1.0f,   0.0f, 1.0f, // top-left
-            -1.0f, -1.0f,   0.0f, 0.0f, // bottom-left
-             1.0f, -1.0f,   1.0f, 0.0f, // bottom-right
-             1.0f,  1.0f,   1.0f, 1.0f  // top-right
-        };
-
-        private uint[] _quadIndices =
-        {
-            0, 1, 2, // First triangle
-            0, 2, 3  // Second triangle
-        };
-
-        private VertexArray _quadVAO;
-        private VertexBuffer _quadVBO;
-        private IndexBuffer _quadEBO;
+        private ScreenQuad _screenQuad;
         
-        // Camera
         private GameCamera _camera;
         private FrameBuffer _fbo;
+
         private const int VIRTUAL_WIDTH = 1920;
         private const int VIRTUAL_HEIGHT = 1080;
         
@@ -130,18 +113,7 @@ namespace FeloxGame
             // Camera
             _camera = new GameCamera(new Vector3(0, 0, 0), ClientSize.X / (float)ClientSize.Y);
             _fbo = new FrameBuffer(VIRTUAL_WIDTH, VIRTUAL_HEIGHT); // determines the native resolution of the game
-
-            _quadVAO = new VertexArray();
-            _quadVBO = new VertexBuffer(_quadVertices);
-            _quadEBO = new IndexBuffer(_quadIndices);
-
-            var quadLayout = new BufferLayout();
-            quadLayout.Add<float>(2); // Position
-            quadLayout.Add<float>(2); // Texture Coordinates
-            _quadVAO.AddBuffer(_quadVBO, quadLayout);
-            _quadEBO.Bind();
-
-            _quadVAO.Unbind();
+            _screenQuad = new ScreenQuad();            
 
             //GameCursor
             _cursor = new GameCursor();
@@ -306,9 +278,7 @@ namespace FeloxGame
             ScreenQuadShader.SetInt("u_ScreenTexture", 0);
             _fbo.BindTexture(TextureUnit.Texture0);
 
-            _quadVAO.Bind();
-            GL.DrawElements(PrimitiveType.Triangles, _quadIndices.Length, DrawElementsType.UnsignedInt, 0);
-            _quadVAO.Unbind();
+            _screenQuad.Draw();
 
             // --- Render UI on top ---
             UIShader.Use();
