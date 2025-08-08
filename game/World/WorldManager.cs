@@ -5,7 +5,9 @@ using SharpNoise;
 using Isola.Entities;
 using System.Text.Json;
 using OpenTK.Mathematics;
-using System.Diagnostics; //debug
+using System.Diagnostics;
+using Isola.engine.graphics;
+using Isola.game.entities; //debug
 
 namespace Isola.World
 {
@@ -22,6 +24,7 @@ namespace Isola.World
         private GameConfig _config;
         public int Seed { get; private set; }
         public IndexedTextureAtlasManager AtlasManager { get; private set; }
+        public BatchRenderer BatchRenderer { get; private set; }
 
         public WorldManager(int seed, GameConfig config)
         {
@@ -30,6 +33,7 @@ namespace Isola.World
             LoadedChunks = new Dictionary<string, Chunk>();
             LoadedEntityList = new List<Entity>();
             AtlasManager = (IndexedTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Tile Atlas"];
+            BatchRenderer = AssetLibrary.BatchRendererList["Tile Atlas"];
         }
 
         // Updates the world around the player
@@ -74,7 +78,7 @@ namespace Isola.World
             //timer.Start();
             foreach (Chunk loadedChunk in LoadedChunks.Values)
             {
-                AtlasManager.StartBatch();
+                BatchRenderer.StartBatch();
 
                 for (int y = 0; y < 16; y++)
                 {
@@ -90,11 +94,11 @@ namespace Isola.World
                             .Where(t => t.TileID == loadedChunk.GetTile(x, y).TileID)
                             .First().TexCoords;
 
-                        AtlasManager.AddQuadToBatch(rect, texCoords);
+                        BatchRenderer.AddQuadToBatch(rect, texCoords);
                     }
                 }
 
-                AtlasManager.EndBatch();
+                BatchRenderer.EndBatch();
             }
             //timer.Stop();
             //Console.WriteLine($"> Chunk draw cycle took {timer.Elapsed.ToString(@"m\:ss\.fffff")} to run.");
@@ -156,7 +160,7 @@ namespace Isola.World
                             try
                             {
                                 EntitySaveData saveData = JsonSerializer.Deserialize<EntitySaveData>(entitySaveDataObject.SaveDataString);
-                                AddEntityToWorld(new Entity(saveData));
+                                AddEntityToWorld(new Entity_Generic(saveData));
                                 Console.WriteLine("Loaded new Entity into world"); //debug
                             }
                             catch { Console.WriteLine("Error: failed to load Entity"); }
