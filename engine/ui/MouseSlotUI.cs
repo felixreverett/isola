@@ -4,7 +4,7 @@ using Isola.Items;
 using Isola.Utilities;
 using OpenTK.Mathematics;
 
-namespace Isola.GUI
+namespace Isola.ui
 {
     public class MouseSlotUI : UI
     {

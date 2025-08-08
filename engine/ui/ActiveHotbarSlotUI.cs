@@ -2,7 +2,7 @@
 using Isola.Utilities;
 using OpenTK.Windowing.Common;
 
-namespace Isola.GUI
+namespace Isola.ui
 {
     public class ActiveHotbarSlotUI : UI
     {

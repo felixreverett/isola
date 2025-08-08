@@ -7,7 +7,7 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
-namespace Isola.GUI
+namespace Isola.ui
 {
     public class PlayerInvUI : UI
     {

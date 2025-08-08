@@ -5,7 +5,7 @@ using Isola.Items;
 using OpenTK.Mathematics;
 using Isola.World;
 
-namespace Isola.GUI
+namespace Isola.ui
 {
     public class SlotUI : UI
     {

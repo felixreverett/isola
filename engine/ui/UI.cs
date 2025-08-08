@@ -5,7 +5,7 @@ using OpenTK.Windowing.Common;
 using Isola.World;
 using Isola.engine.graphics;
 
-namespace Isola.GUI
+namespace Isola.ui
 {
     public class UI : IDrawable
     {

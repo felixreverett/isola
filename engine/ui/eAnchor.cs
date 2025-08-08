@@ -1,4 +1,4 @@
-﻿namespace Isola.GUI
+﻿namespace Isola.ui
 {
     public enum eAnchor
     {

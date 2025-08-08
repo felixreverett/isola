@@ -7,7 +7,7 @@ using Isola.Utilities;
 using Isola.World;
 using Isola.Entities;
 
-namespace Isola.GUI
+namespace Isola.ui
 {
     public class HotbarUI : UI
     {
