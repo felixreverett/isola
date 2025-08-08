@@ -1,12 +1,12 @@
 ﻿using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
-using FeloxGame.Entities;
-using FeloxGame.World;
-using FeloxGame.Utilities;
+using Isola.Entities;
+using Isola.World;
+using Isola.Utilities;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using FeloxGame.Drawing;
+using Isola.Drawing;
 
-namespace FeloxGame
+namespace Isola
 {
     public class PlayerEntity : Entity
     {

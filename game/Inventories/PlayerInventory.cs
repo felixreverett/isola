@@ -1,7 +1,7 @@
-﻿using FeloxGame.Entities;
-using FeloxGame.Inventories;
+﻿using Isola.Entities;
+using Isola.Inventories;
 
-namespace FeloxGame
+namespace Isola
 {
     // The Player's Inventory
     public class PlayerInventory : Inventory

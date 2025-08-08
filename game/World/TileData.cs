@@ -1,7 +1,7 @@
-﻿using FeloxGame.Drawing;
-using FeloxGame.Utilities;
+﻿using Isola.Drawing;
+using Isola.Utilities;
 
-namespace FeloxGame
+namespace Isola
 {
     /// <summary>
     /// A class used to store static tile information that doesn't need to be repeated in world data

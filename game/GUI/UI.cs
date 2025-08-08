@@ -1,10 +1,10 @@
-﻿using FeloxGame.Utilities;
-using FeloxGame.Drawing;
+﻿using Isola.Utilities;
+using Isola.Drawing;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
-using FeloxGame.World;
+using Isola.World;
 
-namespace FeloxGame.GUI
+namespace Isola.GUI
 {
     public class UI : IDrawable
     {

@@ -2,7 +2,7 @@
 using LibNoise.Primitive;
 using LibNoise;
 
-namespace FeloxGame.World
+namespace Isola.World
 {
     public class Noise
     {

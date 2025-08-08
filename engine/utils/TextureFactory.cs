@@ -1,10 +1,10 @@
-﻿using FeloxGame.Drawing;
+﻿using Isola.Drawing;
 using OpenTK.Graphics.OpenGL4;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace FeloxGame.Utilities
+namespace Isola.Utilities
 {
     public static class TextureFactory
     {

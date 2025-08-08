@@ -1,4 +1,4 @@
-﻿namespace FeloxGame.Drawing
+﻿namespace Isola.Drawing
 {
     public class PrecisionTextureAtlasManager : TextureAtlasManager
     {

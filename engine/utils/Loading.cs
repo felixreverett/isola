@@ -1,9 +1,9 @@
-﻿using FeloxGame.Entities;
+﻿using Isola.Entities;
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace FeloxGame.Utilities
+namespace Isola.Utilities
 {
     public static class Loading
     {

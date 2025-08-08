@@ -1,7 +1,7 @@
 ﻿using OpenTK.Mathematics;
 using OpenTK.Windowing.Desktop;
 
-namespace FeloxGame.Core.Management
+namespace Isola.Core.Management
 {
     public sealed class DisplayManager
     {

@@ -1,8 +1,8 @@
 ﻿using OpenTK.Mathematics;
-using FeloxGame.Entities;
+using Isola.Entities;
 using System.Text.Json;
 
-namespace FeloxGame
+namespace Isola
 {
     public class TileEntity : Entity
     {

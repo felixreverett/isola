@@ -1,4 +1,4 @@
-﻿namespace FeloxGame
+﻿namespace Isola
 {
     internal class Program
     {

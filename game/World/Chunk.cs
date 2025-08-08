@@ -1,8 +1,8 @@
-﻿using FeloxGame.Entities;
-using FeloxGame.World;
+﻿using Isola.Entities;
+using Isola.World;
 using System.Text.Json.Serialization;
 
-namespace FeloxGame
+namespace Isola
 {
     /// <summary>
     /// The Chunk and associated behaviour

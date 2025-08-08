@@ -1,4 +1,4 @@
-﻿namespace FeloxGame.Entities
+﻿namespace Isola.Entities
 {
     public class TileEntity_Plant_SaveData : TileEntitySaveData
     {

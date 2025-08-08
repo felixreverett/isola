@@ -1,7 +1,7 @@
-﻿using FeloxGame.Utilities;
+﻿using Isola.Utilities;
 using System.Text.Json.Serialization;
 
-namespace FeloxGame.World
+namespace Isola.World
 {
     public class ChunkTile
     {

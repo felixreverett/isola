@@ -1,6 +1,6 @@
 ﻿using OpenTK.Mathematics;
 
-namespace FeloxGame.GameClasses
+namespace Isola.GameClasses
 {
     public class GameCamera
     {

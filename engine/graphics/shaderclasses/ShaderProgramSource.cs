@@ -1,4 +1,4 @@
-﻿namespace FeloxGame.Core.Rendering
+﻿namespace Isola.Core.Rendering
 {
     public class ShaderProgramSource
     {

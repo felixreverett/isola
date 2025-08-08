@@ -1,4 +1,4 @@
-﻿namespace FeloxGame.Core.Rendering.Shaders
+﻿namespace Isola.Core.Rendering.Shaders
 {
     public enum eShaderType
     {

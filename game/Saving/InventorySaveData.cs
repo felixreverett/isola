@@ -1,4 +1,4 @@
-﻿namespace FeloxGame.Saving
+﻿namespace Isola.Saving
 {
     public class InventorySaveData
     {

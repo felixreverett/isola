@@ -1,13 +1,13 @@
-﻿using FeloxGame.Drawing;
-using FeloxGame.Inventories;
+﻿using Isola.Drawing;
+using Isola.Inventories;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Mathematics;
-using FeloxGame.Utilities;
-using FeloxGame.World;
-using FeloxGame.Entities;
+using Isola.Utilities;
+using Isola.World;
+using Isola.Entities;
 
-namespace FeloxGame.GUI
+namespace Isola.GUI
 {
     public class HotbarUI : UI
     {

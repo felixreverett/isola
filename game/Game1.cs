@@ -1,20 +1,20 @@
-﻿using FeloxGame.Core.Rendering;
-using FeloxGame.Drawing;
-using FeloxGame.Utilities;
-using FeloxGame.GameClasses;
-using FeloxGame.World;
-using FeloxGame.GUI;
-using FeloxGame.Inventories;
-using FeloxGame.Entities;
+﻿using Isola.Core.Rendering;
+using Isola.Drawing;
+using Isola.Utilities;
+using Isola.GameClasses;
+using Isola.World;
+using Isola.GUI;
+using Isola.Inventories;
+using Isola.Entities;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Mathematics;
-using FeloxGame.engine.graphics.Buffers;
-using FeloxGame.engine.graphics;
+using Isola.engine.graphics.Buffers;
+using Isola.engine.graphics;
 
-namespace FeloxGame
+namespace Isola
 {
     public class Game1 : GameWindow
     {

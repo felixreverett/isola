@@ -1,6 +1,6 @@
-﻿using FeloxGame.Drawing;
+﻿using Isola.Drawing;
 
-namespace FeloxGame.Utilities
+namespace Isola.Utilities
 {
     //Todo: consider removing class if unused? (only used by TextureAtlas)
     public class ResourceManager

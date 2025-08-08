@@ -1,7 +1,7 @@
-﻿using FeloxGame.Drawing;
+﻿using Isola.Drawing;
 using OpenTK.Windowing.Common;
 
-namespace FeloxGame.GUI
+namespace Isola.GUI
 {
     public class ActiveHotbarSlotUI : UI
     {

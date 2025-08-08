@@ -1,13 +1,13 @@
-﻿using FeloxGame.Drawing;
-using FeloxGame.GameClasses;
-using FeloxGame.Utilities;
+﻿using Isola.Drawing;
+using Isola.GameClasses;
+using Isola.Utilities;
 using SharpNoise;
-using FeloxGame.Entities;
+using Isola.Entities;
 using System.Text.Json;
 using OpenTK.Mathematics;
 using System.Diagnostics; //debug
 
-namespace FeloxGame.World
+namespace Isola.World
 {
     /// <summary>
     /// Class to encapsulate everything a "world" would need.

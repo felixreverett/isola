@@ -1,4 +1,4 @@
-﻿namespace FeloxGame.Items
+﻿namespace Isola.Items
 {
     public class Item_Seeds_WheatSeeds : Item_Seeds
     {

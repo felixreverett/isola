@@ -1,8 +1,8 @@
-﻿using FeloxGame.Inventories;
-using FeloxGame.Saving;
+﻿using Isola.Inventories;
+using Isola.Saving;
 using System.Text.Json.Serialization;
 
-namespace FeloxGame
+namespace Isola
 {
     // Inventory items will only be accessed through methods like .Add() and .Remove()
     // The basic inventory class for universal inventory functionality

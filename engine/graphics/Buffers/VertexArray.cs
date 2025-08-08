@@ -1,7 +1,7 @@
-﻿using FeloxGame.Utilities;
+﻿using Isola.Utilities;
 using OpenTK.Graphics.OpenGL4;
 
-namespace FeloxGame.Drawing
+namespace Isola.Drawing
 {
     public class VertexArray : IBuffer, IDisposable
     {

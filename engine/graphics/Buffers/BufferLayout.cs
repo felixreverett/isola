@@ -1,6 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 
-namespace FeloxGame.Drawing
+namespace Isola.Drawing
 {
     public class BufferLayout
     {

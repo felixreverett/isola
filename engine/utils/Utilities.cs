@@ -1,7 +1,7 @@
-﻿using FeloxGame.Drawing;
+﻿using Isola.Drawing;
 using OpenTK.Graphics.OpenGL4;
 
-namespace FeloxGame.Utilities
+namespace Isola.Utilities
 {
     public class Utilities
     {

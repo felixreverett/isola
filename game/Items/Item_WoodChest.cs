@@ -1,8 +1,8 @@
-﻿using FeloxGame.Entities;
-using FeloxGame.World;
+﻿using Isola.Entities;
+using Isola.World;
 using OpenTK.Mathematics;
 
-namespace FeloxGame.Items
+namespace Isola.Items
 {
     public class Item_WoodChest : Item
     {

@@ -1,4 +1,4 @@
-﻿namespace FeloxGame.Inventories
+﻿namespace Isola.Inventories
 {
     public enum eSortType
     {

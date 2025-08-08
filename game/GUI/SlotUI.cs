@@ -1,11 +1,11 @@
-﻿using FeloxGame.Utilities;
-using FeloxGame.Drawing;
-using FeloxGame.Inventories;
-using FeloxGame.Items;
+﻿using Isola.Utilities;
+using Isola.Drawing;
+using Isola.Inventories;
+using Isola.Items;
 using OpenTK.Mathematics;
-using FeloxGame.World;
+using Isola.World;
 
-namespace FeloxGame.GUI
+namespace Isola.GUI
 {
     public class SlotUI : UI
     {

@@ -1,6 +1,6 @@
-﻿using FeloxGame.World;
+﻿using Isola.World;
 
-namespace FeloxGame.Saving
+namespace Isola.Saving
 {
     /// <summary>
     /// Serializable save data for the chunk and its entities

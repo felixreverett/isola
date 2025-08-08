@@ -1,12 +1,12 @@
-﻿using FeloxGame.Drawing;
-using FeloxGame.Inventories;
+﻿using Isola.Drawing;
+using Isola.Inventories;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using FeloxGame.World;
-using FeloxGame.Entities;
+using Isola.World;
+using Isola.Entities;
 
-namespace FeloxGame.GUI
+namespace Isola.GUI
 {
     public class PlayerInvUI : UI
     {

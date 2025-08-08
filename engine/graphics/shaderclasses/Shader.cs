@@ -1,8 +1,8 @@
-﻿using FeloxGame.Core.Rendering.Shaders;
+﻿using Isola.Core.Rendering.Shaders;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
-namespace FeloxGame.Core.Rendering
+namespace Isola.Core.Rendering
 {
     public class Shader
     {

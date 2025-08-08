@@ -1,4 +1,4 @@
-﻿namespace FeloxGame.GUI
+﻿namespace Isola.GUI
 {
     public enum eAnchor
     {

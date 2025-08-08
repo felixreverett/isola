@@ -82,6 +82,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="resources\fonts\" />
     <Folder Include="Saves\SampleWorldStructure\ChunkData\" />
   </ItemGroup>
 

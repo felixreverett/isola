@@ -1,7 +1,7 @@
-﻿using FeloxGame.Drawing;
-using FeloxGame.Items;
+﻿using Isola.Drawing;
+using Isola.Items;
 
-namespace FeloxGame.Utilities
+namespace Isola.Utilities
 {
     public static class AssetLibrary
     {

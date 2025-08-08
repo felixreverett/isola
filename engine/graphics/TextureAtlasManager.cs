@@ -1,8 +1,8 @@
-﻿using FeloxGame.Utilities;
+﻿using Isola.Utilities;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
-namespace FeloxGame.Drawing
+namespace Isola.Drawing
 {
     public class TextureAtlasManager
     {

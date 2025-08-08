@@ -1,4 +1,4 @@
-﻿namespace FeloxGame.GameClasses
+﻿namespace Isola.GameClasses
 {
     public class GameTime
     {

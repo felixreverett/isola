@@ -1,6 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 
-namespace FeloxGame.engine.graphics.Buffers
+namespace Isola.engine.graphics.Buffers
 {
     public class FrameBuffer
     {

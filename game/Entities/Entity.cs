@@ -1,11 +1,11 @@
-﻿using FeloxGame.Drawing;
+﻿using Isola.Drawing;
 using OpenTK.Mathematics;
-using FeloxGame.Entities;
+using Isola.Entities;
 using System.Text.Json;
-using FeloxGame.Utilities;
-using FeloxGame.Saving;
+using Isola.Utilities;
+using Isola.Saving;
 
-namespace FeloxGame
+namespace Isola
 {
     public class Entity : IDrawable, ISaveable<EntitySaveDataObject>
     {

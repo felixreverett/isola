@@ -1,10 +1,10 @@
-﻿using FeloxGame.Drawing;
-using FeloxGame.Inventories;
-using FeloxGame.Items;
-using FeloxGame.Utilities;
+﻿using Isola.Drawing;
+using Isola.Inventories;
+using Isola.Items;
+using Isola.Utilities;
 using OpenTK.Mathematics;
 
-namespace FeloxGame.GUI
+namespace Isola.GUI
 {
     public class MouseSlotUI : UI
     {

@@ -2,7 +2,7 @@
 using SharpNoise.Builders;
 using SharpNoise.Modules;
 
-namespace FeloxGame.World
+namespace Isola.World
 {
     public static class NoiseGenerator
     {
