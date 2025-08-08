@@ -1,12 +1,15 @@
 ﻿using OpenTK.Mathematics;
 using Isola.Entities;
 using System.Text.Json;
+using Isola.Drawing;
+using Isola.Utilities;
 
 namespace Isola
 {
     public class TileEntity : Entity
     {
         internal Vector2 DrawPositionOffset { get; set; } = new Vector2(0f, 0f);
+        private IndexedTextureAtlasManager AtlasManager { get; set; }
 
         // Initialize TileEntity from save data
         public TileEntity(TileEntitySaveData saveData)
@@ -15,6 +18,8 @@ namespace Isola
             DrawPositionOffset = new Vector2(saveData.DrawPositionOffset[0], saveData.DrawPositionOffset[1]);
             AlignPosition();
             Size = new Vector2(saveData.Size[0], saveData.Size[1]);
+            AtlasManager = (IndexedTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Item Atlas"];
+            BatchRenderer = AssetLibrary.BatchRendererList["Item Atlas"]; //todo: set to dedicated atlas
         }
 
         // Default constructor
@@ -32,9 +37,9 @@ namespace Isola
                 Position.X + Size.X / 2f + DrawPositionOffset.X, Position.Y + Size.Y + DrawPositionOffset.Y
                 );
 
-            AtlasManager.StartBatch();
-            AtlasManager.AddQuadToBatch(rect, TexCoords);
-            AtlasManager.EndBatch();
+            BatchRenderer.StartBatch();
+            BatchRenderer.AddQuadToBatch(rect, TexCoords);
+            BatchRenderer.EndBatch();
         }
 
         // Export entity save data

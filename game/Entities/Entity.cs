@@ -4,17 +4,18 @@ using Isola.Entities;
 using System.Text.Json;
 using Isola.Utilities;
 using Isola.Saving;
+using Isola.engine.graphics;
 
 namespace Isola
 {
-    public class Entity : IDrawable, ISaveable<EntitySaveDataObject>
+    public abstract class Entity : IDrawable, ISaveable<EntitySaveDataObject>
     {
         public Vector2 Position { get; set; }
         public Vector2 Size { get; set; } = new Vector2(1f, 1f);
 
         // Drawing
-        public TextureAtlasManager AtlasManager { get; protected set; } = (IndexedTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Item Atlas"];
-        protected TexCoords TexCoords { get; set; }
+        public BatchRenderer ?BatchRenderer { get; protected set; }
+        protected TexCoords ?TexCoords { get; set; }
                 
         // Initialize Entity from save data
         public Entity(EntitySaveData saveData)
@@ -31,10 +32,17 @@ namespace Isola
         
         public virtual void Draw()
         {
-            Box2 rect = new Box2(Position.X - Size.X / 2f, Position.Y, Position.X + Size.X / 2f, Position.Y + Size.Y);
-            AtlasManager.StartBatch(); // todo: render entities with the same spritebatch
-            AtlasManager.AddQuadToBatch(rect, TexCoords);
-            AtlasManager.EndBatch(); // todo: render entities with the same spritebatch
+            if (BatchRenderer == null || TexCoords == null)
+            {
+                Console.WriteLine($"[W] Warning: Attempted to draw Entity without setting BatchRenderer || TexCoords.");
+            }
+            else
+            {
+                Box2 rect = new Box2(Position.X - Size.X / 2f, Position.Y, Position.X + Size.X / 2f, Position.Y + Size.Y); //todo (Aug 2025): do I always need to update this?
+                BatchRenderer.StartBatch(); // todo: render entities with the same spritebatch
+                BatchRenderer.AddQuadToBatch(rect, TexCoords);
+                BatchRenderer.EndBatch(); // todo: render entities with the same spritebatch
+            }
         }
 
         // Export entity save data

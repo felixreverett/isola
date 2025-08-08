@@ -1,4 +1,5 @@
-﻿using Isola.Utilities;
+﻿using Isola.Drawing;
+using Isola.Utilities;
 using OpenTK.Mathematics;
 using System.Text.Json;
 
@@ -8,6 +9,7 @@ namespace Isola.Entities
     {
         public string ItemName { get; set; }
         public int Amount { get; set; }
+        private IndexedTextureAtlasManager AtlasManager { get; set; }
 
         // Initialize entity otherwise
         public ItemEntity(Vector2 position, string itemName, int amount) 
@@ -15,6 +17,8 @@ namespace Isola.Entities
         {
             this.ItemName = itemName;
             this.Amount = amount;
+            AtlasManager = (IndexedTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Item Atlas"];
+            BatchRenderer = AssetLibrary.BatchRendererList["Item Atlas"];
             SetTexCoords();
         }
 
@@ -24,6 +28,8 @@ namespace Isola.Entities
         {
             this.ItemName = saveData.ItemName;
             this.Amount = saveData.Amount;
+            AtlasManager = (IndexedTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Item Atlas"];
+            BatchRenderer = AssetLibrary.BatchRendererList["Item Atlas"];
             SetTexCoords();
         }
         
