@@ -1,19 +1,27 @@
 ﻿namespace Isola.Drawing
 {
-    public class PrecisionTextureAtlasManager : TextureAtlasManager
+    public class PrecisionTextureAtlasManager : IAtlasManager
     {
+        public string AtlasFileName { get; private set; }
+        public int AtlasSize { get; private set; }
         private int AtlasWidth { get; set; }
         private int AtlasHeight { get; set; }
 
-        public PrecisionTextureAtlasManager(int textureUnit, string atlasFileName, int atlasSize,
+        protected float Offset { get; private set; }
+        protected bool UseOffset { get; private set; }
+
+        public PrecisionTextureAtlasManager(string atlasFileName, int atlasSize,
             int atlasWidth, int atlasHeight, bool useOffset = false, float zDepthLayer = 0.0f)
-            : base(textureUnit, atlasFileName, atlasSize, useOffset, zDepthLayer)
         {
             AtlasWidth = atlasWidth;
             AtlasHeight = atlasHeight;
+            AtlasFileName = atlasFileName;
+            AtlasSize = atlasSize;
+            Offset = 2.0f / (AtlasSize * 2);
+            UseOffset = useOffset;
         }
 
-        public override TexCoords GetPrecisionAtlasCoords(float x, float y, float textureWidth, float textureHeight)
+        public TexCoords GetPrecisionAtlasCoords(float x, float y, float textureWidth, float textureHeight)
         {
             //todo: add bounds error checking?
             TexCoords texCoords = new TexCoords();
