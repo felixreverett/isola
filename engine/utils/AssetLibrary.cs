@@ -1,4 +1,6 @@
 ﻿using Isola.Drawing;
+using Isola.engine.graphics;
+using Isola.engine.graphics.text;
 using Isola.Items;
 
 namespace Isola.Utilities
@@ -7,7 +9,8 @@ namespace Isola.Utilities
     {
         public static List<Item>? ItemList;
         public static List<TileData>? TileList;
-        public static Dictionary<string, TextureAtlasManager> TextureAtlasManagerList = new();
+        public static Dictionary<string, IAtlasManager> TextureAtlasManagerList = new();
+        public static Dictionary<string, BatchRenderer> BatchRendererList = new();
 
         public static bool GetItemFromItemName(string itemName, out Item? item)
         {
@@ -51,11 +54,18 @@ namespace Isola.Utilities
 
         public static void InitialiseTextureAtlasManagerList()
         {
-            TextureAtlasManagerList.Add("Tile Atlas", new IndexedTextureAtlasManager(0, "1024 Tile Atlas x16.png", 1024, 16, 8, true, 0.0f));
-            TextureAtlasManagerList.Add("Player Atlas", new PrecisionTextureAtlasManager(1, "Player.png", 1024, 1024, 1024, false, 0.001f));
-            TextureAtlasManagerList.Add("Inventory Atlas", new PrecisionTextureAtlasManager(2, "1024 UI Atlas x16.png", 1024, 1024, 1024, false));
-            TextureAtlasManagerList.Add("Item Atlas", new IndexedTextureAtlasManager(3, "1024 Item Atlas 16x.png", 1024, 16, 8, false, 0.001f));
+            TextureAtlasManagerList.Add("Tile Atlas", new IndexedTextureAtlasManager("atlases/1024 Tile Atlas x16.png", 1024, 16, 8, true, 0.0f));
+            TextureAtlasManagerList.Add("Player Atlas", new PrecisionTextureAtlasManager("atlases/Player.png", 1024, 1024, 1024, false, 0.001f));
+            TextureAtlasManagerList.Add("Inventory Atlas", new PrecisionTextureAtlasManager("atlases/1024 UI Atlas x16.png", 1024, 1024, 1024, false));
+            TextureAtlasManagerList.Add("Item Atlas", new IndexedTextureAtlasManager("atlases/1024 Item Atlas 16x.png", 1024, 16, 8, false, 0.001f));
+            TextureAtlasManagerList.Add("Font Atlas", new FontAtlasManager("fonts/nosutaru.png", 4));
             // Todo: add entity atlas here
+
+            BatchRendererList.Add("Tile Atlas", new BatchRenderer(0, "atlases/1024 Tile Atlas x16.png"));
+            BatchRendererList.Add("Player Atlas", new BatchRenderer(1, "atlases/Player.png"));
+            BatchRendererList.Add("Inventory Atlas", new BatchRenderer(2, "atlases/1024 UI Atlas x16.png"));
+            BatchRendererList.Add("Item Atlas", new BatchRenderer(3, "atlases/1024 Item Atlas 16x.png"));
+            BatchRendererList.Add("Font Atlas", new BatchRenderer(4, "fonts/nosutaru.png"));
         }
 
         public static void InitialiseTileList()
