@@ -3,6 +3,7 @@ using Isola.Drawing;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using Isola.World;
+using Isola.engine.graphics;
 
 namespace Isola.GUI
 {
@@ -10,19 +11,19 @@ namespace Isola.GUI
     {
         // Position
         public eAnchor Anchor { get; set; }
-        protected float KoWidth { get; set; }
-        protected float KoHeight { get; set; }
+        protected float Width { get; set; }
+        protected float Height { get; set; }
         protected float AspectRatio { get; set; }
         protected float Scale { get; set; }
-        protected RPC KoPosition { get; set; }
-        protected NDC KoNDCs { get; set; }
-        protected TexCoords TextureCoordinates { get; set; }
+        protected RPC Position { get; set; }
+        protected NDC NDCs { get; set; }
+        protected TexCoords TexCoords { get; set; }
 
         // Kodomo
-        public Dictionary<string, UI> Kodomo { get; set; }
+        public Dictionary<string, UI> Children { get; set; }
 
         // Rendering
-        protected virtual TextureAtlasManager AtlasManager { get; set; }
+        public virtual BatchRenderer BatchRenderer { get; set; }
 
         protected bool IsDrawable { get; set; }
         public bool ToggleDraw { get; set; }
@@ -30,29 +31,25 @@ namespace Isola.GUI
         protected bool IsClickable { get; set; }
 
         // Constructor
-        public UI(float koWidth, float koHeight, eAnchor anchor, float scale, bool isDrawable = false, bool toggleDraw = true, bool isClickable = false)
+        public UI(float width, float height, eAnchor anchor, float scale, bool isDrawable = false, bool toggleDraw = true, bool isClickable = false)
         {
-            this.KoWidth = koWidth;
-            this.KoHeight = koHeight;
-            this.AspectRatio = koWidth / koHeight;
+            this.Width = width;
+            this.Height = height;
+            this.AspectRatio = width / height;
             this.Anchor = anchor;
             this.Scale = Math.Clamp(scale, 0.0f, 1.0f);
-            this.KoPosition = new();
-            this.KoNDCs = new();
-            this.Kodomo = new Dictionary<string, UI>();
+            this.Position = new();
+            this.NDCs = new();
+            this.Children = new Dictionary<string, UI>();
             this.IsDrawable = isDrawable;
             this.ToggleDraw = toggleDraw;
             this.IsClickable = isClickable;
-            OnLoad();
-        }
 
-        public void OnLoad()
-        {
-            if (IsDrawable)
+            if (IsDrawable) //todo Aug 2025: Consider removing if all inheritees define these anyway. UI.cs never renders (it's the master class for all UI children)
             {
-                if (AtlasManager is null)
+                if (BatchRenderer is null)
                 {
-                    AtlasManager = AssetLibrary.TextureAtlasManagerList["Inventory Atlas"];
+                    BatchRenderer = AssetLibrary.BatchRendererList["Inventory Atlas"];
                 }
             }
         }
@@ -61,15 +58,15 @@ namespace Isola.GUI
         {
             if (IsDrawable && ToggleDraw)
             {
-                Box2 rect = new Box2(KoNDCs.MinX, KoNDCs.MinY, KoNDCs.MaxX, KoNDCs.MaxY);
-                AtlasManager.StartBatch();
-                AtlasManager.AddQuadToBatch(rect, TextureCoordinates);
-                AtlasManager.EndBatch();
+                Box2 rect = new Box2(NDCs.MinX, NDCs.MinY, NDCs.MaxX, NDCs.MaxY);
+                BatchRenderer.StartBatch();
+                BatchRenderer.AddQuadToBatch(rect, TexCoords);
+                BatchRenderer.EndBatch();
             }
             
-            if (Kodomo.Count != 0 && ToggleDraw)
+            if (Children.Count != 0 && ToggleDraw)
             {
-                foreach (UI ui in Kodomo.Values)
+                foreach (UI ui in Children.Values)
                 {
                     ui.Draw();
                 }
@@ -78,33 +75,28 @@ namespace Isola.GUI
 
         public virtual void Update()
         {
-            if (Kodomo.Count != 0)
+            if (Children.Count != 0)
             {
-                foreach (UI ui in Kodomo.Values)
+                foreach (UI ui in Children.Values)
                 {
                     ui.Update();
                 }
             }
         }
 
-        public virtual void SetTextureCoords(float x, float y, float textureWidth, float textureHeight)
-        {
-            TextureCoordinates = AtlasManager.GetPrecisionAtlasCoords(x, y, textureWidth, textureHeight);
-        }
-
         public void OnResize(float oyaWidth, float oyaHeight, NDC oyaNDCs)
         {
-            this.KoWidth = oyaWidth;
-            this.KoHeight = oyaHeight;
+            this.Width = oyaWidth;
+            this.Height = oyaHeight;
             this.AspectRatio = oyaWidth / oyaHeight;
             SetNDCs(oyaWidth, oyaHeight, oyaNDCs);
         }
 
         public virtual void OnMouseMove(Vector2 mouseNDCs)
         {
-            if (Kodomo.Count > 0)
+            if (Children.Count > 0)
             {
-                foreach (UI ui in Kodomo.Values)
+                foreach (UI ui in Children.Values)
                 {
                     ui.OnMouseMove(mouseNDCs);
                 }
@@ -120,9 +112,9 @@ namespace Isola.GUI
 
             else
             {
-                if (Kodomo.Count > 0)
+                if (Children.Count > 0)
                 {
-                    foreach (UI ui in Kodomo.Values)
+                    foreach (UI ui in Children.Values)
                     {
                         ui.OnLeftClick(mousePosition, world);
                     }
@@ -144,9 +136,9 @@ namespace Isola.GUI
 
             else
             {
-                if (Kodomo.Count > 0)
+                if (Children.Count > 0)
                 {
-                    foreach (UI ui in Kodomo.Values)
+                    foreach (UI ui in Children.Values)
                     {
                         ui.OnRightClick(mousePosition, world);
                     }
@@ -161,9 +153,9 @@ namespace Isola.GUI
 
         public virtual void OnMouseWheel(MouseWheelEventArgs e)
         {
-            if (Kodomo.Count > 0)
+            if (Children.Count > 0)
             {
-                foreach (UI ui in Kodomo.Values)
+                foreach (UI ui in Children.Values)
                 {
                     ui.OnMouseWheel(e);
                 }
@@ -172,9 +164,9 @@ namespace Isola.GUI
 
         public virtual void OnKeyDown(KeyboardKeyEventArgs e)
         {
-            if (Kodomo.Count > 0)
+            if (Children.Count > 0)
             {
-                foreach (UI ui in Kodomo.Values)
+                foreach (UI ui in Children.Values)
                 {
                     ui.OnKeyDown(e);
                 }
@@ -183,7 +175,7 @@ namespace Isola.GUI
 
         public bool IsMouseInBounds(Vector2 mouseNDCs)
         {
-            if (mouseNDCs.X >= KoNDCs.MinX && mouseNDCs.Y >= KoNDCs.MinY && mouseNDCs.X <= KoNDCs.MaxX && mouseNDCs.Y <= KoNDCs.MaxY) { return true; }
+            if (mouseNDCs.X >= NDCs.MinX && mouseNDCs.Y >= NDCs.MinY && mouseNDCs.X <= NDCs.MaxX && mouseNDCs.Y <= NDCs.MaxY) { return true; }
             else { return false; }
         }
 
@@ -191,20 +183,20 @@ namespace Isola.GUI
         {
             if (Anchor != eAnchor.None)
             {
-                KoPosition = GetAnchoredDimensions(oyaWidth, oyaHeight);
+                Position = GetAnchoredDimensions(oyaWidth, oyaHeight);
             }
 
             // map anchored coordinates
-            KoNDCs.MaxX = ((KoPosition.MaxX / oyaWidth) * (oyaNDCs.MaxX - oyaNDCs.MinX) + oyaNDCs.MinX);
-            KoNDCs.MinX = ((KoPosition.MinX / oyaWidth) * (oyaNDCs.MaxX - oyaNDCs.MinX) + oyaNDCs.MinX);
-            KoNDCs.MaxY = ((KoPosition.MaxY / oyaHeight) * (oyaNDCs.MaxY - oyaNDCs.MinY) + oyaNDCs.MinY);
-            KoNDCs.MinY = ((KoPosition.MinY / oyaHeight) * (oyaNDCs.MaxY - oyaNDCs.MinY) + oyaNDCs.MinY);
+            NDCs.MaxX = ((Position.MaxX / oyaWidth) * (oyaNDCs.MaxX - oyaNDCs.MinX) + oyaNDCs.MinX);
+            NDCs.MinX = ((Position.MinX / oyaWidth) * (oyaNDCs.MaxX - oyaNDCs.MinX) + oyaNDCs.MinX);
+            NDCs.MaxY = ((Position.MaxY / oyaHeight) * (oyaNDCs.MaxY - oyaNDCs.MinY) + oyaNDCs.MinY);
+            NDCs.MinY = ((Position.MinY / oyaHeight) * (oyaNDCs.MaxY - oyaNDCs.MinY) + oyaNDCs.MinY);
 
-            if (Kodomo.Count > 0)
+            if (Children.Count > 0)
             {
-                foreach (UI ui in Kodomo.Values)
+                foreach (UI ui in Children.Values)
                 {
-                    ui.SetNDCs(KoWidth, KoHeight, KoNDCs);
+                    ui.SetNDCs(Width, Height, NDCs);
                 }
             }
         }

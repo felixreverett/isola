@@ -11,16 +11,18 @@ namespace Isola.GUI
         private Vector2 MouseNDCs { get; set; }
         protected Vector2 NDCDimensions;
         protected PlayerEntity OwnerPlayer;
+        protected IndexedTextureAtlasManager AtlasManager;
 
         public MouseSlotUI
         (
             float koWidth, float koHeight, eAnchor anchor, float scale, bool isDrawable, bool toggleDraw, bool isClickable,
-            PlayerEntity ownerPlayer
+            PlayerEntity ownerPlayer, string atlasName
         )
             : base(koWidth, koHeight, anchor, scale, isDrawable, toggleDraw, isClickable)
         {
             OwnerPlayer = ownerPlayer;
-            AtlasManager = AssetLibrary.TextureAtlasManagerList["Item Atlas"];
+            AtlasManager = (IndexedTextureAtlasManager)AssetLibrary.TextureAtlasManagerList[atlasName];
+            BatchRenderer = AssetLibrary.BatchRendererList[atlasName];
         }
 
         public override void Update()
@@ -38,7 +40,7 @@ namespace Isola.GUI
                 if (matchingItem != null)
                 {
                     textureIndex = matchingItem.TextureIndex;
-                    TextureCoordinates = AtlasManager.GetIndexedAtlasCoords(textureIndex);
+                    TexCoords = AtlasManager.GetIndexedAtlasCoords(textureIndex);
                 }
                 else
                 {
@@ -58,17 +60,17 @@ namespace Isola.GUI
         // This one updates the NDCs when the parent UI element calls it
         public override void SetNDCs(float oyaWidth, float oyaHeight, NDC oyaNDCs)
         {
-            NDCDimensions.X = (KoWidth / oyaWidth) * (oyaNDCs.MaxX - oyaNDCs.MinX);
-            NDCDimensions.Y = (KoHeight / oyaHeight) * (oyaNDCs.MaxY - oyaNDCs.MinY);
+            NDCDimensions.X = (Width / oyaWidth) * (oyaNDCs.MaxX - oyaNDCs.MinX);
+            NDCDimensions.Y = (Height / oyaHeight) * (oyaNDCs.MaxY - oyaNDCs.MinY);
         }
 
         // This one updates the NDCs when the mouse moves
         protected void SetNDCs()
         {
-            KoNDCs.MaxX = MouseNDCs.X + NDCDimensions.X / 2.0f;
-            KoNDCs.MinX = MouseNDCs.X - NDCDimensions.X / 2.0f;
-            KoNDCs.MaxY = MouseNDCs.Y + NDCDimensions.Y / 2.0f;
-            KoNDCs.MinY = MouseNDCs.Y - NDCDimensions.Y / 2.0f;
+            NDCs.MaxX = MouseNDCs.X + NDCDimensions.X / 2.0f;
+            NDCs.MinX = MouseNDCs.X - NDCDimensions.X / 2.0f;
+            NDCs.MaxY = MouseNDCs.Y + NDCDimensions.Y / 2.0f;
+            NDCs.MinY = MouseNDCs.Y - NDCDimensions.Y / 2.0f;
         }
 
     }

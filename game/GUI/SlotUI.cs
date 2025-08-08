@@ -12,19 +12,21 @@ namespace Isola.GUI
         protected int ItemSlotID;
         protected Inventory Inventory;
         protected PlayerEntity OwnerPlayer;
+        protected IndexedTextureAtlasManager AtlasManager;
 
         public SlotUI
         (
-            float koWidth, float koHeight, eAnchor anchor, float scale, bool isDrawable, bool toggleDraw, bool isClickable,
-            int itemSlotID, Inventory inventory, RPC koPosition, PlayerEntity ownerPlayer
+            float width, float height, eAnchor anchor, float scale, bool isDrawable, bool toggleDraw, bool isClickable,
+            int itemSlotID, Inventory inventory, RPC position, PlayerEntity ownerPlayer, string atlasName
         )
-            : base(koWidth, koHeight, anchor, scale, isDrawable, toggleDraw, isClickable)
+            : base(width, height, anchor, scale, isDrawable, toggleDraw, isClickable)
         {
             ItemSlotID = itemSlotID;
             Inventory = inventory;
             OwnerPlayer = ownerPlayer;
-            KoPosition = koPosition;
-            AtlasManager = AssetLibrary.TextureAtlasManagerList["Item Atlas"];
+            Position = position;
+            AtlasManager = (IndexedTextureAtlasManager)AssetLibrary.TextureAtlasManagerList[atlasName];
+            BatchRenderer = AssetLibrary.BatchRendererList[atlasName];
         }
 
         public override void Update()
@@ -42,7 +44,7 @@ namespace Isola.GUI
                 if (matchingItem != null)
                 {
                     textureIndex = matchingItem.TextureIndex;
-                    TextureCoordinates = AtlasManager.GetIndexedAtlasCoords(textureIndex);
+                    TexCoords = AtlasManager.GetIndexedAtlasCoords(textureIndex);
                 }
                 else
                 {

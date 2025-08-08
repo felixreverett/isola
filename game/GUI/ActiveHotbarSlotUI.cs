@@ -1,4 +1,5 @@
 ﻿using Isola.Drawing;
+using Isola.Utilities;
 using OpenTK.Windowing.Common;
 
 namespace Isola.GUI
@@ -32,29 +33,37 @@ namespace Isola.GUI
         protected int MinIndex { get; set; }
         protected int MaxIndex { get; set; }
         private RPC BasePosition { get; set; }
+        protected PrecisionTextureAtlasManager AtlasManager;
         
 
         public ActiveHotbarSlotUI
         (
-            float koWidth, float koHeight, eAnchor anchor, float scale, bool isDrawable, bool toggleDraw, bool isClickable,
+            float width, float height, eAnchor anchor, float scale, bool isDrawable, bool toggleDraw, bool isClickable,
             float x, float y, float textureWidth, float textureHeight,
-            RPC basePosition, int minIndex, int maxIndex, int activeIndex
+            RPC basePosition, int minIndex, int maxIndex, int activeIndex, string atlasName = "Inventory Atlas"
         )
-            : base(koWidth, koHeight, anchor, scale, isDrawable, toggleDraw, isClickable)
+            : base(width, height, anchor, scale, isDrawable, toggleDraw, isClickable)
         {
-            this.BasePosition = basePosition;
-            this.MinIndex = minIndex;
-            this.MaxIndex = maxIndex;
-            this.ActiveIndex = activeIndex;
-            base.SetTextureCoords(x, y, textureWidth, textureHeight);
+            BasePosition = basePosition;
+            MinIndex = minIndex;
+            MaxIndex = maxIndex;
+            ActiveIndex = activeIndex;
+            AtlasManager = (PrecisionTextureAtlasManager)AssetLibrary.TextureAtlasManagerList[atlasName];
+            BatchRenderer = AssetLibrary.BatchRendererList[atlasName];
+            SetTextureCoords(x, y, textureWidth, textureHeight);
         }
 
         protected void SetRPCs()
         {
-            this.KoPosition.MinX = this.BasePosition.MinX + ActiveIndex * KoWidth;
-            this.KoPosition.MaxX = this.KoPosition.MinX + KoWidth;
-            this.KoPosition.MinY = this.BasePosition.MinY;
-            this.KoPosition.MaxY = this.BasePosition.MaxY;
+            Position.MinX = BasePosition.MinX + ActiveIndex * Width;
+            Position.MaxX = Position.MinX + Width;
+            Position.MinY = BasePosition.MinY;
+            Position.MaxY = BasePosition.MaxY;
+        }
+
+        public void SetTextureCoords(float x, float y, float textureWidth, float textureHeight)
+        {
+            TexCoords = AtlasManager.GetPrecisionAtlasCoords(x, y, textureWidth, textureHeight);
         }
 
         public override void OnMouseWheel(MouseWheelEventArgs e)

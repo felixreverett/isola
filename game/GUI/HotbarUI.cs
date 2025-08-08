@@ -20,14 +20,15 @@ namespace Isola.GUI
         private float _itemSlotPadding;
         Inventory Inventory;
         private PlayerEntity OwnerPlayer;
+        protected PrecisionTextureAtlasManager AtlasManager;
 
         public bool ToggleScrolling { get; set; } = true; //todo: improve this name
 
         /// <summary>
         /// Creates a HotbarUI class to display an associated inventory
         /// </summary>
-        /// <param name="koWidth">The total width of the UI element</param>
-        /// <param name="koHeight">The total height of the UI element</param>
+        /// <param name="width">The total width of the UI element</param>
+        /// <param name="height">The total height of the UI element</param>
         /// <param name="anchor">The eAnchor type</param>
         /// <param name="scale">The scale of the UI element</param>
         /// <param name="isDrawable">Whether the UI element will use a texture atlas</param>
@@ -42,23 +43,26 @@ namespace Isola.GUI
         /// <param name="inventory">The associated inventory of the UI element</param>
         public HotbarUI
         (
-            float koWidth, float koHeight, eAnchor anchor, float scale, bool isDrawable, bool toggleDraw, bool isClickable,
-            int rows, int cols, float itemSlotHeight, float itemSlotWidth, float edgePadding, float itemSlotPadding, Inventory inventory, PlayerEntity ownerPlayer
+            float width, float height, eAnchor anchor, float scale, bool isDrawable, bool toggleDraw, bool isClickable,
+            int rows, int cols, float itemSlotHeight, float itemSlotWidth, float edgePadding, float itemSlotPadding, Inventory inventory, PlayerEntity ownerPlayer, string atlasName
         )
-            : base(koWidth, koHeight, anchor, scale, isDrawable, toggleDraw, isClickable)
+            : base(width, height, anchor, scale, isDrawable, toggleDraw, isClickable)
         {
-            this._rows = rows;
-            this._cols = cols;
-            this._itemSlotHeight = itemSlotHeight;
-            this._itemSlotWidth = itemSlotWidth;
-            this._edgePadding = edgePadding;
-            this._itemSlotPadding = itemSlotPadding;
-            this.Inventory = inventory;
-            this.OwnerPlayer = ownerPlayer;
-            GenerateKodomo();
+            _rows = rows;
+            _cols = cols;
+            _itemSlotHeight = itemSlotHeight;
+            _itemSlotWidth = itemSlotWidth;
+            _edgePadding = edgePadding;
+            _itemSlotPadding = itemSlotPadding;
+            Inventory = inventory;
+            OwnerPlayer = ownerPlayer;
+            AtlasManager = (PrecisionTextureAtlasManager)AssetLibrary.TextureAtlasManagerList[atlasName];
+            BatchRenderer = AssetLibrary.BatchRendererList[atlasName];
+            SetTextureCoords(0, 118, 188, 26);
+            GenerateChildren();
         }
 
-        public void GenerateKodomo()
+        public void GenerateChildren()
         {
             int slotIndex = 0;
 
@@ -66,23 +70,23 @@ namespace Isola.GUI
             {
                 for (int col = 0; col < _cols; col++)
                 {
-                    RPC koPosition = new();
+                    RPC childPosition = new();
 
-                    koPosition.MinX = _edgePadding + col * (_itemSlotWidth + _itemSlotPadding);
+                    childPosition.MinX = _edgePadding + col * (_itemSlotWidth + _itemSlotPadding);
 
                     if (row == 0)
                     {
-                        koPosition.MinY = _edgePadding;
+                        childPosition.MinY = _edgePadding;
                     }
                     else
                     {
-                        koPosition.MinY = KoHeight - _edgePadding - (row * _itemSlotHeight) - (row - 1) * _itemSlotPadding;
+                        childPosition.MinY = Height - _edgePadding - (row * _itemSlotHeight) - (row - 1) * _itemSlotPadding;
                     }
 
-                    koPosition.MaxX = koPosition.MinX + _itemSlotWidth;
-                    koPosition.MaxY = koPosition.MinY + _itemSlotHeight;
+                    childPosition.MaxX = childPosition.MinX + _itemSlotWidth;
+                    childPosition.MaxY = childPosition.MinY + _itemSlotHeight;
 
-                    Kodomo.Add($"{slotIndex}", new SlotUI(_itemSlotWidth, _itemSlotHeight, eAnchor.None, 1f, true, false, false, slotIndex, Inventory, koPosition, OwnerPlayer));
+                    Children.Add($"{slotIndex}", new SlotUI(_itemSlotWidth, _itemSlotHeight, eAnchor.None, 1f, true, false, false, slotIndex, Inventory, childPosition, OwnerPlayer, "Item Atlas"));
 
                     slotIndex++;
                 }
@@ -94,7 +98,12 @@ namespace Isola.GUI
             basePosition.MinY = _edgePadding - 1f;
             basePosition.MaxX = basePosition.MinX + _itemSlotWidth + 2f;
             basePosition.MaxY = basePosition.MinY + _itemSlotHeight + 2f;
-            Kodomo.Add("ActiveHotbarSlot", new ActiveHotbarSlotUI(_itemSlotHeight + 2f, _itemSlotWidth + 2f, eAnchor.None, 1f, true, true, false, 0, 152, 18, 18, basePosition, 0, (_cols * _rows - 1), 0));
+            Children.Add("ActiveHotbarSlot", new ActiveHotbarSlotUI(_itemSlotHeight + 2f, _itemSlotWidth + 2f, eAnchor.None, 1f, true, true, false, 0, 152, 18, 18, basePosition, 0, (_cols * _rows - 1), 0));
+        }
+
+        public void SetTextureCoords(float x, float y, float textureWidth, float textureHeight)
+        {
+            TexCoords = AtlasManager.GetPrecisionAtlasCoords(x, y, textureWidth, textureHeight);
         }
 
         public override void OnMouseWheel(MouseWheelEventArgs e)
@@ -102,8 +111,8 @@ namespace Isola.GUI
             // Only run if ActiveHotbarSlotUI is accepting scrollwheel updates?
             if (ToggleScrolling)
             {
-                Kodomo["ActiveHotbarSlot"].OnMouseWheel(e);
-                Kodomo["ActiveHotbarSlot"].SetNDCs(KoWidth, KoHeight, KoNDCs);
+                Children["ActiveHotbarSlot"].OnMouseWheel(e);
+                Children["ActiveHotbarSlot"].SetNDCs(Width, Height, NDCs);
             }
         }
 
@@ -116,7 +125,7 @@ namespace Isola.GUI
                 // drop one item into world if item exists at slot
                 if (e.Key == Keys.Q)
                 {
-                    int index = ((ActiveHotbarSlotUI)Kodomo["ActiveHotbarSlot"]).ActiveIndex;
+                    int index = ((ActiveHotbarSlotUI)Children["ActiveHotbarSlot"]).ActiveIndex;
 
                     ItemStack itemStack = Inventory.ItemStackList[index];
 
@@ -139,7 +148,7 @@ namespace Isola.GUI
 
         public override void OnRightClick(Vector2 mouseNDCs, WorldManager world)
         {
-            int index = ((ActiveHotbarSlotUI)Kodomo["ActiveHotbarSlot"]).ActiveIndex;
+            int index = ((ActiveHotbarSlotUI)Children["ActiveHotbarSlot"]).ActiveIndex;
             
             if (!Inventory.ItemStackList[index].Equals(default(ItemStack)))
             {
@@ -152,7 +161,7 @@ namespace Isola.GUI
 
         public override void OnLeftClick(Vector2 mouseNDCs, WorldManager world)
         {
-            int index = ((ActiveHotbarSlotUI)Kodomo["ActiveHotbarSlot"]).ActiveIndex;
+            int index = ((ActiveHotbarSlotUI)Children["ActiveHotbarSlot"]).ActiveIndex;
 
             if (!Inventory.ItemStackList[index].Equals(default(ItemStack)))
             {
