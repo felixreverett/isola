@@ -1,7 +1,9 @@
-﻿namespace Isola.Drawing
+﻿using Isola.engine.graphics;
+
+namespace Isola.Drawing
 {
     public interface IDrawable
     {
-        public void Draw();
+        void Draw();
     }
 }
