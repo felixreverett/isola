@@ -26,7 +26,7 @@ namespace Isola.Utilities
 
         public Texture2D LoadTextureAtlas(string atlasFileName, int textureUnit)
         {
-            string texturePath = @"../../../Resources/TextureAtlases/" + atlasFileName;
+            string texturePath = @"../../../resources/" + atlasFileName;
             _textureCache.TryGetValue(texturePath, out var value);
             if (value is not null)
             {
