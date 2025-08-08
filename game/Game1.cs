@@ -102,10 +102,8 @@ namespace Isola
 
             // UI systems
             MasterUI = new(ClientSize.X, ClientSize.Y, eAnchor.Middle, 1.0f);
-                MasterUI.Kodomo.Add("Hotbar", new HotbarUI(188f, 26f, eAnchor.Bottom, 0.5f, true, true, false, 1, 10, 16f, 16f, 5f, 2f, _player.Inventory, _player));
-                MasterUI.Kodomo["Hotbar"].SetTextureCoords(0, 118, 188, 26); //todo: set on instantiation
-                MasterUI.Kodomo.Add("Inventory", new PlayerInvUI(196f, 110f, eAnchor.Middle, 0.5f, true, false, false, _player.Inventory, _player));
-                MasterUI.Kodomo["Inventory"].SetTextureCoords(0, 0, 196, 110); //todo: set on instantiation
+                MasterUI.Children.Add("Hotbar", new HotbarUI(188f, 26f, eAnchor.Bottom, 0.5f, true, true, false, 1, 10, 16f, 16f, 5f, 2f, _player.Inventory, _player, "Inventory Atlas"));
+                MasterUI.Children.Add("Inventory", new PlayerInvUI(196f, 110f, eAnchor.Middle, 0.5f, true, false, false, _player.Inventory, _player, "Inventory Atlas"));
 
             // Textures
             WorldShader.Use(); //todo: do I need this?
@@ -145,13 +143,13 @@ namespace Isola
                 toggleInventory = !toggleInventory; // todo: find where this should belong
                 if (toggleInventory)
                 {
-                    MasterUI.Kodomo["Inventory"].ToggleDraw = true;
-                    ((HotbarUI)MasterUI.Kodomo["Hotbar"]).ToggleScrolling = false;
+                    MasterUI.Children["Inventory"].ToggleDraw = true;
+                    ((HotbarUI)MasterUI.Children["Hotbar"]).ToggleScrolling = false;
                 }
                 else
                 {
-                    MasterUI.Kodomo["Inventory"].ToggleDraw = false;
-                    ((HotbarUI)MasterUI.Kodomo["Hotbar"]).ToggleScrolling = true;
+                    MasterUI.Children["Inventory"].ToggleDraw = false;
+                    ((HotbarUI)MasterUI.Children["Hotbar"]).ToggleScrolling = true;
                 }
             }
 
@@ -164,31 +162,31 @@ namespace Isola
                 switch (currentAnchor)
                 {
                     case 0:
-                        MasterUI.Kodomo["Inventory"].Anchor = eAnchor.Middle;
+                        MasterUI.Children["Inventory"].Anchor = eAnchor.Middle;
                         break;
                     case 1:
-                        MasterUI.Kodomo["Inventory"].Anchor = eAnchor.Left;
+                        MasterUI.Children["Inventory"].Anchor = eAnchor.Left;
                         break;
                     case 2:
-                        MasterUI.Kodomo["Inventory"].Anchor = eAnchor.Top;
+                        MasterUI.Children["Inventory"].Anchor = eAnchor.Top;
                         break;
                     case 3:
-                        MasterUI.Kodomo["Inventory"].Anchor = eAnchor.Right;
+                        MasterUI.Children["Inventory"].Anchor = eAnchor.Right;
                         break;
                     case 4:
-                        MasterUI.Kodomo["Inventory"].Anchor = eAnchor.Bottom;
+                        MasterUI.Children["Inventory"].Anchor = eAnchor.Bottom;
                         break;
                     case 5:
-                        MasterUI.Kodomo["Inventory"].Anchor = eAnchor.TopLeft;
+                        MasterUI.Children["Inventory"].Anchor = eAnchor.TopLeft;
                         break;
                     case 6:
-                        MasterUI.Kodomo["Inventory"].Anchor = eAnchor.TopRight;
+                        MasterUI.Children["Inventory"].Anchor = eAnchor.TopRight;
                         break;
                     case 7:
-                        MasterUI.Kodomo["Inventory"].Anchor = eAnchor.BottomRight;
+                        MasterUI.Children["Inventory"].Anchor = eAnchor.BottomRight;
                         break;
                     case 8:
-                        MasterUI.Kodomo["Inventory"].Anchor = eAnchor.BottomLeft;
+                        MasterUI.Children["Inventory"].Anchor = eAnchor.BottomLeft;
                         break;
                 }
                 MasterUI.SetNDCs(ClientSize.X, ClientSize.Y, new NDC(-1f, -1f, 1f, 1f));
@@ -345,13 +343,13 @@ namespace Isola
                 if (e.Button == MouseButton.Left)
                 {
                     //_world.SetTile(_cursor.Rounded(_cursor.WorldPosition.X), _cursor.Rounded(_cursor.WorldPosition.Y), "Grass");
-                    MasterUI.Kodomo["Hotbar"].OnLeftClick(_cursor.WorldPosition, _world);
+                    MasterUI.Children["Hotbar"].OnLeftClick(_cursor.WorldPosition, _world);
                 }
                 
                 // right click
                 if (e.Button == MouseButton.Right)
                 {
-                    MasterUI.Kodomo["Hotbar"].OnRightClick(_cursor.WorldPosition, _world);
+                    MasterUI.Children["Hotbar"].OnRightClick(_cursor.WorldPosition, _world);
                 }
             }
         }
