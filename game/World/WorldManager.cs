@@ -104,12 +104,24 @@ namespace Isola.World
             //Console.WriteLine($"> Chunk draw cycle took {timer.Elapsed.ToString(@"m\:ss\.fffff")} to run.");
         }
 
-        private void DrawEntities()
+        private void DrawEntities() //todo Aug 2025: simplify as all entities should now use the same batch
         {
-            LoadedEntityList = LoadedEntityList.OrderByDescending(i => i.Position.Y).ToList();
-            foreach (Entity entity in LoadedEntityList)
+            var groupedEntities = LoadedEntityList
+                .Where(e => e.BatchRenderer != null && e.TexCoords != null)
+                .OrderByDescending(i => i.Position.Y)
+                .GroupBy(e => e.BatchRenderer);
+            
+            foreach (var group in groupedEntities)
             {
-                entity.Draw();
+                var batchRenderer = group.Key;
+
+                batchRenderer!.StartBatch();
+
+                foreach (var entity in group)
+                {
+                    entity.Draw();
+                }
+                batchRenderer.EndBatch();
             }
         }
 
