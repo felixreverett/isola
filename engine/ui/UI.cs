@@ -1,5 +1,4 @@
-﻿using Isola.Utilities;
-using Isola.Drawing;
+﻿using Isola.Drawing;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using Isola.World;
@@ -7,7 +6,7 @@ using Isola.engine.graphics;
 
 namespace Isola.ui
 {
-    public class UI : IDrawable
+    public abstract class UI : IDrawable
     {
         // Position
         public eAnchor Anchor { get; set; }
@@ -17,13 +16,13 @@ namespace Isola.ui
         protected float Scale { get; set; }
         protected RPC Position { get; set; }
         protected NDC NDCs { get; set; }
-        protected TexCoords TexCoords { get; set; }
+        protected TexCoords ?TexCoords { get; set; }
 
-        // Kodomo
+        // Children
         public Dictionary<string, UI> Children { get; set; }
 
         // Rendering
-        public virtual BatchRenderer BatchRenderer { get; set; }
+        public virtual BatchRenderer ?BatchRenderer { get; set; }
 
         protected bool IsDrawable { get; set; }
         public bool ToggleDraw { get; set; }
@@ -44,18 +43,15 @@ namespace Isola.ui
             this.IsDrawable = isDrawable;
             this.ToggleDraw = toggleDraw;
             this.IsClickable = isClickable;
-
-            if (IsDrawable) //todo Aug 2025: Consider removing if all inheritees define these anyway. UI.cs never renders (it's the master class for all UI children)
-            {
-                if (BatchRenderer is null)
-                {
-                    BatchRenderer = AssetLibrary.BatchRendererList["Inventory Atlas"];
-                }
-            }
         }
 
         public virtual void Draw()
         {
+            if (BatchRenderer == null)
+            {
+                Console.WriteLine($"[W] Attempted to Draw() UI element while batchrenderer null. This could be an indication that the selected BatchRenderer could not be found in AssetLibrary."); //debug
+                return;
+            }
             if (IsDrawable && ToggleDraw)
             {
                 Box2 rect = new Box2(NDCs.MinX, NDCs.MinY, NDCs.MaxX, NDCs.MaxY);

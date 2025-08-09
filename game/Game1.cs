@@ -13,6 +13,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Mathematics;
 using Isola.engine.graphics.Buffers;
 using Isola.engine.graphics;
+using Isola.engine.ui;
 
 namespace Isola
 {
@@ -49,7 +50,7 @@ namespace Isola
         private bool toggleInventory = false;
         
         // UISystem
-        private UI MasterUI { get; set; }
+        private MasterUI MasterUI { get; set; }
         int currentAnchor = 0; //debug
 
         protected override void OnLoad()
@@ -83,11 +84,8 @@ namespace Isola
             }
 
             // Asset Loading
-
             AssetLibrary.InitialiseTextureAtlasManagerList();
-
             AssetLibrary.InitialiseItemList();
-
             AssetLibrary.InitialiseTileList();
 
             // World (initialised before player as player will reference it)
