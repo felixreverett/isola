@@ -1,4 +1,5 @@
-﻿using Isola.Utilities;
+﻿using Isola.engine.graphics;
+using Isola.Utilities;
 using OpenTK.Mathematics;
 using System.Text.Json;
 
@@ -7,10 +8,13 @@ namespace Isola.Entities
     public class TileEntity_Chest : TileEntity
     {
         public Inventory Inventory { get; set; }
+        public EntityTextureAtlasManager AtlasManager { get; set; }
         public TileEntity_Chest(Vector2 position, Vector2 drawPositionOffset)
             : base(position, drawPositionOffset)
         {
             Inventory = new Inventory(5, 10);
+            AtlasManager = (EntityTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Entity Atlas"];
+            BatchRenderer = AssetLibrary.BatchRendererList["Entity Atlas"];
             SetTexCoords();
         }
 
@@ -18,15 +22,16 @@ namespace Isola.Entities
             : base(saveData)
         {
             Inventory = saveData.Inventory;
+            AtlasManager = (EntityTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Entity Atlas"];
+            BatchRenderer = AssetLibrary.BatchRendererList["Entity Atlas"];
             SetTexCoords();
         }
 
-        // Todo: adjust to use entityatlas
         private void SetTexCoords()
         {
-            Items.Item? matchingItem = AssetLibrary.ItemList!.FirstOrDefault(i => i.ItemName == "Wood Chest")!;
-            int index = matchingItem == null ? 0 : matchingItem.TextureIndex;
-            TexCoords = Utilities.Utilities.GetIndexedAtlasCoords(index, 16, 1024, 8);
+            //Items.Item? matchingItem = AssetLibrary.ItemList!.FirstOrDefault(i => i.ItemName == "Wood Chest")!;
+            //int index = matchingItem == null ? 0 : matchingItem.TextureIndex;
+            TexCoords = AtlasManager.GetAtlasCoords("Wood Chest"); //todo: update per chest
         }
 
         public override EntitySaveDataObject GetSaveData()

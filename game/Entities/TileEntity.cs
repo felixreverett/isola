@@ -1,15 +1,16 @@
-﻿using OpenTK.Mathematics;
+﻿using Isola.Drawing;
+using Isola.engine.graphics;
 using Isola.Entities;
-using System.Text.Json;
-using Isola.Drawing;
 using Isola.Utilities;
+using OpenTK.Mathematics;
+using System.Text.Json;
 
 namespace Isola
 {
-    public class TileEntity : Entity
+    public abstract class TileEntity : Entity
     {
         internal Vector2 DrawPositionOffset { get; set; } = new Vector2(0f, 0f);
-        private IndexedTextureAtlasManager AtlasManager { get; set; }
+        private EntityTextureAtlasManager AtlasManager { get; set; }
 
         // Initialize TileEntity from save data
         public TileEntity(TileEntitySaveData saveData)
@@ -18,8 +19,8 @@ namespace Isola
             DrawPositionOffset = new Vector2(saveData.DrawPositionOffset[0], saveData.DrawPositionOffset[1]);
             AlignPosition();
             Size = new Vector2(saveData.Size[0], saveData.Size[1]);
-            AtlasManager = (IndexedTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Item Atlas"];
-            BatchRenderer = AssetLibrary.BatchRendererList["Item Atlas"]; //todo: set to dedicated atlas
+            AtlasManager = (EntityTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Entity Atlas"];
+            BatchRenderer = AssetLibrary.BatchRendererList["Entity Atlas"];
         }
 
         // Default constructor
@@ -27,6 +28,8 @@ namespace Isola
             : base(position)
         {
             AlignPosition();
+            AtlasManager = (EntityTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Entity Atlas"];
+            BatchRenderer = AssetLibrary.BatchRendererList["Entity Atlas"];
         }
 
         // TileEntities can have an offset for drawing
@@ -37,9 +40,7 @@ namespace Isola
                 Position.X + Size.X / 2f + DrawPositionOffset.X, Position.Y + Size.Y + DrawPositionOffset.Y
                 );
 
-            BatchRenderer.StartBatch();
             BatchRenderer.AddQuadToBatch(rect, TexCoords);
-            BatchRenderer.EndBatch();
         }
 
         // Export entity save data

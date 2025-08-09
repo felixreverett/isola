@@ -1,5 +1,7 @@
-﻿using OpenTK.Mathematics;
+﻿using Isola.engine.graphics;
 using Isola.Entities;
+using Isola.Utilities;
+using OpenTK.Mathematics;
 using System.Text.Json;
 
 namespace Isola
@@ -8,11 +10,15 @@ namespace Isola
     {
         public int MaximumGrowthStages { get; set; } = 1; //todo: remove this and shift over to EntityStaticData
         public int GrowthStage { get; set; } = 1;
+        public EntityTextureAtlasManager AtlasManager { get; set; }
 
         // Initialize TileEntity from save data
         public TileEntity_Plant(TileEntity_Plant_SaveData saveData)
             : base(saveData)
         {
+            AtlasManager = (EntityTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Entity Atlas"];
+            BatchRenderer = AssetLibrary.BatchRendererList["Entity Atlas"];
+            SetTexCoords();
         }
 
         // Default constructor
@@ -20,6 +26,14 @@ namespace Isola
             : base(position, drawPositionOffset)
         {
             GrowthStage = growthStage;
+            AtlasManager = (EntityTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Entity Atlas"];
+            BatchRenderer = AssetLibrary.BatchRendererList["Entity Atlas"];
+            SetTexCoords();
+        }
+
+        private void SetTexCoords()
+        {
+            TexCoords = AtlasManager.GetAtlasCoords("Wood Chest"); //todo: update per chest
         }
 
         // Export entity save data

@@ -15,7 +15,7 @@ namespace Isola
 
         // Drawing
         public BatchRenderer ?BatchRenderer { get; protected set; }
-        protected TexCoords ?TexCoords { get; set; }
+        public TexCoords ?TexCoords { get; protected set; }
                 
         // Initialize Entity from save data
         public Entity(EntitySaveData saveData)
@@ -39,9 +39,7 @@ namespace Isola
             else
             {
                 Box2 rect = new Box2(Position.X - Size.X / 2f, Position.Y, Position.X + Size.X / 2f, Position.Y + Size.Y); //todo (Aug 2025): do I always need to update this?
-                BatchRenderer.StartBatch(); // todo: render entities with the same spritebatch
                 BatchRenderer.AddQuadToBatch(rect, TexCoords);
-                BatchRenderer.EndBatch(); // todo: render entities with the same spritebatch
             }
         }
 

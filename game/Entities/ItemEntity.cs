@@ -1,4 +1,5 @@
 ﻿using Isola.Drawing;
+using Isola.engine.graphics;
 using Isola.Utilities;
 using OpenTK.Mathematics;
 using System.Text.Json;
@@ -9,7 +10,7 @@ namespace Isola.Entities
     {
         public string ItemName { get; set; }
         public int Amount { get; set; }
-        private IndexedTextureAtlasManager AtlasManager { get; set; }
+        private EntityTextureAtlasManager AtlasManager { get; set; }
 
         // Initialize entity otherwise
         public ItemEntity(Vector2 position, string itemName, int amount) 
@@ -17,9 +18,9 @@ namespace Isola.Entities
         {
             this.ItemName = itemName;
             this.Amount = amount;
-            AtlasManager = (IndexedTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Item Atlas"];
-            BatchRenderer = AssetLibrary.BatchRendererList["Item Atlas"];
-            SetTexCoords();
+            AtlasManager = (EntityTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Entity Atlas"];
+            BatchRenderer = AssetLibrary.BatchRendererList["Entity Atlas"];
+            TexCoords = AtlasManager.GetAtlasCoords(ItemName);
         }
 
         // Initialize Entity from save data
@@ -28,16 +29,9 @@ namespace Isola.Entities
         {
             this.ItemName = saveData.ItemName;
             this.Amount = saveData.Amount;
-            AtlasManager = (IndexedTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Item Atlas"];
-            BatchRenderer = AssetLibrary.BatchRendererList["Item Atlas"];
-            SetTexCoords();
-        }
-        
-        private void SetTexCoords()
-        {
-            Items.Item? matchingItem = AssetLibrary.ItemList!.FirstOrDefault(i => i.ItemName == ItemName)!;
-            int index = matchingItem == null ? 0 : matchingItem.TextureIndex;
-            TexCoords = Utilities.Utilities.GetIndexedAtlasCoords(index, 16, 1024, 8);
+            AtlasManager = (EntityTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Entity Atlas"];
+            BatchRenderer = AssetLibrary.BatchRendererList["Entity Atlas"];
+            TexCoords = AtlasManager.GetAtlasCoords(ItemName);
         }
 
         // Export entity save data
