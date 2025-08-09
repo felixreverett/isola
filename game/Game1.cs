@@ -3,7 +3,7 @@ using Isola.Drawing;
 using Isola.Utilities;
 using Isola.GameClasses;
 using Isola.World;
-using Isola.GUI;
+using Isola.ui;
 using Isola.Inventories;
 using Isola.Entities;
 using OpenTK.Graphics.OpenGL4;
@@ -253,29 +253,25 @@ namespace Isola
             _fbo.Use(); // render world to a frame buffer for fixed native res
             GL.ClearColor(Color4.CornflowerBlue);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
             GL.Enable(EnableCap.DepthTest | EnableCap.Blend);
 
             // ---------- WORLD & Entities ----------
 
             WorldShader.Use();
             WorldShader.SetMatrix4("model", Matrix4.Identity);
-
             WorldShader.SetMatrix4("view", _camera.GetViewMatrix());
             WorldShader.SetMatrix4("projection", _camera.GetProjectionMatrix());
+
             _world.Draw();
 
             // --- Render FBO to screen ---
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             GL.Viewport(0, 0, ClientSize.X, ClientSize.Y);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
             GL.Disable(EnableCap.DepthTest);
-
             ScreenQuadShader.Use();
             ScreenQuadShader.SetInt("u_ScreenTexture", 0);
             _fbo.BindTexture(TextureUnit.Texture0);
-
             _screenQuad.Draw();
 
             // --- Render UI on top ---
