@@ -1,19 +1,20 @@
 ﻿using Isola.Core.Rendering;
 using Isola.Drawing;
-using Isola.Utilities;
-using Isola.GameClasses;
-using Isola.World;
-using Isola.ui;
-using Isola.Inventories;
+using Isola.engine.graphics;
+using Isola.engine.graphics.Buffers;
+using Isola.engine.ui;
 using Isola.Entities;
+using Isola.game.GUI;
+using Isola.GameClasses;
+using Isola.Inventories;
+using Isola.ui;
+using Isola.Utilities;
+using Isola.World;
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using OpenTK.Mathematics;
-using Isola.engine.graphics.Buffers;
-using Isola.engine.graphics;
-using Isola.engine.ui;
 
 namespace Isola
 {
@@ -25,9 +26,6 @@ namespace Isola
         }
         
         // Shaders & Camera
-        private Shader WorldShader;
-        private Shader UIShader;
-        private Shader ScreenQuadShader;
         private ScreenQuad _screenQuad;
         
         private GameCamera _camera;
@@ -60,33 +58,24 @@ namespace Isola
             GL.ClearColor(Color4.CornflowerBlue);
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Blend);
-            GL.Arb.BlendFuncSeparate(0, BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha, BlendingFactor.SrcAlpha, BlendingFactor.DstAlpha);
+            //GL.Arb.BlendFuncSeparate(0, BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha, BlendingFactor.SrcAlpha, BlendingFactor.DstAlpha);
+            //GL.BlendFuncSeparate(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha, BlendingFactorSrc.SrcAlpha, BlendingFactorDest.DstAlpha);
+            //GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+            
+            GL.BlendFuncSeparate(
+                BlendingFactorSrc.SrcAlpha,
+                BlendingFactorDest.OneMinusSrcAlpha,
+                BlendingFactorSrc.One,
+                BlendingFactorDest.OneMinusSrcAlpha);
 
-            WorldShader = new(Shader.ParseShader(@"../../../Resources/Shaders/TextureWithColorAndTextureSlotAndUniforms.glsl"));
-            if (!WorldShader.CompileShader())
-            {
-                Console.WriteLine("Failed to compile shader.");
-                return;
-            }
+            var error = GL.GetError();
+            if (error != OpenTK.Graphics.OpenGL4.ErrorCode.NoError)
+                Console.WriteLine($"GL Error after BlendFuncSeparate: {error}");
 
-            UIShader = new(Shader.ParseShader(@"../../../Resources/Shaders/UIShader.glsl")); // todo: move to UI Load?
-            if (!UIShader.CompileShader())
-            {
-                Console.WriteLine("Failed to compile shader.");
-                return;
-            }
-
-            ScreenQuadShader = new(Shader.ParseShader(@"../../../Resources/Shaders/ScreenQuadShader.glsl"));
-            if (!ScreenQuadShader.CompileShader())
-            {
-                Console.WriteLine("[!] Failed to compile shader.");
-                return;
-            }
 
             // Asset Loading
-            AssetLibrary.InitialiseTextureAtlasManagerList();
-            AssetLibrary.InitialiseItemList();
-            AssetLibrary.InitialiseTileList();
+            AssetLibrary.Initialise();
+            Console.WriteLine($"font texture id: {AssetLibrary.BatchRendererList["Font Atlas"].Texture.TextureSlot}"); //debug
 
             // World (initialised before player as player will reference it)
             _config = new GameConfig(true, 10);
@@ -102,13 +91,15 @@ namespace Isola
             MasterUI = new(ClientSize.X, ClientSize.Y, eAnchor.Middle, 1.0f);
                 MasterUI.Children.Add("Hotbar", new HotbarUI(188f, 26f, eAnchor.Bottom, 0.5f, true, true, false, 1, 10, 16f, 16f, 5f, 2f, _player.Inventory, _player, "Inventory Atlas"));
                 MasterUI.Children.Add("Inventory", new PlayerInvUI(196f, 110f, eAnchor.Middle, 0.5f, true, false, false, _player.Inventory, _player, "Inventory Atlas"));
+                MasterUI.Children.Add("Amount", new TextUI(120f, 120f, eAnchor.Middle, 1, true, true, false, "Hello World!", 60, false, "Font Atlas"));
 
             // Textures
-            WorldShader.Use(); //todo: do I need this?
+            //AssetLibrary.ShaderList["World Shader"].Use(); //todo: do I need this?
 
             // Camera
             _camera = new GameCamera(new Vector3(0, 0, 0), ClientSize.X / (float)ClientSize.Y);
             _fbo = new FrameBuffer(VIRTUAL_WIDTH, VIRTUAL_HEIGHT); // determines the native resolution of the game
+
             _screenQuad = new ScreenQuad();            
 
             //GameCursor
@@ -249,34 +240,66 @@ namespace Isola
 
             // --- Render to Frame Buffer Object ---
             _fbo.Use(); // render world to a frame buffer for fixed native res
+
+            var err = GL.GetError();
+            if (err != OpenTK.Graphics.OpenGL4.ErrorCode.NoError)
+                Console.WriteLine($"GL Error after _fbo.Use(): {err}");
+
             GL.ClearColor(Color4.CornflowerBlue);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            GL.Enable(EnableCap.DepthTest | EnableCap.Blend);
+            //GL.Enable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.Blend);
 
             // ---------- WORLD & Entities ----------
 
-            WorldShader.Use();
-            WorldShader.SetMatrix4("model", Matrix4.Identity);
-            WorldShader.SetMatrix4("view", _camera.GetViewMatrix());
-            WorldShader.SetMatrix4("projection", _camera.GetProjectionMatrix());
+            AssetLibrary.ShaderList["World Shader"].Use();
+            AssetLibrary.ShaderList["World Shader"].SetMatrix4("model", Matrix4.Identity);
+            AssetLibrary.ShaderList["World Shader"].SetMatrix4("view", _camera.GetViewMatrix());
+            AssetLibrary.ShaderList["World Shader"].SetMatrix4("projection", _camera.GetProjectionMatrix());
 
             _world.Draw();
+
+            err = GL.GetError();
+            if (err != OpenTK.Graphics.OpenGL4.ErrorCode.NoError)
+                Console.WriteLine($"GL Error after _world.Draw(): {err}");
 
             // --- Render FBO to screen ---
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             GL.Viewport(0, 0, ClientSize.X, ClientSize.Y);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            GL.Disable(EnableCap.DepthTest);
-            ScreenQuadShader.Use();
-            ScreenQuadShader.SetInt("u_ScreenTexture", 0);
+            GL.Disable(EnableCap.DepthTest); // no longer depth testing
+            AssetLibrary.ShaderList["Screen Quad Shader"].Use();
+            AssetLibrary.ShaderList["Screen Quad Shader"].SetInt("u_Texture", 0);
             _fbo.BindTexture(TextureUnit.Texture0);
+
+            // debug
+            //GL.ActiveTexture(TextureUnit.Texture0);
+            //GL.GetInteger(GetPName.TextureBinding2D, out int boundTex);
+            //Console.WriteLine($"Texture bound to unit 0: {boundTex}");
+
+            // end debug
+
             _screenQuad.Draw();
 
+            err = GL.GetError();
+            if (err != OpenTK.Graphics.OpenGL4.ErrorCode.NoError)
+                Console.WriteLine($"GL Error after screenQuad.Draw(): {err}");
+
             // --- Render UI on top ---
-            UIShader.Use();
+            AssetLibrary.ShaderList["UI Shader"].Use();
             MasterUI.Draw();
 
+            err = GL.GetError();
+            if (err != OpenTK.Graphics.OpenGL4.ErrorCode.NoError)
+                Console.WriteLine($"GL Error after MasterUI.Draw(): {err}");
+
             SwapBuffers();
+
+            err = GL.GetError();
+            if (err != OpenTK.Graphics.OpenGL4.ErrorCode.NoError)
+            {
+                Console.WriteLine("GL Error: " + err);
+            }
         }
 
         protected override void OnResize(ResizeEventArgs e)
@@ -359,9 +382,10 @@ namespace Isola
         {
             base.OnUnload();
 
-            GL.DeleteProgram(WorldShader.ProgramId);
-            GL.DeleteProgram(UIShader.ProgramId);
-            GL.DeleteProgram(ScreenQuadShader.ProgramId);
+            // Aug 2025: removed because the shaders are now in AssetLibrary
+            //GL.DeleteProgram(WorldShader.ProgramId);
+            //GL.DeleteProgram(UIShader.ProgramId);
+            //GL.DeleteProgram(ScreenQuadShader.ProgramId);
         }
     }
 }
