@@ -8,7 +8,7 @@ namespace Isola.Drawing
     /// Handles information pertaining to a texture unit
     /// Compare "BatchRenderer" classes, which are solely responsible for the sampling of and drawing from textureUnits
     /// </summary>
-    public class TextureAtlasManager
+    public class TextureAtlasManager //todo Aug 2025: remove this if fully obsolete
     {
         // Atlas information
         public string AtlasFileName { get; private set; }
