@@ -1,4 +1,5 @@
-﻿using Isola.Drawing;
+﻿using Isola.Core.Rendering;
+using Isola.Drawing;
 using Isola.engine.graphics;
 using Isola.engine.graphics.text;
 using Isola.Items;
@@ -11,6 +12,7 @@ namespace Isola.Utilities
         public static List<TileData>? TileList;
         public static Dictionary<string, IAtlasManager> TextureAtlasManagerList = new();
         public static Dictionary<string, BatchRenderer> BatchRendererList = new();
+        public static Dictionary<string, Shader> ShaderList = new();
 
         public static bool GetItemFromItemName(string itemName, out Item? item)
         {
@@ -52,22 +54,65 @@ namespace Isola.Utilities
             };
         }
 
+        // Single intialise to ensure the correct order
+        public static void Initialise()
+        {
+            InitialiseShaders();
+            InitialiseTextureAtlasManagerList();
+            InitialiseItemList();
+            InitialiseTileList();
+        }
+
+        public static void InitialiseShaders()
+        {
+            Shader WorldShader = new(Shader.ParseShader(@"../../../resources/shaders/TextureWithColorAndTextureSlotAndUniforms.glsl"));
+            if (WorldShader.CompileShader())
+            {
+                WorldShader.SetTextureArray();
+                ShaderList.Add("World Shader", WorldShader);
+            }
+            else
+            {
+                Console.WriteLine("Failed to compile world shader.");
+            }
+
+            Shader UIShader = new(Shader.ParseShader(@"../../../resources/shaders/UIShader.glsl")); // todo: move to UI Load?
+            if (UIShader.CompileShader())
+            {
+                UIShader.SetTextureArray();
+                ShaderList.Add("UI Shader", UIShader);
+            }
+            else { Console.WriteLine("Failed to compile UI shader.");
+            }
+
+            Shader ScreenQuadShader = new(Shader.ParseShader(@"../../../resources/shaders/ScreenQuadShader.glsl"));
+            if (ScreenQuadShader.CompileShader())
+            {
+                ShaderList.Add("Screen Quad Shader", ScreenQuadShader);
+            }
+            else
+            {
+                Console.WriteLine("Failed to compile Screen Quad Shader.");
+            }
+        }
+
         public static void InitialiseTextureAtlasManagerList()
         {
             TextureAtlasManagerList.Add("Tile Atlas", new IndexedTextureAtlasManager("atlases/1024 Tile Atlas x16.png", 1024, 16, 8, true, 0.0f));
-            TextureAtlasManagerList.Add("Player Atlas", new PrecisionTextureAtlasManager("atlases/Player.png", 1024, 1024, 1024, false, 0.001f));//todo Aug-2025: deprecate
+            //TextureAtlasManagerList.Add("Player Atlas", new PrecisionTextureAtlasManager("atlases/Player.png", 1024, 1024, 1024, false, 0.001f));//todo Aug-2025: deprecate
             TextureAtlasManagerList.Add("Inventory Atlas", new PrecisionTextureAtlasManager("atlases/1024 UI Atlas x16.png", 1024, 1024, 1024, false));
             TextureAtlasManagerList.Add("Item Atlas", new IndexedTextureAtlasManager("atlases/1024 Item Atlas 16x.png", 1024, 16, 8, false, 0.001f));
-            TextureAtlasManagerList.Add("Font Atlas", new FontAtlasManager("fonts/nosutaru.png", 4));
+            TextureAtlasManagerList.Add("Font Atlas", new FontAtlasManager("debugpink", 4));
             TextureAtlasManagerList.Add("Entity Atlas", new EntityTextureAtlasManager("atlases/1024 Entity Atlas x16.png", 1024, 1024));
             // Todo: add entity atlas here
 
-            BatchRendererList.Add("Tile Atlas", new BatchRenderer(0, "atlases/1024 Tile Atlas x16.png"));
-            BatchRendererList.Add("Player Atlas", new BatchRenderer(1, "atlases/Player.png")); //todo Aug-2025: deprecate
-            BatchRendererList.Add("Inventory Atlas", new BatchRenderer(2, "atlases/1024 UI Atlas x16.png"));
-            BatchRendererList.Add("Item Atlas", new BatchRenderer(3, "atlases/1024 Item Atlas 16x.png"));
-            BatchRendererList.Add("Font Atlas", new BatchRenderer(4, "fonts/nosutaru.png"));
-            BatchRendererList.Add("Entity Atlas", new BatchRenderer(5, "atlases/1024 Entity Atlas 16x.png"));
+            // texture unit 0 is dedicated to the frame buffer object and mustn't be used
+            BatchRendererList.Add("Tile Atlas", new BatchRenderer(ShaderList["World Shader"], 1, "atlases/1024 Tile Atlas x16.png", 0.0f));
+            //BatchRendererList.Add("Player Atlas", new BatchRenderer(1, "atlases/Player.png")); //todo Aug-2025: deprecate
+            BatchRendererList.Add("Inventory Atlas", new BatchRenderer(ShaderList["UI Shader"], 2, "atlases/1024 UI Atlas x16.png"));
+            BatchRendererList.Add("Item Atlas", new BatchRenderer(ShaderList["UI Shader"], 3, "atlases/1024 Item Atlas 16x.png"));
+            BatchRendererList.Add("Font Atlas", new BatchRenderer(ShaderList["UI Shader"], 4, "fonts/debugpink.png"));
+            BatchRendererList.Add("Entity Atlas", new BatchRenderer(ShaderList["World Shader"], 5, "atlases/1024 Entity Atlas 16x.png", 0.001f));
         }
 
         public static void InitialiseTileList()
