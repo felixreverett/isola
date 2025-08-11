@@ -15,6 +15,7 @@ namespace Isola.engine.graphics.Buffers
             Height = height;
 
             _fboHandle = GL.GenFramebuffer();
+
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, _fboHandle);
 
             _textureHandle = GL.GenTexture();
@@ -24,6 +25,13 @@ namespace Isola.engine.graphics.Buffers
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, _textureHandle, 0);
+
+            // Adding renderbuffer
+            _renderbufferHandle = GL.GenRenderbuffer();
+            GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, _renderbufferHandle);
+            GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.DepthComponent24, Width, Height);
+            GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, RenderbufferTarget.Renderbuffer, _renderbufferHandle);
+
 
             // Check for completeness
             var status = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
