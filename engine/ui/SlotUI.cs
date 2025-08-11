@@ -4,6 +4,7 @@ using Isola.Inventories;
 using Isola.Items;
 using OpenTK.Mathematics;
 using Isola.World;
+using Isola.game.GUI;
 
 namespace Isola.ui
 {
@@ -27,15 +28,19 @@ namespace Isola.ui
             Position = position;
             AtlasManager = (IndexedTextureAtlasManager)AssetLibrary.TextureAtlasManagerList[atlasName];
             BatchRenderer = AssetLibrary.BatchRendererList[atlasName];
+            // Adding child text element
+            Children.Add("Amount", new TextUI(12f, 12f, eAnchor.BottomRight, 1, true, false, false, "0", 8, false, "Font Atlas"));
         }
 
         public override void Update()
         {
             ItemStack itemStack = OwnerPlayer.Inventory.ItemStackList[ItemSlotID];
+            TextUI textAmount = (TextUI)Children["Amount"];
 
             if (itemStack.Equals(default(ItemStack)))
             {
                 ToggleDraw = false;
+                textAmount.ToggleDraw = false;
             }
             else
             {
@@ -51,6 +56,17 @@ namespace Isola.ui
                     Console.WriteLine($"Error: No matching item found in library with name {itemStack.ItemName}. Using default texture 0.");
                 }
                 ToggleDraw = true;
+
+                // Update the text element and its visibility
+                if (itemStack.Amount > 1)
+                {
+                    textAmount.Text = itemStack.Amount.ToString();
+                    textAmount.ToggleDraw = true;
+                }
+                else
+                {
+                    textAmount.ToggleDraw = false;
+                }
             }
             base.Update();
         }
