@@ -25,8 +25,28 @@ namespace Isola.Drawing
         
         public void Use()
         {
+            //Console.WriteLine($"===== Texture2D.Use() on unit {TextureSlot - TextureUnit.Texture0} with texture handle {Handle}");
+
+            if ((int)TextureSlot < (int)TextureUnit.Texture0 || (int)TextureSlot > (int)TextureUnit.Texture31)
+            {
+                Console.WriteLine($"Invalid TextureSlot value: {TextureSlot}");
+                return;
+            }
             GL.ActiveTexture(TextureSlot);
+
+            var err = GL.GetError();
+            if (err != OpenTK.Graphics.OpenGL4.ErrorCode.NoError)
+            {
+                Console.WriteLine("GL Error in Use() after GL.ActivateTexture(): " + err);
+            }
+
             GL.BindTexture(TextureTarget.Texture2D, Handle);
+
+            err = GL.GetError();
+            if (err != OpenTK.Graphics.OpenGL4.ErrorCode.NoError)
+            {
+                Console.WriteLine("GL Error in Use() after GL.BindTexture(): " + err);
+            }
         }
 
         public void Dispose(bool disposing)
