@@ -20,6 +20,16 @@ namespace Isola.Core.Rendering
             }
         }
 
+        public void SetTextureArray()
+        {
+            GL.UseProgram(ProgramId);
+            for (int i = 0; i < 6; i++)
+            {
+                int location = GL.GetUniformLocation(ProgramId, $"u_Texture[{i}]");
+                GL.Uniform1(location, i);
+            }
+        }
+
         public bool CompileShader()
         {
             if (_shaderProgramSource == null)
