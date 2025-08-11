@@ -16,7 +16,8 @@ namespace Isola.Utilities
             {
                 throw new Exception($"Exceeded maximum texture slots OpenGL can natively support. Count {texUnit}");
             }
-            TextureUnit textureUnit = ((TextureUnit)texUnit);
+            
+            TextureUnit textureUnit = TextureUnit.Texture0 + texUnit;
 
             GL.ActiveTexture(textureUnit); // Set the texture units
             GL.BindTexture(TextureTarget.Texture2D, handle); // Bind our texture
@@ -38,7 +39,7 @@ namespace Isola.Utilities
 
             // Auto-Generate Mipmaps (probably won't need for 2D game)
             //GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-
+            Console.WriteLine($"Created new Texture2D with handle {handle}, dimensions {image.Width}, {image.Height}, and texture unit {textureUnit}");//debug Aug 2025
             return new Texture2D(handle, image.Width, image.Height, textureUnit);
         }
     }
