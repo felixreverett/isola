@@ -21,6 +21,7 @@ namespace Isola.Utilities
 
             GL.ActiveTexture(textureUnit); // Set the texture units
             GL.BindTexture(TextureTarget.Texture2D, handle); // Bind our texture
+            Configuration.Default.PreferContiguousImageBuffers = true;
             using var image = Image.Load<Rgba32>(textureName);
 
             image.Mutate(i => i.RotateFlip(RotateMode.Rotate180, FlipMode.Horizontal));
