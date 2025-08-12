@@ -91,7 +91,7 @@ namespace Isola
             MasterUI = new(ClientSize.X, ClientSize.Y, eAnchor.Middle, 1.0f);
                 MasterUI.Children.Add("Hotbar", new HotbarUI(188f, 26f, eAnchor.Bottom, 0.5f, true, true, false, 1, 10, 16f, 16f, 5f, 2f, _player.Inventory, _player, "Inventory Atlas"));
                 MasterUI.Children.Add("Inventory", new PlayerInvUI(196f, 110f, eAnchor.Middle, 0.5f, true, false, false, _player.Inventory, _player, "Inventory Atlas"));
-                MasterUI.Children.Add("Amount", new TextUI(120f, 120f, eAnchor.Middle, 1, true, true, false, "Hello World!", 60, false, "Font Atlas"));
+                MasterUI.Children.Add("Amount", new TextUI(120f, 120f, eAnchor.Middle, 1, true, true, false, "世界へようこそ！", 60, false, "Font Atlas"));
 
             // Textures
             //AssetLibrary.ShaderList["World Shader"].Use(); //todo: do I need this?

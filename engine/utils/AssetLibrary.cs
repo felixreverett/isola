@@ -102,7 +102,7 @@ namespace Isola.Utilities
             //TextureAtlasManagerList.Add("Player Atlas", new PrecisionTextureAtlasManager("atlases/Player.png", 1024, 1024, 1024, false, 0.001f));//todo Aug-2025: deprecate
             TextureAtlasManagerList.Add("Inventory Atlas", new PrecisionTextureAtlasManager("atlases/1024 UI Atlas x16.png", 1024, 1024, 1024, false));
             TextureAtlasManagerList.Add("Item Atlas", new IndexedTextureAtlasManager("atlases/1024 Item Atlas 16x.png", 1024, 16, 8, false, 0.001f));
-            TextureAtlasManagerList.Add("Font Atlas", new FontAtlasManager("debugpink", 4));
+            TextureAtlasManagerList.Add("Font Atlas", new FontAtlasManager("nosutaru", 4));
             TextureAtlasManagerList.Add("Entity Atlas", new EntityTextureAtlasManager("atlases/1024 Entity Atlas x16.png", 1024, 1024));
             // Todo: add entity atlas here
 
@@ -111,7 +111,7 @@ namespace Isola.Utilities
             //BatchRendererList.Add("Player Atlas", new BatchRenderer(1, "atlases/Player.png")); //todo Aug-2025: deprecate
             BatchRendererList.Add("Inventory Atlas", new BatchRenderer(ShaderList["UI Shader"], 2, "atlases/1024 UI Atlas x16.png"));
             BatchRendererList.Add("Item Atlas", new BatchRenderer(ShaderList["UI Shader"], 3, "atlases/1024 Item Atlas 16x.png"));
-            BatchRendererList.Add("Font Atlas", new BatchRenderer(ShaderList["UI Shader"], 4, "fonts/debugpink.png"));
+            BatchRendererList.Add("Font Atlas", new BatchRenderer(ShaderList["UI Shader"], 4, "fonts/nosutaru.png"));
             BatchRendererList.Add("Entity Atlas", new BatchRenderer(ShaderList["World Shader"], 5, "atlases/1024 Entity Atlas 16x.png", 0.001f));
         }
 
