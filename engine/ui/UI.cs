@@ -4,10 +4,8 @@ using OpenTK.Windowing.Common;
 using Isola.World;
 using Isola.engine.graphics;
 
-namespace Isola.ui
-{
-    public abstract class UI : IDrawable
-    {
+namespace Isola.ui {
+    public abstract class UI : IDrawable {
         // Position
         public eAnchor Anchor { get; set; }
         protected float Width { get; set; }
@@ -15,7 +13,7 @@ namespace Isola.ui
         protected float AspectRatio { get; set; }
         protected float Scale { get; set; }
         protected RPC Position { get; set; }
-        protected NDC NDCs { get; set; }
+        public NDC NDCs { get; set; }
         protected TexCoords ?TexCoords { get; set; }
 
         // Children
@@ -29,156 +27,111 @@ namespace Isola.ui
 
         protected bool IsClickable { get; set; }
 
-        // Constructor
-        public UI(float width, float height, eAnchor anchor, float scale, bool isDrawable = false, bool toggleDraw = true, bool isClickable = false)
-        {
-            this.Width = width;
-            this.Height = height;
-            this.AspectRatio = width / height;
-            this.Anchor = anchor;
-            this.Scale = Math.Clamp(scale, 0.0f, 1.0f);
-            this.Position = new();
-            this.NDCs = new();
-            this.Children = new Dictionary<string, UI>();
-            this.IsDrawable = isDrawable;
-            this.ToggleDraw = toggleDraw;
-            this.IsClickable = isClickable;
+        public UI(float width, float height, eAnchor anchor, float scale, bool isDrawable = false, bool toggleDraw = true, bool isClickable = false) {
+            Width = width;
+            Height = height;
+            AspectRatio = width / height;
+            Anchor = anchor;
+            Scale = Math.Clamp(scale, 0.0f, 1.0f);
+            Position = new();
+            NDCs = new();
+            Children = new Dictionary<string, UI>();
+            IsDrawable = isDrawable;
+            ToggleDraw = toggleDraw;
+            IsClickable = isClickable;
         }
 
-        public virtual void Draw()
-        {
-            if (BatchRenderer == null)
-            {
+        public virtual void Draw() {
+            if (BatchRenderer == null) {
                 Console.WriteLine($"[W] Attempted to Draw() UI element while batchrenderer null. This could be an indication that the selected BatchRenderer could not be found in AssetLibrary."); //debug
                 return;
             }
-            if (IsDrawable && ToggleDraw)
-            {
+            if (IsDrawable && ToggleDraw) {
                 Box2 rect = new Box2(NDCs.MinX, NDCs.MinY, NDCs.MaxX, NDCs.MaxY);
                 BatchRenderer.StartBatch();
                 BatchRenderer.AddQuadToBatch(rect, TexCoords);
                 BatchRenderer.EndBatch();
             }
             
-            if (Children.Count != 0 && ToggleDraw)
-            {
-                foreach (UI ui in Children.Values)
-                {
-                    ui.Draw();
-                }
+            if (Children.Count != 0 && ToggleDraw) {
+                foreach (UI ui in Children.Values) ui.Draw();
             }
         }
 
-        public virtual void Update()
-        {
-            if (Children.Count != 0)
-            {
-                foreach (UI ui in Children.Values)
-                {
-                    ui.Update();
-                }
+        public virtual void Update() {
+            if (Children.Count != 0) {
+                foreach (UI ui in Children.Values) ui.Update();
             }
         }
 
-        public void OnResize(float oyaWidth, float oyaHeight, NDC oyaNDCs)
-        {
-            this.Width = oyaWidth;
-            this.Height = oyaHeight;
-            this.AspectRatio = oyaWidth / oyaHeight;
+        public void OnResize(float oyaWidth, float oyaHeight, NDC oyaNDCs) {
+            Width = oyaWidth;
+            Height = oyaHeight;
+            AspectRatio = oyaWidth / oyaHeight;
             SetNDCs(oyaWidth, oyaHeight, oyaNDCs);
         }
 
-        public virtual void OnMouseMove(Vector2 mouseNDCs)
-        {
-            if (Children.Count > 0)
-            {
-                foreach (UI ui in Children.Values)
-                {
+        public virtual void OnMouseMove(Vector2 mouseNDCs) {
+            if (Children.Count > 0) {
+                foreach (UI ui in Children.Values) {
                     ui.OnMouseMove(mouseNDCs);
                 }
             }
         }
 
-        public virtual void OnLeftClick(Vector2 mousePosition, WorldManager world)
-        {
-            if (!IsMouseInBounds(mousePosition))
-            {
+        public virtual void OnLeftClick(Vector2 mousePosition, WorldManager world) {
+            if (!IsMouseInBounds(mousePosition)) {
                 // out of bounds functionality
-            }
-
-            else
-            {
-                if (Children.Count > 0)
-                {
-                    foreach (UI ui in Children.Values)
-                    {
-                        ui.OnLeftClick(mousePosition, world);
-                    }
+            } else {
+                if (Children.Count > 0) {
+                    foreach (UI ui in Children.Values) ui.OnLeftClick(mousePosition, world);
                 }
 
-                if (this.IsClickable)
-                {
+                if (this.IsClickable) {
                     // functionality here
                 }
             }
         }
 
-        public virtual void OnRightClick(Vector2 mousePosition, WorldManager world)
-        {
-            if (!IsMouseInBounds(mousePosition))
-            {
+        public virtual void OnRightClick(Vector2 mousePosition, WorldManager world) {
+            if (!IsMouseInBounds(mousePosition)) {
                 // out of bounds functionality
-            }
-
-            else
-            {
-                if (Children.Count > 0)
-                {
-                    foreach (UI ui in Children.Values)
-                    {
+            } else {
+                if (Children.Count > 0) {
+                    foreach (UI ui in Children.Values) {
                         ui.OnRightClick(mousePosition, world);
                     }
                 }
 
-                if (this.IsClickable)
-                {
+                if (this.IsClickable) {
                     // functionality here
                 }
             }
         }
 
-        public virtual void OnMouseWheel(MouseWheelEventArgs e)
-        {
-            if (Children.Count > 0)
-            {
-                foreach (UI ui in Children.Values)
-                {
+        public virtual void OnMouseWheel(MouseWheelEventArgs e) {
+            if (Children.Count > 0) {
+                foreach (UI ui in Children.Values) {
                     ui.OnMouseWheel(e);
                 }
             }
         }
 
-        public virtual void OnKeyDown(KeyboardKeyEventArgs e)
-        {
-            if (Children.Count > 0)
-            {
-                foreach (UI ui in Children.Values)
-                {
+        public virtual void OnKeyDown(KeyboardKeyEventArgs e) {
+            if (Children.Count > 0) {
+                foreach (UI ui in Children.Values) {
                     ui.OnKeyDown(e);
                 }
             }
         }
 
-        public bool IsMouseInBounds(Vector2 mouseNDCs)
-        {
+        public bool IsMouseInBounds(Vector2 mouseNDCs) {
             if (mouseNDCs.X >= NDCs.MinX && mouseNDCs.Y >= NDCs.MinY && mouseNDCs.X <= NDCs.MaxX && mouseNDCs.Y <= NDCs.MaxY) { return true; }
             else { return false; }
         }
 
-        public virtual void SetNDCs(float oyaWidth, float oyaHeight, NDC oyaNDCs)
-        {
-            if (Anchor != eAnchor.None)
-            {
+        public virtual void SetNDCs(float oyaWidth, float oyaHeight, NDC oyaNDCs) {
+            if (Anchor != eAnchor.None) {
                 Position = GetAnchoredDimensions(oyaWidth, oyaHeight);
             }
 
@@ -188,10 +141,8 @@ namespace Isola.ui
             NDCs.MaxY = ((Position.MaxY / oyaHeight) * (oyaNDCs.MaxY - oyaNDCs.MinY) + oyaNDCs.MinY);
             NDCs.MinY = ((Position.MinY / oyaHeight) * (oyaNDCs.MaxY - oyaNDCs.MinY) + oyaNDCs.MinY);
 
-            if (Children.Count > 0)
-            {
-                foreach (UI ui in Children.Values)
-                {
+            if (Children.Count > 0) {
+                foreach (UI ui in Children.Values) {
                     ui.SetNDCs(Width, Height, NDCs);
                 }
             }
@@ -203,18 +154,15 @@ namespace Isola.ui
         /// <param name="OyaWidth"></param>
         /// <param name="OyaHeight"></param>
         /// <returns></returns>
-        public Vector2 GetRelativeDimensions(float OyaWidth, float OyaHeight)
-        {
+        public Vector2 GetRelativeDimensions(float OyaWidth, float OyaHeight) {
             Vector2 relativeDimensions = new();
             float OyaAspectRatio = OyaWidth / OyaHeight;
-                        
-            if (OyaAspectRatio > AspectRatio) // koHeight is constraint
-            {
+
+            // child height is constraint, else child width is constraint
+            if (OyaAspectRatio > AspectRatio) {
                 relativeDimensions.Y = OyaHeight * Scale;
                 relativeDimensions.X = relativeDimensions.Y * AspectRatio;
-            }
-            else // koWidth is constraint
-            {
+            } else {
                 relativeDimensions.X = OyaWidth * Scale;
                 relativeDimensions.Y = relativeDimensions.X / AspectRatio;
             }
@@ -228,12 +176,10 @@ namespace Isola.ui
         /// <param name="OyaWidth"></param>
         /// <param name="OyaHeight"></param>
         /// <returns></returns>
-        public RPC GetAnchoredDimensions(float OyaWidth, float OyaHeight)
-        {
+        public RPC GetAnchoredDimensions(float OyaWidth, float OyaHeight) {
             Vector2 relativeDimensions = GetRelativeDimensions(OyaWidth, OyaHeight);
             RPC anchoredDimensions = new();
-            switch (this.Anchor)
-            {
+            switch (this.Anchor) {
                 case eAnchor.Middle:
                     anchoredDimensions.MaxX = (OyaWidth + relativeDimensions.X) / 2f;
                     anchoredDimensions.MaxY = (OyaHeight + relativeDimensions.Y) / 2f;

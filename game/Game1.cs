@@ -20,9 +20,12 @@ namespace Isola
 {
     public class Game1 : GameWindow
     {
-        public Game1(int width, int height, string title)
-            : base(GameWindowSettings.Default, new NativeWindowSettings() { ClientSize = (width, height), Title = title, NumberOfSamples = 24 })
+        private string _version;
+
+        public Game1(int width, int height, string version)
+            : base(GameWindowSettings.Default, new NativeWindowSettings() { ClientSize = (width, height), Title = version, NumberOfSamples = 24 })
         {
+            _version = version;
         }
         
         // Shaders & Camera
@@ -58,98 +61,55 @@ namespace Isola
             GL.ClearColor(Color4.CornflowerBlue);
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Blend);
-            //GL.Arb.BlendFuncSeparate(0, BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha, BlendingFactor.SrcAlpha, BlendingFactor.DstAlpha);
-            //GL.BlendFuncSeparate(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha, BlendingFactorSrc.SrcAlpha, BlendingFactorDest.DstAlpha);
-            //GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-            
-            GL.BlendFuncSeparate(
-                BlendingFactorSrc.SrcAlpha,
-                BlendingFactorDest.OneMinusSrcAlpha,
-                BlendingFactorSrc.One,
-                BlendingFactorDest.OneMinusSrcAlpha);
+            GL.BlendFuncSeparate(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha, BlendingFactorSrc.One, BlendingFactorDest.OneMinusSrcAlpha);
 
-            var error = GL.GetError();
-            if (error != OpenTK.Graphics.OpenGL4.ErrorCode.NoError)
-                Console.WriteLine($"GL Error after BlendFuncSeparate: {error}");
-
-
-            // Asset Loading
             AssetLibrary.Initialise();
-            Console.WriteLine($"font texture id: {AssetLibrary.BatchRendererList["Font Atlas"].Texture.TextureSlot}"); //debug
 
-            // World (initialised before player as player will reference it)
             _config = new GameConfig(true, 10);
-            _world = new WorldManager(1, _config);
-            
-            // Player (with reference to _world)
+            _world = new WorldManager(1, _config); // World (initialised before player as player will reference it)
             _player = new PlayerEntity(new Vector2(0, 0), new Vector2(1, 2), _world);
-
-            // Entities
             _world.AddEntityToWorld(_player);
 
             // UI systems
-            MasterUI = new(ClientSize.X, ClientSize.Y, eAnchor.Middle, 1.0f);
+            MasterUI = new MasterUI(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, eAnchor.Middle, 1.0f);
                 MasterUI.Children.Add("Hotbar", new HotbarUI(188f, 26f, eAnchor.Bottom, 0.5f, true, true, false, 1, 10, 16f, 16f, 5f, 2f, _player.Inventory, _player, "Inventory Atlas"));
                 MasterUI.Children.Add("Inventory", new PlayerInvUI(196f, 110f, eAnchor.Middle, 0.5f, true, false, false, _player.Inventory, _player, "Inventory Atlas"));
-                MasterUI.Children.Add("Amount", new TextUI(120f, 120f, eAnchor.Middle, 1, true, true, false, "世界へようこそ！", 60, false, "Font Atlas"));
-
-            // Textures
-            //AssetLibrary.ShaderList["World Shader"].Use(); //todo: do I need this?
+                MasterUI.Children.Add("Build Version", new TextUI(VIRTUAL_WIDTH, 12f, eAnchor.BottomLeft, 1f, true, true, false, _version, 12, true, "Font Atlas"));
 
             // Camera
             _camera = new GameCamera(new Vector3(0, 0, 0), ClientSize.X / (float)ClientSize.Y);
             _fbo = new FrameBuffer(VIRTUAL_WIDTH, VIRTUAL_HEIGHT); // determines the native resolution of the game
-
             _screenQuad = new ScreenQuad();            
-
+            
             //GameCursor
             _cursor = new GameCursor();
         }
 
-        protected override void OnUpdateFrame(FrameEventArgs args)
-        {
-            if (!IsFocused) // check to see if the window is focused
-            {
-                return;
-            }
+        protected override void OnUpdateFrame(FrameEventArgs args) {
+            if (!IsFocused) return;
 
             KeyboardState keyboardInput = KeyboardState;
 
             _world.Update(_player); // World has to be updated at least once before player is first updated
-
             _player.Update(args, keyboardInput);
-
             MasterUI.Update();
 
-            // keyboard
-            if (keyboardInput.IsKeyDown(Keys.Escape))
-            {
-                //Close();
-            }
-
-            if (keyboardInput.IsKeyReleased(Keys.E))
-            {
+            if (keyboardInput.IsKeyReleased(Keys.E)) {
                 toggleInventory = !toggleInventory; // todo: find where this should belong
-                if (toggleInventory)
-                {
+                if (toggleInventory) {
                     MasterUI.Children["Inventory"].ToggleDraw = true;
-                    ((HotbarUI)MasterUI.Children["Hotbar"]).ToggleScrolling = false;
-                }
-                else
-                {
+                    ((HotbarUI)MasterUI.Children["Hotbar"]).AllowScrolling = false;
+                } else {
                     MasterUI.Children["Inventory"].ToggleDraw = false;
-                    ((HotbarUI)MasterUI.Children["Hotbar"]).ToggleScrolling = true;
+                    ((HotbarUI)MasterUI.Children["Hotbar"]).AllowScrolling = true;
                 }
             }
 
-            // Test - changing anchor
-            if (keyboardInput.IsKeyPressed(Keys.R))
-            {
+            if (keyboardInput.IsKeyPressed(Keys.R)) {
                 // temporary code to ensure Anchors are working. Will leave for now as debug
                 currentAnchor++;
                 if (currentAnchor > 8) { currentAnchor = 0; }
-                switch (currentAnchor)
-                {
+                switch (currentAnchor) {
                     case 0:
                         MasterUI.Children["Inventory"].Anchor = eAnchor.Middle;
                         break;
@@ -181,50 +141,29 @@ namespace Isola
                 MasterUI.SetNDCs(ClientSize.X, ClientSize.Y, new NDC(-1f, -1f, 1f, 1f));
             }
             // TEST - add hoe to player inventory
-            if (keyboardInput.IsKeyPressed(Keys.U))
-            {
-                _player.Inventory.AddToSlotIndex(new ItemStack("Stone Hoe", 1), 0);
-            }
+            if (keyboardInput.IsKeyPressed(Keys.U)) _player.Inventory.AddToSlotIndex(new ItemStack("Stone Hoe", 1), 0);
 
             // TEST - add persimmon to player inventory
-            if (keyboardInput.IsKeyPressed(Keys.P))
-            {
-                _player.Inventory.AddToSlotIndex(new ItemStack("Persimmon", 1), 0);
-            }
+            if (keyboardInput.IsKeyPressed(Keys.P)) _player.Inventory.AddToSlotIndex(new ItemStack("Persimmon", 1), 0);
 
             // Test - add rice seeds to player inventory
-            if (keyboardInput.IsKeyPressed(Keys.I))
-            {
-                _player.Inventory.AddToSlotIndex(new ItemStack("Wheat Seeds", 1), 1);
-            }
+            if (keyboardInput.IsKeyPressed(Keys.I)) _player.Inventory.AddToSlotIndex(new ItemStack("Wheat Seeds", 1), 1);
 
             // Test - add chest to player inventory
-            if (keyboardInput.IsKeyPressed(Keys.RightBracket))
-            {
-                _player.Inventory.AddToSlotIndex(new ItemStack("Wood Chest", 1), 2);
-            }
+            if (keyboardInput.IsKeyPressed(Keys.RightBracket)) _player.Inventory.AddToSlotIndex(new ItemStack("Wood Chest", 1), 2);
 
             // TEST - count items in inventory
-            if (keyboardInput.IsKeyPressed(Keys.O))
-            {
-                foreach (var item in _player.Inventory.ItemStackList)
-                {
-                    if (!item.Equals(default(ItemStack)))
-                    {
-                        Console.WriteLine($"{item.ItemName}: {item.Amount}");
-                    }
+            if (keyboardInput.IsKeyPressed(Keys.O)) {
+                foreach (var item in _player.Inventory.ItemStackList) {
+                    if (!item.Equals(default(ItemStack))) Console.WriteLine($"{item.ItemName}: {item.Amount}");
                 }
             }
 
             // TEST - spawn entity
-            if (keyboardInput.IsKeyPressed(Keys.L))
-            {
-                _world.AddEntityToWorld(new ItemEntity(_player.Position, "Persimmon", 1));
-            }
+            if (keyboardInput.IsKeyPressed(Keys.L)) _world.AddEntityToWorld(new ItemEntity(_player.Position, "Persimmon", 1));
 
             // TEST - save chunk
-            if (keyboardInput.IsKeyPressed(Keys.K))
-            {
+            if (keyboardInput.IsKeyPressed(Keys.K)) {
                 _world.Save();
                 Console.WriteLine("Debug: current world saved");
             }
@@ -234,24 +173,15 @@ namespace Isola
             _camera.Position += (cameraMoveDirection * 0.05f);
         }
 
-        protected override void OnRenderFrame(FrameEventArgs args)
-        {
+        protected override void OnRenderFrame(FrameEventArgs args) {
             base.OnRenderFrame(args);
-
             // --- Render to Frame Buffer Object ---
-            _fbo.Use(); // render world to a frame buffer for fixed native res
-
-            var err = GL.GetError();
-            if (err != OpenTK.Graphics.OpenGL4.ErrorCode.NoError)
-                Console.WriteLine($"GL Error after _fbo.Use(): {err}");
-
+            _fbo.Use();
             GL.ClearColor(Color4.CornflowerBlue);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            //GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Blend);
 
             // ---------- WORLD & Entities ----------
-
             AssetLibrary.ShaderList["World Shader"].Use();
             AssetLibrary.ShaderList["World Shader"].SetMatrix4("model", Matrix4.Identity);
             AssetLibrary.ShaderList["World Shader"].SetMatrix4("view", _camera.GetViewMatrix());
@@ -259,9 +189,8 @@ namespace Isola
 
             _world.Draw();
 
-            err = GL.GetError();
-            if (err != OpenTK.Graphics.OpenGL4.ErrorCode.NoError)
-                Console.WriteLine($"GL Error after _world.Draw(): {err}");
+            AssetLibrary.ShaderList["UI Shader"].Use();
+            MasterUI.Draw();
 
             // --- Render FBO to screen ---
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
@@ -271,70 +200,34 @@ namespace Isola
             AssetLibrary.ShaderList["Screen Quad Shader"].Use();
             AssetLibrary.ShaderList["Screen Quad Shader"].SetInt("u_Texture", 0);
             _fbo.BindTexture(TextureUnit.Texture0);
-
-            // debug
-            //GL.ActiveTexture(TextureUnit.Texture0);
-            //GL.GetInteger(GetPName.TextureBinding2D, out int boundTex);
-            //Console.WriteLine($"Texture bound to unit 0: {boundTex}");
-
-            // end debug
-
             _screenQuad.Draw();
-
-            err = GL.GetError();
-            if (err != OpenTK.Graphics.OpenGL4.ErrorCode.NoError)
-                Console.WriteLine($"GL Error after screenQuad.Draw(): {err}");
-
-            // --- Render UI on top ---
-            AssetLibrary.ShaderList["UI Shader"].Use();
-            MasterUI.Draw();
-
-            err = GL.GetError();
-            if (err != OpenTK.Graphics.OpenGL4.ErrorCode.NoError)
-                Console.WriteLine($"GL Error after MasterUI.Draw(): {err}");
-
             SwapBuffers();
-
-            err = GL.GetError();
-            if (err != OpenTK.Graphics.OpenGL4.ErrorCode.NoError)
-            {
-                Console.WriteLine("GL Error: " + err);
-            }
         }
 
-        protected override void OnResize(ResizeEventArgs e)
-        {
+        protected override void OnResize(ResizeEventArgs e) {
             base.OnResize(e);
             GL.Viewport(0, 0, e.Width, e.Height);
 
-            if (_camera != null)
-            {
+            if (_camera != null) {
                 _camera.AspectRatio = (float)e.Width / e.Height;
                 _camera.UpdateCameraDimensions();
-                MasterUI.OnResize(e.Width, e.Height, new NDC(-1f, -1f, 1f, 1f));
+                MasterUI.OnResize(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, new NDC(-1f, -1f, 1f, 1f));
             }
         }
 
         // ===== INPUT =====
-
-        protected override void OnKeyDown(KeyboardKeyEventArgs e)
-        {
+        protected override void OnKeyDown(KeyboardKeyEventArgs e) {
             base.OnKeyDown(e);
-
             MasterUI.OnKeyDown(e);
         }
 
-        protected override void OnMouseMove(MouseMoveEventArgs e)
-        {
+        protected override void OnMouseMove(MouseMoveEventArgs e) {
             base.OnMouseMove(e);
-
             _cursor.UpdateWorldAndScreenPosition(MousePosition, _camera.Position, ClientSize, _camera.Width, _camera.Height);
-
             MasterUI.OnMouseMove(_cursor.ScreenPosition);
         }
 
-        protected override void OnMouseDown(MouseButtonEventArgs e)
-        {
+        protected override void OnMouseDown(MouseButtonEventArgs e) {
             base.OnMouseDown(e);
 
             _cursor.UpdateWorldAndScreenPosition(MousePosition, _camera.Position, ClientSize, _camera.Width, _camera.Height);
@@ -344,48 +237,22 @@ namespace Isola
             //Console.WriteLine($"The cursor is {distanceFromPlayer} units from the player.");
 
             // if inventory open
-            if (toggleInventory)
-            {
-                // left click
-                if (e.Button == MouseButton.Left)
-                {
-                    MasterUI.OnLeftClick(_cursor.ScreenPosition, _world);
-                }
-            }
-
-            // if inventory closed
-            else
-            {
-                // left click
-                if (e.Button == MouseButton.Left)
-                {
-                    //_world.SetTile(_cursor.Rounded(_cursor.WorldPosition.X), _cursor.Rounded(_cursor.WorldPosition.Y), "Grass");
-                    MasterUI.Children["Hotbar"].OnLeftClick(_cursor.WorldPosition, _world);
-                }
+            if (toggleInventory) {
+                if (e.Button == MouseButton.Left) MasterUI.OnLeftClick(_cursor.ScreenPosition, _world);
+            } else {
+                if (e.Button == MouseButton.Left) MasterUI.Children["Hotbar"].OnLeftClick(_cursor.WorldPosition, _world);
                 
-                // right click
-                if (e.Button == MouseButton.Right)
-                {
-                    MasterUI.Children["Hotbar"].OnRightClick(_cursor.WorldPosition, _world);
-                }
+                if (e.Button == MouseButton.Right) MasterUI.Children["Hotbar"].OnRightClick(_cursor.WorldPosition, _world);
             }
         }
 
-        protected override void OnMouseWheel(MouseWheelEventArgs e)
-        {
+        protected override void OnMouseWheel(MouseWheelEventArgs e) {
             base.OnMouseWheel(e);
-            
             MasterUI.OnMouseWheel(e);
         }
 
-        protected override void OnUnload()
-        {
+        protected override void OnUnload() {
             base.OnUnload();
-
-            // Aug 2025: removed because the shaders are now in AssetLibrary
-            //GL.DeleteProgram(WorldShader.ProgramId);
-            //GL.DeleteProgram(UIShader.ProgramId);
-            //GL.DeleteProgram(ScreenQuadShader.ProgramId);
         }
     }
 }
