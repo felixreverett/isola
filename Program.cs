@@ -4,7 +4,7 @@
     {
         static void Main(string[] args)
         {
-            Game1 game = new Game1(1920, 1080, "Isola alpha v0.1.2-1");
+            Game1 game = new Game1(1920, 1080, "Isola alpha v0.1.3");
             game.Run();
         }
     }
