@@ -1,5 +1,4 @@
-﻿using Isola.Core.Rendering;
-using Isola.Drawing;
+﻿using Isola.Drawing;
 using Isola.engine.graphics;
 using Isola.engine.graphics.Buffers;
 using Isola.engine.ui;
@@ -16,10 +15,8 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
-namespace Isola
-{
-    public class Game1 : GameWindow
-    {
+namespace Isola {
+    public class Game1 : GameWindow {
         private string _version;
 
         public Game1(int width, int height, string version)
@@ -72,9 +69,9 @@ namespace Isola
 
             // UI systems
             MasterUI = new MasterUI(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, eAnchor.Middle, 1.0f);
-                MasterUI.Children.Add("Hotbar", new HotbarUI(188f, 26f, eAnchor.Bottom, 0.5f, true, true, false, 1, 10, 16f, 16f, 5f, 2f, _player.Inventory, _player, "Inventory Atlas"));
-                MasterUI.Children.Add("Inventory", new PlayerInvUI(196f, 110f, eAnchor.Middle, 0.5f, true, false, false, _player.Inventory, _player, "Inventory Atlas"));
-                MasterUI.Children.Add("Build Version", new TextUI(VIRTUAL_WIDTH, 12f, eAnchor.BottomLeft, 1f, true, true, false, _version, 12, true, "Font Atlas"));
+                MasterUI.Children.Add("Hotbar", new HotbarUI(188f, 26f, eAnchor.Bottom, 1.0f, true, true, false, 1, 10, 16f, 16f, 5f, 2f, _player.Inventory, _player, "Inventory Atlas"));
+                MasterUI.Children.Add("Inventory", new PlayerInvUI(196f, 110f, eAnchor.Middle, 1.0f, true, false, false, _player.Inventory, _player, "Inventory Atlas"));
+                MasterUI.Children.Add("Build Version", new TextUI(VIRTUAL_WIDTH, 12f, eAnchor.BottomLeft, 1f, true, true, false, _version, 12, "Font Atlas"));
 
             // Camera
             _camera = new GameCamera(new Vector3(0, 0, 0), ClientSize.X / (float)ClientSize.Y);
@@ -138,7 +135,7 @@ namespace Isola
                         MasterUI.Children["Inventory"].Anchor = eAnchor.BottomLeft;
                         break;
                 }
-                MasterUI.SetNDCs(ClientSize.X, ClientSize.Y, new NDC(-1f, -1f, 1f, 1f));
+                MasterUI.OnResize(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
             }
             // TEST - add hoe to player inventory
             if (keyboardInput.IsKeyPressed(Keys.U)) _player.Inventory.AddToSlotIndex(new ItemStack("Stone Hoe", 1), 0);
@@ -211,7 +208,7 @@ namespace Isola
             if (_camera != null) {
                 _camera.AspectRatio = (float)e.Width / e.Height;
                 _camera.UpdateCameraDimensions();
-                MasterUI.OnResize(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, new NDC(-1f, -1f, 1f, 1f));
+                MasterUI.OnResize(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
             }
         }
 
@@ -221,10 +218,18 @@ namespace Isola
             MasterUI.OnKeyDown(e);
         }
 
+        private Vector2 GetVirtualMousePosition() {
+            float scaleX = (float)VIRTUAL_WIDTH / ClientSize.X;
+            float scaleY = (float)VIRTUAL_HEIGHT / ClientSize.Y;
+            float x = MousePosition.X * scaleX;
+            float y = VIRTUAL_HEIGHT - (MousePosition.Y * scaleY);
+            return new Vector2(x, y);
+        }
+
         protected override void OnMouseMove(MouseMoveEventArgs e) {
             base.OnMouseMove(e);
             _cursor.UpdateWorldAndScreenPosition(MousePosition, _camera.Position, ClientSize, _camera.Width, _camera.Height);
-            MasterUI.OnMouseMove(_cursor.ScreenPosition);
+            MasterUI.OnMouseMove(GetVirtualMousePosition());
         }
 
         protected override void OnMouseDown(MouseButtonEventArgs e) {
@@ -238,11 +243,11 @@ namespace Isola
 
             // if inventory open
             if (toggleInventory) {
-                if (e.Button == MouseButton.Left) MasterUI.OnLeftClick(_cursor.ScreenPosition, _world);
+                if (e.Button == MouseButton.Left) MasterUI.OnLeftClick(GetVirtualMousePosition(), _world);
             } else {
-                if (e.Button == MouseButton.Left) MasterUI.Children["Hotbar"].OnLeftClick(_cursor.WorldPosition, _world);
+                if (e.Button == MouseButton.Left) MasterUI.Children["Hotbar"].OnLeftClick(GetVirtualMousePosition(), _world);
                 
-                if (e.Button == MouseButton.Right) MasterUI.Children["Hotbar"].OnRightClick(_cursor.WorldPosition, _world);
+                if (e.Button == MouseButton.Right) MasterUI.Children["Hotbar"].OnRightClick(GetVirtualMousePosition(), _world);
             }
         }
 
