@@ -2,80 +2,63 @@
 using Isola.Utilities;
 using OpenTK.Windowing.Common;
 
-namespace Isola.ui
-{
-    public class ActiveHotbarSlotUI : UI
-    {
-        // fields
+namespace Isola.ui {
+    public class ActiveHotbarSlotUI : UI {
         private int activeIndex;
-        
-        // properties
-        public int ActiveIndex
-        {
-            get
-            {
-                return activeIndex;
-            }
-            set
-            {
-                if (value > MaxIndex)
-                {
-                    value = MinIndex;
-                }
-                else if (value < MinIndex)
-                {
-                    value = MaxIndex;
-                }
+        public int ActiveIndex {
+            get => activeIndex;
+            set {
+                if (value > MaxIndex) value = MinIndex;
+                else if (value < MinIndex) value = MaxIndex;
                 activeIndex = value;
-                SetRPCs();
+                UpdatePosition();
              }
         }
         protected int MinIndex { get; set; }
         protected int MaxIndex { get; set; }
-        private RPC BasePosition { get; set; }
+        private float BaseX { get; set; }
+        private float BaseY { get; set; }
         protected PrecisionTextureAtlasManager AtlasManager;
         
-
-        public ActiveHotbarSlotUI
-        (
+        public ActiveHotbarSlotUI (
             float width, float height, eAnchor anchor, float scale, bool isDrawable, bool toggleDraw, bool isClickable,
-            float x, float y, float textureWidth, float textureHeight,
-            RPC basePosition, int minIndex, int maxIndex, int activeIndex, string atlasName = "Inventory Atlas"
-        )
-            : base(width, height, anchor, scale, isDrawable, toggleDraw, isClickable)
-        {
-            BasePosition = basePosition;
+            float textureX, float textureY, float textureWidth, float textureHeight,
+            float baseX, float baseY, int minIndex, int maxIndex, int activeIndex, string atlasName = "Inventory Atlas"
+        ) : base(width, height, anchor, scale, isDrawable, toggleDraw, isClickable) {
+            BaseX = baseX;
+            BaseY = baseY;
             MinIndex = minIndex;
             MaxIndex = maxIndex;
             ActiveIndex = activeIndex;
+
             AtlasManager = (PrecisionTextureAtlasManager)AssetLibrary.TextureAtlasManagerList[atlasName];
             BatchRenderer = AssetLibrary.BatchRendererList[atlasName];
-            SetTextureCoords(x, y, textureWidth, textureHeight);
+            SetTextureCoords(textureX, textureY, textureWidth, textureHeight);
         }
 
-        protected void SetRPCs()
-        {
-            Position.MinX = BasePosition.MinX + ActiveIndex * Width;
-            Position.MaxX = Position.MinX + Width;
-            Position.MinY = BasePosition.MinY;
-            Position.MaxY = BasePosition.MaxY;
+        protected void UpdatePosition() {
+            float oldLocalX = LocalRect.X;
+            float newLocalX = BaseX + (ActiveIndex * Width);
+            float deltaX = newLocalX - oldLocalX;
+
+            LocalRect.X = newLocalX;
+            LocalRect.Y = BaseY;
+
+            AbsoluteRect.X += deltaX;
+
+            float vw = 640f;
+
+            NDCs.MinX = (AbsoluteRect.X / vw) * 2f - 1f;
+            NDCs.MaxX = (AbsoluteRect.Right / vw) * 2f - 1f;
         }
 
-        public void SetTextureCoords(float x, float y, float textureWidth, float textureHeight)
-        {
+        public void SetTextureCoords(float x, float y, float textureWidth, float textureHeight) {
             TexCoords = AtlasManager.GetPrecisionAtlasCoords(x, y, textureWidth, textureHeight);
         }
 
-        public override void OnMouseWheel(MouseWheelEventArgs e)
-        {
-            if (e.OffsetY > 0)
-            {
-                ActiveIndex--;
-            }
-            else if (e.OffsetY < 0)
-            {
-                ActiveIndex++;
-            }
+        public override void OnMouseWheel(MouseWheelEventArgs e) {
+            if (e.OffsetY > 0) ActiveIndex--;
+            else if (e.OffsetY < 0) ActiveIndex++;
         }
     }
 }
