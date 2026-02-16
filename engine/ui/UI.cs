@@ -5,36 +5,60 @@ using Isola.World;
 using Isola.engine.graphics;
 
 namespace Isola.ui {
+    /// <summary>
+    /// Represents a rectangle in absolute screen pixels,
+    /// with origin (x, y) at bottom left to match OpenGL.
+    /// </summary>
+    public struct PixelRect {
+        public float X;
+        public float Y;
+        public float Width;
+        public float Height;
+        public float Left => X;
+        public float Right => X + Width;
+        public float Bottom => Y;
+        public float Top => Y + Height;
+
+        public PixelRect(float x, float y, float w, float h) {
+            X = x;
+            Y = y;
+            Width = w;
+            Height = h;
+        }
+
+        public override string ToString() => $"PixelRect(X: {X}, Y: {Y}, Width: {Width}, Height: {Height})";
+    }
+
     public abstract class UI : IDrawable {
-        // Position
         public eAnchor Anchor { get; set; }
-        protected float Width { get; set; }
-        protected float Height { get; set; }
-        protected float AspectRatio { get; set; }
+        public float Width { get; set; }
+        public float Height { get; set; }
         protected float Scale { get; set; }
-        protected RPC Position { get; set; }
+        /// <summary>
+        /// Stores the local offset and size in pixels.
+        /// If eAnchor is None, X/Y are relative to parent's Bottom-Left.
+        /// </summary>
+        public PixelRect LocalRect;
+        /// <summary>
+        /// Absolute Rectangle on the virtual screen.
+        /// </summary>
+        public PixelRect AbsoluteRect;
         public NDC NDCs { get; set; }
         protected TexCoords ?TexCoords { get; set; }
-
-        // Children
         public Dictionary<string, UI> Children { get; set; }
-
-        // Rendering
         public virtual BatchRenderer ?BatchRenderer { get; set; }
-
         protected bool IsDrawable { get; set; }
         public bool ToggleDraw { get; set; }
-
         protected bool IsClickable { get; set; }
 
         public UI(float width, float height, eAnchor anchor, float scale, bool isDrawable = false, bool toggleDraw = true, bool isClickable = false) {
             Width = width;
             Height = height;
-            AspectRatio = width / height;
             Anchor = anchor;
-            Scale = Math.Clamp(scale, 0.0f, 1.0f);
-            Position = new();
-            NDCs = new();
+            Scale = Math.Clamp(scale, 0.0f, 10.0f);
+            LocalRect = new PixelRect(0, 0, width * Scale, height * Scale);
+            AbsoluteRect = new PixelRect(0, 0, width * Scale, height * Scale);
+            NDCs = new NDC();
             Children = new Dictionary<string, UI>();
             IsDrawable = isDrawable;
             ToggleDraw = toggleDraw;
@@ -42,10 +66,8 @@ namespace Isola.ui {
         }
 
         public virtual void Draw() {
-            if (BatchRenderer == null) {
-                Console.WriteLine($"[W] Attempted to Draw() UI element while batchrenderer null. This could be an indication that the selected BatchRenderer could not be found in AssetLibrary."); //debug
-                return;
-            }
+            if (BatchRenderer == null) return;
+
             if (IsDrawable && ToggleDraw) {
                 Box2 rect = new Box2(NDCs.MinX, NDCs.MinY, NDCs.MaxX, NDCs.MaxY);
                 BatchRenderer.StartBatch();
@@ -59,50 +81,39 @@ namespace Isola.ui {
         }
 
         public virtual void Update() {
-            if (Children.Count != 0) {
-                foreach (UI ui in Children.Values) ui.Update();
-            }
+            foreach (UI ui in Children.Values) ui.Update();
         }
 
-        public void OnResize(float oyaWidth, float oyaHeight, NDC oyaNDCs) {
-            Width = oyaWidth;
-            Height = oyaHeight;
-            AspectRatio = oyaWidth / oyaHeight;
-            SetNDCs(oyaWidth, oyaHeight, oyaNDCs);
+        /// <summary>
+        /// Called when window resizes or on refresh.
+        /// Passes virtual dimensions not window dimensions.
+        /// </summary>
+        /// <param name="oyaWidth"></param>
+        /// <param name="oyaHeight"></param>
+        /// <param name="oyaNDCs"></param>
+        public void OnResize(float virtualW, float virtualH) {
+            PixelRect screenRect = new PixelRect(0, 0, virtualW, virtualH);
+            SetNDCs(screenRect, virtualW, virtualH);
         }
 
         public virtual void OnMouseMove(Vector2 mouseNDCs) {
-            if (Children.Count > 0) {
-                foreach (UI ui in Children.Values) {
-                    ui.OnMouseMove(mouseNDCs);
-                }
-            }
+            foreach (UI ui in Children.Values) ui.OnMouseMove(mouseNDCs);
         }
 
-        public virtual void OnLeftClick(Vector2 mousePosition, WorldManager world) {
-            if (!IsMouseInBounds(mousePosition)) {
-                // out of bounds functionality
-            } else {
-                if (Children.Count > 0) {
-                    foreach (UI ui in Children.Values) ui.OnLeftClick(mousePosition, world);
-                }
-
+        public virtual void OnLeftClick(Vector2 mousePixels, WorldManager world) {
+            if (IsMouseInBounds(mousePixels)) {
+                foreach (UI ui in Children.Values) ui.OnLeftClick(mousePixels, world);
+                
                 if (this.IsClickable) {
                     // functionality here
                 }
             }
         }
 
-        public virtual void OnRightClick(Vector2 mousePosition, WorldManager world) {
-            if (!IsMouseInBounds(mousePosition)) {
-                // out of bounds functionality
-            } else {
-                if (Children.Count > 0) {
-                    foreach (UI ui in Children.Values) {
-                        ui.OnRightClick(mousePosition, world);
-                    }
-                }
-
+        public virtual void OnRightClick(Vector2 mousePixels, WorldManager world) {
+            if (IsMouseInBounds(mousePixels)) {
+                foreach (UI ui in Children.Values) ui.OnRightClick(mousePixels, world);
+                
                 if (this.IsClickable) {
                     // functionality here
                 }
@@ -110,135 +121,104 @@ namespace Isola.ui {
         }
 
         public virtual void OnMouseWheel(MouseWheelEventArgs e) {
-            if (Children.Count > 0) {
-                foreach (UI ui in Children.Values) {
-                    ui.OnMouseWheel(e);
-                }
-            }
+            foreach (UI ui in Children.Values) ui.OnMouseWheel(e);
         }
 
         public virtual void OnKeyDown(KeyboardKeyEventArgs e) {
-            if (Children.Count > 0) {
-                foreach (UI ui in Children.Values) {
-                    ui.OnKeyDown(e);
-                }
-            }
+            foreach (UI ui in Children.Values) ui.OnKeyDown(e);
         }
 
-        public bool IsMouseInBounds(Vector2 mouseNDCs) {
-            if (mouseNDCs.X >= NDCs.MinX && mouseNDCs.Y >= NDCs.MinY && mouseNDCs.X <= NDCs.MaxX && mouseNDCs.Y <= NDCs.MaxY) { return true; }
-            else { return false; }
+        public bool IsMouseInBounds(Vector2 mousePixels) {
+            return  mousePixels.X >= AbsoluteRect.Left &&
+                    mousePixels.X <= AbsoluteRect.Right &&
+                    mousePixels.Y >= AbsoluteRect.Bottom &&
+                    mousePixels.Y <= AbsoluteRect.Top;
         }
 
-        public virtual void SetNDCs(float oyaWidth, float oyaHeight, NDC oyaNDCs) {
+        /// <summary>
+        /// Calculates NDCs based on absolute pixel coordinates, which are either anchored or relative to the parent container.
+        /// </summary>
+        /// <param name="parentRect">The absolute pixel rectangle of the parent element.</param>
+        /// <param name="virtualScreenW">The total virtual width of the game screen.</param>
+        /// <param name="virtualScreenH">The total virtual height of the game screen.</param>
+        public virtual void SetNDCs(PixelRect parentRect, float virtualScreenW, float virtualScreenH) {
             if (Anchor != eAnchor.None) {
-                Position = GetAnchoredDimensions(oyaWidth, oyaHeight);
+                LocalRect = GetAnchoredRect(parentRect.Width, parentRect.Height);
             }
 
-            // map anchored coordinates
-            NDCs.MaxX = ((Position.MaxX / oyaWidth) * (oyaNDCs.MaxX - oyaNDCs.MinX) + oyaNDCs.MinX);
-            NDCs.MinX = ((Position.MinX / oyaWidth) * (oyaNDCs.MaxX - oyaNDCs.MinX) + oyaNDCs.MinX);
-            NDCs.MaxY = ((Position.MaxY / oyaHeight) * (oyaNDCs.MaxY - oyaNDCs.MinY) + oyaNDCs.MinY);
-            NDCs.MinY = ((Position.MinY / oyaHeight) * (oyaNDCs.MaxY - oyaNDCs.MinY) + oyaNDCs.MinY);
+            AbsoluteRect.X = parentRect.X + LocalRect.X;
+            AbsoluteRect.Y = parentRect.Y + LocalRect.Y;
+            AbsoluteRect.Width = LocalRect.Width;
+            AbsoluteRect.Height = LocalRect.Height;
+
+            // Mapping virtual pixels to NDCs
+            float ndcMinX = (AbsoluteRect.Left      / virtualScreenW) * 2f - 1f;
+            float ndcMaxX = (AbsoluteRect.Right     / virtualScreenW) * 2f - 1f;
+            float ndcMinY = (AbsoluteRect.Bottom    / virtualScreenH) * 2f - 1f;
+            float ndcMaxY = (AbsoluteRect.Top       / virtualScreenH) * 2f - 1f;
+
+            NDCs.MinX = ndcMinX;
+            NDCs.MaxX = ndcMaxX;
+            NDCs.MinY = ndcMinY;
+            NDCs.MaxY = ndcMaxY;
 
             if (Children.Count > 0) {
                 foreach (UI ui in Children.Values) {
-                    ui.SetNDCs(Width, Height, NDCs);
+                    ui.SetNDCs(AbsoluteRect, virtualScreenW, virtualScreenH);
                 }
             }
         }
 
         /// <summary>
-        /// Returns coordinates (0,0) to (1,1) relative to the parent container.
+        /// Returns the local position relative to the parent's Bottom-Left corner.
         /// </summary>
-        /// <param name="OyaWidth"></param>
-        /// <param name="OyaHeight"></param>
-        /// <returns></returns>
-        public Vector2 GetRelativeDimensions(float OyaWidth, float OyaHeight) {
-            Vector2 relativeDimensions = new();
-            float OyaAspectRatio = OyaWidth / OyaHeight;
+        protected PixelRect GetAnchoredRect(float parentW, float parentH) {
+            float effectiveW = Width * Scale;
+            float effectiveH = Height * Scale;
+            float x = 0;
+            float y = 0;
 
-            // child height is constraint, else child width is constraint
-            if (OyaAspectRatio > AspectRatio) {
-                relativeDimensions.Y = OyaHeight * Scale;
-                relativeDimensions.X = relativeDimensions.Y * AspectRatio;
-            } else {
-                relativeDimensions.X = OyaWidth * Scale;
-                relativeDimensions.Y = relativeDimensions.X / AspectRatio;
-            }
-            
-            return relativeDimensions;
-        }
-
-        /// <summary>
-        /// Returns coordinates (0, 0) to (1,1) anchored within the parent container.
-        /// </summary>
-        /// <param name="OyaWidth"></param>
-        /// <param name="OyaHeight"></param>
-        /// <returns></returns>
-        public RPC GetAnchoredDimensions(float OyaWidth, float OyaHeight) {
-            Vector2 relativeDimensions = GetRelativeDimensions(OyaWidth, OyaHeight);
-            RPC anchoredDimensions = new();
-            switch (this.Anchor) {
-                case eAnchor.Middle:
-                    anchoredDimensions.MaxX = (OyaWidth + relativeDimensions.X) / 2f;
-                    anchoredDimensions.MaxY = (OyaHeight + relativeDimensions.Y) / 2f;
-                    anchoredDimensions.MinX = anchoredDimensions.MaxX - relativeDimensions.X;
-                    anchoredDimensions.MinY = anchoredDimensions.MaxY - relativeDimensions.Y;
-                    break;
-                case eAnchor.Left:
-                    anchoredDimensions.MaxX = relativeDimensions.X;
-                    anchoredDimensions.MaxY = (OyaHeight + relativeDimensions.Y) / 2f;
-                    anchoredDimensions.MinX = anchoredDimensions.MaxX - relativeDimensions.X;
-                    anchoredDimensions.MinY = anchoredDimensions.MaxY - relativeDimensions.Y;
-                    break;
-                case eAnchor.Top:
-                    anchoredDimensions.MaxX = (OyaWidth + relativeDimensions.X) / 2f;
-                    anchoredDimensions.MaxY = OyaHeight;
-                    anchoredDimensions.MinX = anchoredDimensions.MaxX - relativeDimensions.X;
-                    anchoredDimensions.MinY = anchoredDimensions.MaxY - relativeDimensions.Y;
-                    break;
-                case eAnchor.Right:
-                    anchoredDimensions.MaxX = OyaWidth;
-                    anchoredDimensions.MaxY = (OyaHeight + relativeDimensions.Y) / 2f;
-                    anchoredDimensions.MinX = anchoredDimensions.MaxX - relativeDimensions.X;
-                    anchoredDimensions.MinY = anchoredDimensions.MaxY - relativeDimensions.Y;
+            switch (Anchor) {
+                case eAnchor.BottomLeft:
+                case eAnchor.None:
+                    x = 0;
+                    y = 0;
                     break;
                 case eAnchor.Bottom:
-                    anchoredDimensions.MaxX = (OyaWidth + relativeDimensions.X) / 2f;
-                    anchoredDimensions.MaxY = relativeDimensions.Y;
-                    anchoredDimensions.MinX = anchoredDimensions.MaxX - relativeDimensions.X;
-                    anchoredDimensions.MinY = anchoredDimensions.MaxY - relativeDimensions.Y;
-                    break;
-                case eAnchor.TopLeft:
-                    anchoredDimensions.MaxX = relativeDimensions.X;
-                    anchoredDimensions.MaxY = OyaHeight;
-                    anchoredDimensions.MinX = anchoredDimensions.MaxX - relativeDimensions.X;
-                    anchoredDimensions.MinY = anchoredDimensions.MaxY - relativeDimensions.Y;
-                    break;
-                case eAnchor.TopRight:
-                    anchoredDimensions.MaxX = OyaWidth;
-                    anchoredDimensions.MaxY = OyaHeight;
-                    anchoredDimensions.MinX = anchoredDimensions.MaxX - relativeDimensions.X;
-                    anchoredDimensions.MinY = anchoredDimensions.MaxY - relativeDimensions.Y;
+                    x = (parentW - effectiveW) / 2f;
+                    y = 0;
                     break;
                 case eAnchor.BottomRight:
-                    anchoredDimensions.MaxX = OyaWidth;
-                    anchoredDimensions.MaxY = relativeDimensions.Y;
-                    anchoredDimensions.MinX = anchoredDimensions.MaxX - relativeDimensions.X;
-                    anchoredDimensions.MinY = anchoredDimensions.MaxY - relativeDimensions.Y;
+                    x = parentW - effectiveW;
+                    y = 0;
                     break;
-                case eAnchor.BottomLeft:
-                    anchoredDimensions.MaxX = relativeDimensions.X;
-                    anchoredDimensions.MaxY = relativeDimensions.Y;
-                    anchoredDimensions.MinX = 0f;
-                    anchoredDimensions.MinY = 0f;
+                case eAnchor.Left:
+                    x = 0;
+                    y = (parentH - effectiveH) / 2f;
                     break;
-                default:
+                case eAnchor.Middle:
+                    x = (parentW - effectiveW) / 2f;
+                    y = (parentH - effectiveH) / 2f;
+                    break;
+                case eAnchor.Right:
+                    x = parentW - effectiveW;
+                    y = (parentH - effectiveH) / 2f;
+                    break;
+                case eAnchor.TopLeft:
+                    x = 0;
+                    y = parentH - effectiveH;
+                    break;
+                case eAnchor.Top:
+                    x = (parentW - effectiveW) / 2f;
+                    y = parentH - effectiveH;
+                    break;
+                case eAnchor.TopRight:
+                    x = parentW - effectiveW;
+                    y = parentH - effectiveH;
                     break;
             }
-                        
-            return anchoredDimensions;
+
+            return new PixelRect(x, y, effectiveW, effectiveH);
         }
     }
 }

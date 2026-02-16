@@ -14,12 +14,13 @@ namespace Isola.ui {
 
         public SlotUI (
             float width, float height, eAnchor anchor, float scale, bool isDrawable, bool toggleDraw, bool isClickable,
-            int itemSlotID, Inventory inventory, RPC position, PlayerEntity ownerPlayer, string atlasName
+            int itemSlotID, Inventory inventory, float x, float y, PlayerEntity ownerPlayer, string atlasName
         ) : base(width, height, anchor, scale, isDrawable, toggleDraw, isClickable) {
             ItemSlotID = itemSlotID;
             Inventory = inventory;
             OwnerPlayer = ownerPlayer;
-            Position = position;
+            LocalRect.X = x;
+            LocalRect.Y = y;
             AtlasManager = (IndexedTextureAtlasManager)AssetLibrary.TextureAtlasManagerList[atlasName];
             BatchRenderer = AssetLibrary.BatchRendererList[atlasName];
         }
@@ -43,14 +44,14 @@ namespace Isola.ui {
             base.Update();
         }
 
-        public override void OnLeftClick(Vector2 mousePosition, WorldManager world) {
+        public override void OnLeftClick(Vector2 mousePixels, WorldManager world) {
             // Swap slots
-            if (IsMouseInBounds(mousePosition)) {
+            if (IsMouseInBounds(mousePixels)) {
                 ItemStack itemStack = OwnerPlayer.Inventory.ItemStackList[ItemSlotID];
 
                 if (itemStack.ItemName == OwnerPlayer.Inventory.MouseSlotItemStack.ItemName) {
                     OwnerPlayer.Inventory.ItemStackList[ItemSlotID].Amount += OwnerPlayer.Inventory.MouseSlotItemStack.Amount;
-                    OwnerPlayer.Inventory.MouseSlotItemStack = default(ItemStack);
+                    OwnerPlayer.Inventory.MouseSlotItemStack = default;
                 } else {
                     OwnerPlayer.Inventory.ItemStackList[ItemSlotID] = OwnerPlayer.Inventory.MouseSlotItemStack;
                     OwnerPlayer.Inventory.MouseSlotItemStack = itemStack;
