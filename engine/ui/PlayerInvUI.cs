@@ -40,7 +40,7 @@ namespace Isola.ui {
             SetTextureCoords(0, 0, 196, 110);
             GenerateUISlots();
 
-            _countTextHelper = new TextUI(16f, 16f, eAnchor.BottomRight, 1.0f, true, true, false, "0", 12, true, "Font Atlas");
+            _countTextHelper = new TextUI(16f, 16f, eAnchor.BottomRight, 1.0f, true, true, false, "0", 12, "Font Atlas");
         }
 
         public override void Draw() {
@@ -65,26 +65,26 @@ namespace Isola.ui {
                                     textPixelWidth += charData.XAdvance * fontScale;
                                 }
                             }
-                            float ndcPixelW = (1f / 640f) * 2f;
-                            float ndcPixelH = (1f / 360f) * 2f;
 
-                            float slotRight = slotUI.NDCs.MaxX;
-                            float slotBottom = slotUI.NDCs.MinY;
+                            float slotRight = slotUI.AbsoluteRect.Right;
+                            float slotBottom = slotUI.AbsoluteRect.Bottom;
 
-                            float padX = 2f * ndcPixelW;
-                            float padY = 2f * ndcPixelH;
+                            float padX = 2f;
+                            float padY = 2f;
+                            float verticalOffset = 9f;
 
-                            float textWidthNDC = textPixelWidth * ndcPixelW;
-                            float startX = slotRight - padX - textWidthNDC;
-
-                            float verticalOffset = 9f * ndcPixelH;
-
+                            float startX = slotRight - padX - textPixelWidth;
                             float startY = slotBottom + padY - verticalOffset;
 
-                            float boxWidthNDC = 16f * ndcPixelW;
-                            float boxHeightNDC = 16f * ndcPixelH;
+                            _countTextHelper.AbsoluteRect = new PixelRect(startX, startY, 16f, 16f);
 
-                            _countTextHelper.NDCs = new NDC(startX, startY, startX + boxWidthNDC, startY + boxHeightNDC);
+                            float vw = 640f;
+                            float vh = 360f;
+
+                            _countTextHelper.NDCs.MinX = (_countTextHelper.AbsoluteRect.X       / vw) * 2f - 1f;
+                            _countTextHelper.NDCs.MaxX = (_countTextHelper.AbsoluteRect.Right   / vw) * 2f - 1f;
+                            _countTextHelper.NDCs.MinY = (_countTextHelper.AbsoluteRect.Y       / vh) * 2f - 1f;
+                            _countTextHelper.NDCs.MaxY = (_countTextHelper.AbsoluteRect.Top     / vh) * 2f - 1f;
 
                             _countTextHelper.Draw();
                         }
@@ -98,12 +98,8 @@ namespace Isola.ui {
             float itemSlotHeight = 16f;
             float itemSlotWidth = 16f;
             float edgePadding = 9f;
-            float hotbarPadding = 6f;
             float itemSlotPadding = 2f;
             
-            float availableWidth = Width - 2 * edgePadding;
-            float availableHeight = Height - 2 * edgePadding - hotbarPadding;
-
             /* Get the coordinates for each UI Slot
                 10-19
                 20-29
@@ -115,20 +111,18 @@ namespace Isola.ui {
             int slotIndex = 0;
             for (int row = 0; row < Inventory.Rows; row++) {
                 for (int col = 0; col < Inventory.Cols; col++) {
-                    RPC childPosition = new();
-
-                    childPosition.MinX = edgePadding + col * (itemSlotWidth + itemSlotPadding);
+                    float x = edgePadding + col * (itemSlotWidth + itemSlotPadding);
+                    float y;
 
                     if (row == 0) {
-                        childPosition.MinY = edgePadding;
+                        y = edgePadding;
                     } else {
-                        childPosition.MinY = Height - edgePadding - (row * itemSlotHeight) - (row - 1) * itemSlotPadding;
+                        y = Height - edgePadding - (row * itemSlotHeight) - (row - 1) * itemSlotPadding;
                     }
 
-                    childPosition.MaxX = childPosition.MinX + itemSlotWidth;
-                    childPosition.MaxY = childPosition.MinY + itemSlotHeight;
-
-                    Children.Add($"{slotIndex}", new SlotUI(itemSlotWidth, itemSlotHeight, eAnchor.None, 1f, true, false, true, slotIndex, Inventory, childPosition, OwnerPlayer, "Item Atlas"));
+                    Children.Add($"{slotIndex}", new SlotUI(
+                        itemSlotWidth, itemSlotHeight, eAnchor.None, 1f, true, false, true,
+                        slotIndex, Inventory, x, y, OwnerPlayer, "Item Atlas"));
 
                     slotIndex++;
                 }
@@ -153,7 +147,7 @@ namespace Isola.ui {
                 }
             }
 
-            if (this.IsClickable) {
+            if (IsClickable) {
                 // functionality here
             }
         }
