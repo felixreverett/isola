@@ -1,13 +1,13 @@
 ﻿using Isola.Drawing;
 using Isola.Inventories;
-using OpenTK.Windowing.Common;
-using OpenTK.Windowing.GraphicsLibraryFramework;
-using OpenTK.Mathematics;
 using Isola.Utilities;
 using Isola.World;
 using Isola.Entities;
 using Isola.game.GUI;
 using Isola.engine.graphics.text;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.GraphicsLibraryFramework;
+using OpenTK.Mathematics;
 
 namespace Isola.ui {
     public class HotbarUI : UI {
@@ -59,12 +59,14 @@ namespace Isola.ui {
             BatchRenderer = AssetLibrary.BatchRendererList[atlasName];
             SetTextureCoords(0, 118, 188, 26);
             GenerateChildren();
-            _countTextHelper = new TextUI(16f, 16f, eAnchor.BottomRight, 1.0f, true, true, false, "0", 12, true, "Font Atlas");
+            _countTextHelper = new TextUI(16f, 16f, eAnchor.BottomRight, 1.0f, true, true, false, "0", 12, "Font Atlas");
         }
 
         public override void Draw() {
             base.Draw();
+
             int totalSlots = _rows * _cols;
+
             for (int i = 0; i < totalSlots; i++) {
                 ItemStack item = Inventory.ItemStackList[i];
 
@@ -81,26 +83,27 @@ namespace Isola.ui {
                                 textPixelWidth += charData.XAdvance * fontScale;
                             }
                         }
-                        float ndcPixelW = (1f / 640f) * 2f;
-                        float ndcPixelH = (1f / 360f) * 2f;
 
-                        float slotRight = slotUI.NDCs.MaxX;
-                        float slotBottom = slotUI.NDCs.MinY;
+                        float slotRight = slotUI.AbsoluteRect.Right;
+                        float slotBottom = slotUI.AbsoluteRect.Bottom;
 
-                        float padX = 2f * ndcPixelW;
-                        float padY = 2f * ndcPixelH;
+                        float padX = 2f;
+                        float padY = 2f;
 
-                        float textWidthNDC = textPixelWidth * ndcPixelW;
-                        float startX = slotRight - padX - textWidthNDC;
+                        float startX = slotRight - padX - textPixelWidth;
 
-                        float verticalOffset = 9f * ndcPixelH;
-
+                        float verticalOffset = 9f;
                         float startY = slotBottom + padY - verticalOffset;
 
-                        float boxWidthNDC = 16f * ndcPixelW;
-                        float boxHeightNDC = 16f * ndcPixelH;
+                        _countTextHelper.AbsoluteRect = new PixelRect(startX, startY, 16f, 16f);
 
-                        _countTextHelper.NDCs = new NDC( startX, startY, startX + boxWidthNDC, startY + boxHeightNDC);
+                        float vw = 640f;
+                        float vh = 360f;
+
+                        _countTextHelper.NDCs.MinX = (_countTextHelper.AbsoluteRect.X / vw) * 2f - 1f;
+                        _countTextHelper.NDCs.MaxX = (_countTextHelper.AbsoluteRect.Right / vw) * 2f - 1f;
+                        _countTextHelper.NDCs.MinY = (_countTextHelper.AbsoluteRect.Y / vh) * 2f - 1f;
+                        _countTextHelper.NDCs.MaxY = (_countTextHelper.AbsoluteRect.Top / vh) * 2f - 1f;
 
                         _countTextHelper.Draw();
                     }
@@ -113,32 +116,26 @@ namespace Isola.ui {
 
             for (int row = 0; row < _rows; row++) {
                 for (int col = 0; col < _cols; col++) {
-                    RPC childPosition = new();
+                    float x = _edgePadding + col * (_itemSlotWidth + _itemSlotPadding);
 
-                    childPosition.MinX = _edgePadding + col * (_itemSlotWidth + _itemSlotPadding);
+                    float y = 0;
+                    if (row == 0) y = _edgePadding;
+                    else y = _edgePadding + row * (_itemSlotHeight + _itemSlotPadding);
 
-                    if (row == 0) {
-                        childPosition.MinY = _edgePadding;
-                    } else {
-                        childPosition.MinY = Height - _edgePadding - (row * _itemSlotHeight) - (row - 1) * _itemSlotPadding;
-                    }
-
-                    childPosition.MaxX = childPosition.MinX + _itemSlotWidth;
-                    childPosition.MaxY = childPosition.MinY + _itemSlotHeight;
-
-                    Children.Add($"{slotIndex}", new SlotUI(_itemSlotWidth, _itemSlotHeight, eAnchor.None, 1f, true, false, false, slotIndex, Inventory, childPosition, OwnerPlayer, "Item Atlas"));
+                    Children.Add($"{slotIndex}", new SlotUI(_itemSlotWidth, _itemSlotHeight, eAnchor.None, 1f, true, false, false, slotIndex, Inventory, x, y, OwnerPlayer, "Item Atlas"));
 
                     slotIndex++;
                 }
             }
 
-            // Add "activeHotbarSlot" child
-            RPC basePosition = new();
-            basePosition.MinX = _edgePadding - 1f;
-            basePosition.MinY = _edgePadding - 1f;
-            basePosition.MaxX = basePosition.MinX + _itemSlotWidth + 2f;
-            basePosition.MaxY = basePosition.MinY + _itemSlotHeight + 2f;
-            Children.Add("ActiveHotbarSlot", new ActiveHotbarSlotUI(_itemSlotHeight + 2f, _itemSlotWidth + 2f, eAnchor.None, 1f, true, true, false, 0, 152, 18, 18, basePosition, 0, (_cols * _rows - 1), 0));
+            float cursorBaseX = _edgePadding - 1f;
+            float cursorBaseY = _edgePadding - 1f;
+
+            Children.Add("ActiveHotbarSlot", new ActiveHotbarSlotUI(
+                _itemSlotHeight + 2f, _itemSlotWidth + 2f, eAnchor.None, 1f, true, true, false,
+                0, 152, 18, 18,
+                cursorBaseX, cursorBaseY,
+                0, (_cols * _rows - 1), 0));
         }
 
         public void SetTextureCoords(float x, float y, float textureWidth, float textureHeight) {
@@ -146,10 +143,9 @@ namespace Isola.ui {
         }
 
         public override void OnMouseWheel(MouseWheelEventArgs e) {
-            // Only run if ActiveHotbarSlotUI is accepting scrollwheel updates?
             if (AllowScrolling) {
                 Children["ActiveHotbarSlot"].OnMouseWheel(e);
-                Children["ActiveHotbarSlot"].SetNDCs(Width, Height, NDCs);
+                Children["ActiveHotbarSlot"].Update();
             }
         }
 
@@ -165,7 +161,7 @@ namespace Isola.ui {
 
                     if (!itemStack.Equals(default(ItemStack))) {
                         if (itemStack.Amount == 1) {
-                            Inventory.ItemStackList[index] = default(ItemStack);
+                            Inventory.ItemStackList[index] = default;
                         } else {
                             Inventory.ItemStackList[index].Amount -= 1;
                         }
