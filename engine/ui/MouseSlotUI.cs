@@ -13,13 +13,13 @@ namespace Isola.ui {
         private TextUI _countTextHelper;
 
         public MouseSlotUI (
-            float width, float height, eAnchor anchor, float scale, bool isDrawable, bool toggleDraw, bool isClickable,
+            float width, float height, eAnchor anchor, float scale, AssetLibrary assets, bool isDrawable, bool toggleDraw, bool isClickable,
             PlayerEntity ownerPlayer, string atlasName
-        ) : base(width, height, anchor, scale, isDrawable, toggleDraw, isClickable) {
+        ) : base(width, height, anchor, scale, assets, isDrawable, toggleDraw, isClickable) {
             OwnerPlayer = ownerPlayer;
-            AtlasManager = (IndexedTextureAtlasManager)AssetLibrary.TextureAtlasManagerList[atlasName];
-            BatchRenderer = AssetLibrary.BatchRendererList[atlasName];
-            _countTextHelper = new TextUI(16f, 16f, eAnchor.BottomRight, 1.0f, true, true, false, "0", 12, "Font Atlas");
+            AtlasManager = (IndexedTextureAtlasManager)_assets.TextureAtlasManagerList[atlasName];
+            BatchRenderer = _assets.BatchRendererList[atlasName];
+            _countTextHelper = new TextUI(16f, 16f, eAnchor.BottomRight, 1.0f, _assets, true, true, false, "0", 12, "Font Atlas");
         }
 
         public override void Update()
@@ -29,7 +29,7 @@ namespace Isola.ui {
             if (itemStack.Equals(default(ItemStack))) ToggleDraw = false;
             else {
                 int textureIndex = 0;
-                Item matchingItem = AssetLibrary.ItemList.FirstOrDefault(i => i.ItemName == itemStack.ItemName);
+                Item matchingItem = _assets.ItemList.FirstOrDefault(i => i.ItemName == itemStack.ItemName);
                 if (matchingItem != null) {
                     textureIndex = matchingItem.TextureIndex;
                     TexCoords = AtlasManager.GetIndexedAtlasCoords(textureIndex);

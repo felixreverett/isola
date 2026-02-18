@@ -9,6 +9,9 @@
 
   <ItemGroup>
     <PackageReference Include="LibNoise" Version="0.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.3" />
     <PackageReference Include="OpenTK" Version="4.8.2" />
     <PackageReference Include="OpenTK.Mathematics" Version="4.8.2" />
     <PackageReference Include="SharpNoise" Version="0.12.1.1" />

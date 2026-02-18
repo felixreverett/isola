@@ -5,18 +5,18 @@ using SharpNoise;
 using Isola.Entities;
 using System.Text.Json;
 using OpenTK.Mathematics;
-using System.Diagnostics;
 using Isola.engine.graphics;
-using Isola.game.entities; //debug
+using Isola.game.entities;
+using Microsoft.Extensions.Logging;
 
-namespace Isola.World
-{
+namespace Isola.World {
     /// <summary>
     /// Class to encapsulate everything a "world" would need.
     /// Currently active chunks + chunk loading/saving
     /// </summary>
-    public class WorldManager : IDrawable
-    {
+    public class WorldManager : IDrawable {
+        private readonly AssetLibrary _assets;
+        private readonly ILogger<WorldManager> _logger;
         public string WorldName { get; set; } = "Example";
         public Dictionary<string, Chunk> LoadedChunks { get; private set; }
         public List<Entity> LoadedEntityList { get; set; }
@@ -26,123 +26,105 @@ namespace Isola.World
         public IndexedTextureAtlasManager AtlasManager { get; private set; }
         public BatchRenderer BatchRenderer { get; private set; }
 
-        public WorldManager(int seed, GameConfig config)
-        {
+        public WorldManager(int seed, GameConfig config, AssetLibrary assets, ILoggerFactory loggerFactory) {
             Seed = seed;
             _config = config;
+            _assets = assets;
+            _logger = loggerFactory.CreateLogger<WorldManager>();
+
             LoadedChunks = new Dictionary<string, Chunk>();
             LoadedEntityList = new List<Entity>();
-            AtlasManager = (IndexedTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Tile Atlas"];
-            BatchRenderer = AssetLibrary.BatchRendererList["Tile Atlas"];
+
+            AtlasManager = (IndexedTextureAtlasManager)_assets.TextureAtlasManagerList["Tile Atlas"];
+            BatchRenderer = _assets.BatchRendererList["Tile Atlas"];
         }
 
         // Updates the world around the player
-        public void Update(PlayerEntity player)
-        {
+        public void Update(PlayerEntity player) {
             int worldX = (int)Math.Floor(player.Position.X);
             int worldY = (int)Math.Floor(player.Position.Y);
             int chunkX = worldX >= 0 ? worldX / 16 : worldX / 16 - 1;
             int chunkY = worldY >= 0 ? worldY / 16 : worldY / 16 - 1;
             // load chunks around the player
-            for (int x = chunkX - _config.RenderDistance; x <= chunkX + _config.RenderDistance; x++)
-            {
-                for (int y = chunkY - _config.RenderDistance; y <= chunkY + _config.RenderDistance; y++)
-                {
+            for (int x = chunkX - _config.RenderDistance; x <= chunkX + _config.RenderDistance; x++) {
+                for (int y = chunkY - _config.RenderDistance; y <= chunkY + _config.RenderDistance; y++) {
                     string chunkID = $"x{x}y{y}";
-                    if (!LoadedChunks.ContainsKey(chunkID))
-                    {
+                    if (!LoadedChunks.ContainsKey(chunkID)) {
                         LoadOrGenerateChunk(_worldFolderPath, x, y); // load the chunk
                     }
                 }
             }
 
             // unload chunks around the player
-            foreach (Chunk chunk in LoadedChunks.Values)
-            {
-                if (Math.Abs(chunk.ChunkPosX - chunkX) > _config.RenderDistance || Math.Abs(chunk.ChunkPosY - chunkY) > _config.RenderDistance)
-                {
+            foreach (Chunk chunk in LoadedChunks.Values) {
+                if (Math.Abs(chunk.ChunkPosX - chunkX) > _config.RenderDistance || Math.Abs(chunk.ChunkPosY - chunkY) > _config.RenderDistance) {
                     UnloadChunk(_worldFolderPath, chunk.ChunkPosX, chunk.ChunkPosY);
                 }
             }
         }
         
-        public void Draw()
-        {
+        public void Draw() {
             DrawChunks();
             DrawEntities();
         }
 
-        private void DrawChunks()
-        {
-            //var timer = new Stopwatch();
-            //timer.Start();
-            foreach (Chunk loadedChunk in LoadedChunks.Values)
-            {
-                BatchRenderer.StartBatch();
+        private void DrawChunks() {
+            BatchRenderer.StartBatch();
 
-                for (int y = 0; y < 16; y++)
-                {
-                    for (int x = 0; x < 16; x++)
-                    {
+            foreach (Chunk loadedChunk in LoadedChunks.Values) {
+
+                for (int y = 0; y < 16; y++) {
+                    for (int x = 0; x < 16; x++) {
                         Box2 rect = new Box2(
                             loadedChunk.ChunkPosX * 16 + x,
                             loadedChunk.ChunkPosY * 16 + y,
                             loadedChunk.ChunkPosX * 16 + x + 1,
                             loadedChunk.ChunkPosY * 16 + y + 1);
-                        
-                        TexCoords texCoords = AssetLibrary.TileList
-                            .Where(t => t.TileID == loadedChunk.GetTile(x, y).TileID)
-                            .First().TexCoords;
+
+                        int tileID = loadedChunk.GetTile(x, y).TileID;
+                        TexCoords texCoords = _assets.TileLookup[tileID].TexCoords;
 
                         BatchRenderer.AddQuadToBatch(rect, texCoords);
                     }
                 }
-
-                BatchRenderer.EndBatch();
             }
-            //timer.Stop();
-            //Console.WriteLine($"> Chunk draw cycle took {timer.Elapsed.ToString(@"m\:ss\.fffff")} to run.");
+
+            BatchRenderer.EndBatch();
         }
 
-        private void DrawEntities() //todo Aug 2025: simplify as all entities should now use the same batch
-        {
+        //todo Aug 2025: simplify as all entities should now use the same batch 
+        private void DrawEntities() {
             var groupedEntities = LoadedEntityList
                 .Where(e => e.BatchRenderer != null && e.TexCoords != null)
                 .OrderByDescending(i => i.Position.Y)
                 .GroupBy(e => e.BatchRenderer);
             
-            foreach (var group in groupedEntities)
-            {
+            foreach (var group in groupedEntities) {
                 var batchRenderer = group.Key;
 
                 batchRenderer!.StartBatch();
 
-                foreach (var entity in group)
-                {
+                foreach (var entity in group) {
                     entity.Draw();
                 }
+
                 batchRenderer.EndBatch();
             }
         }
 
         // Handles loading/generating of all aspects of chunk: tiles, entities, tileentities
-        private void LoadOrGenerateChunk(string worldFolderPath, int x, int y)
-        {
+        private void LoadOrGenerateChunk(string worldFolderPath, int x, int y) {
             string chunkID = $"x{x}y{y}";
             string chunkTilesFilePath = $@"{worldFolderPath}/ChunkData/{chunkID}.json";
             string chunkEntityFilePath = $@"{worldFolderPath}/EntityData/{chunkID}.json";
 
-            if (File.Exists(chunkTilesFilePath))
-            {
+            if (File.Exists(chunkTilesFilePath)) {
                 LoadChunkTiles(chunkID, chunkTilesFilePath);
 
-                if (File.Exists(chunkEntityFilePath))
-                {
-                    LoadChunkEntities(chunkEntityFilePath);
+                if (File.Exists(chunkEntityFilePath)) {
+                    LoadChunkEntities(chunkEntityFilePath, chunkID);
                 }
-            }
-            else
-            {
+            } else {
                 GenerateChunk(chunkID, x, y);
             }
 
@@ -150,66 +132,58 @@ namespace Isola.World
             //string chunkTileEntityFilePath = $@"{worldFolderPath}/TileEntityData/{chunkID}.json";
         }
                 
-        private void LoadChunkTiles(string chunkID, string filePath)
-        {
+        private void LoadChunkTiles(string chunkID, string filePath) {
             LoadedChunks.Add(chunkID, Loading.LoadObject<Chunk>(filePath));
         }
 
-        private void LoadChunkEntities(string chunkEntityFilePath)
-        {
-            Console.WriteLine("=== Loading entities into world from chunk ==="); // debug
-            
+        private void LoadChunkEntities(string chunkEntityFilePath, string chunkID) {
+            _logger.LogInformation("[i] Loading entities into world from chunk {ChunkID}", chunkID);
+
             // 1. Deserialize file into a list of "EntitySaveDataObject"s
             List<EntitySaveDataObject> entitySaveDataList = Loading.LoadObject<List<EntitySaveDataObject>>(chunkEntityFilePath);
 
             // 2. For every EntitySaveDataObject, create an entity based on the provided eEntityType
-            foreach (EntitySaveDataObject entitySaveDataObject in entitySaveDataList)
-            {
-                switch (entitySaveDataObject.EntityType)
-                {
+            foreach (EntitySaveDataObject entitySaveDataObject in entitySaveDataList) {
+                switch (entitySaveDataObject.EntityType) {
                     case eEntityType.Entity:
                         {
-                            try
-                            {
+                            try {
                                 EntitySaveData saveData = JsonSerializer.Deserialize<EntitySaveData>(entitySaveDataObject.SaveDataString);
-                                AddEntityToWorld(new Entity_Generic(saveData));
+                                AddEntityToWorld(new Entity_Generic(saveData, _assets));
                                 Console.WriteLine("Loaded new Entity into world"); //debug
+                            } catch {
+                                _logger.LogError("Failed to load Entity in chunk {ChunkID}", chunkID);
                             }
-                            catch { Console.WriteLine("Error: failed to load Entity"); }
                             break;
                         }
                     case eEntityType.ItemEntity:
                         {
-                            try
-                            {
+                            try {
                                 ItemEntitySaveData saveData = JsonSerializer.Deserialize<ItemEntitySaveData>(entitySaveDataObject.SaveDataString);
-                                AddEntityToWorld(new ItemEntity(saveData));
+                                AddEntityToWorld(new ItemEntity(saveData, _assets));
                                 Console.WriteLine("Loaded new item entity into world"); //debug
+                            } catch { 
+                                Console.WriteLine("Error: failed to load Item Entity");
                             }
-                            catch { Console.WriteLine("Error: failed to load Item Entity"); }
                             break;
                         }
                     case eEntityType.TileEntity_Plant:
                         {
-                            try
-                            {
+                            try {
                                 TileEntity_Plant_SaveData saveData = JsonSerializer.Deserialize<TileEntity_Plant_SaveData>(entitySaveDataObject.SaveDataString);
-                                AddEntityToWorld(new TileEntity_Plant(saveData));
+                                AddEntityToWorld(new TileEntity_Plant(saveData, _assets));
                                 Console.WriteLine("Loaded new Plant Tile Entity into world"); //debug
+                            } catch { Console.WriteLine("Error: failed to load Plant Tile Entity");
                             }
-                            catch { Console.WriteLine("Error: failed to load Plant Tile Entity"); }
                             break;
                         }
                     case eEntityType.TileEntity_Chest:
                         {
-                            try
-                            {
+                            try {
                                 TileEntity_Chest_SaveData saveData = JsonSerializer.Deserialize<TileEntity_Chest_SaveData>(entitySaveDataObject.SaveDataString);
-                                AddEntityToWorld(new TileEntity_Chest(saveData));
+                                AddEntityToWorld(new TileEntity_Chest(saveData, _assets));
                                 Console.WriteLine("Loaded new Chest Tile Entity into world"); //debug
-                            }
-                            catch (Exception ex)
-                            {
+                            } catch (Exception ex) {
                                 Console.WriteLine($"Loading Error: Could not load Chest Tile Entity. Exception: {ex}.");
                             }
                             break;
@@ -225,8 +199,7 @@ namespace Isola.World
         }
 
         // Procedurally generates a chunk. todo: also generate tileEntities
-        private void GenerateChunk(string chunkID, int chunkPosX, int chunkPosY)
-        {
+        private void GenerateChunk(string chunkID, int chunkPosX, int chunkPosY) {
             NoiseMap noiseMap = NoiseGenerator.GenerateNoiseMap(chunkPosX, chunkPosY, 16, Seed, 200f, 4);
             Chunk newChunk = ApplyNoiseMap(noiseMap, new Chunk(chunkPosX, chunkPosY));
             LoadedChunks.Add(chunkID, newChunk);
@@ -234,35 +207,21 @@ namespace Isola.World
 
         // Todo: make this load from a terrain config file
         // Applies noisemap to set the values of a chunk.
-        private Chunk ApplyNoiseMap(NoiseMap noiseMap, Chunk chunk)
-        {
-            for (int x = 0; x < 16; x++)
-            {
-                for (int y = 0; y < 16; y++)
-                {
+        private Chunk ApplyNoiseMap(NoiseMap noiseMap, Chunk chunk) {
+            for (int x = 0; x < 16; x++) {
+                for (int y = 0; y < 16; y++) {
                     float noiseValue = noiseMap.GetValue(x, y);
-                    if (noiseValue < -0.35f)
-                    {
+                    if (noiseValue < -0.35f) {
                         chunk.SetTile(x, y, new ChunkTile(5)); // Water_4
-                    }
-                    else if (noiseValue < -0.25f)
-                    {
+                    } else if (noiseValue < -0.25f) {
                         chunk.SetTile(x, y, new ChunkTile(4)); // Water_3
-                    }
-                    else if (noiseValue < -0.15f)
-                    {
+                    } else if (noiseValue < -0.15f) {
                         chunk.SetTile(x, y, new ChunkTile(3)); // Water_2
-                    }
-                    else if (noiseValue < -0.1f)
-                    {
+                    } else if (noiseValue < -0.1f) {
                         chunk.SetTile(x, y, new ChunkTile(2)); // Water
-                    }
-                    else if (noiseValue < 0.0f)
-                    {
+                    } else if (noiseValue < 0.0f) {
                         chunk.SetTile(x, y, new ChunkTile(1)); // Sand
-                    }
-                    else
-                    {
+                    } else {
                         chunk.SetTile(x, y, new ChunkTile(0)); // Grass
                     }
                     // -0.35, -0.25, -0.15, -0.1, 0, 0.1, 0.2, 0.5, 0.7, 0.8, 0.85, 0.9, 1
@@ -274,61 +233,48 @@ namespace Isola.World
 
         // ===== Saving & Unloading =====
 
-        public void Save()
-        {
-            foreach (Chunk c in LoadedChunks.Values)
-            {
+        public void Save() {
+            foreach (Chunk c in LoadedChunks.Values) {
                 SaveChunkEntities(_worldFolderPath, c.ChunkPosX, c.ChunkPosY);
                 SaveChunkTiles(_worldFolderPath, c.ChunkPosX, c.ChunkPosY);
             }
         }
 
-        private void UnloadChunk(string worldFolderPath, int chunkPosX, int chunkPosY)
-        {
+        private void UnloadChunk(string worldFolderPath, int chunkPosX, int chunkPosY) {
             UnloadChunkEntities(worldFolderPath, chunkPosX, chunkPosY);
             UnloadChunkTiles(worldFolderPath, chunkPosX, chunkPosY);
         }
 
         // Unloads entities in the given chunk if there are any
-        private void UnloadChunkEntities(string worldFolderPath, int chunkPosX, int chunkPosY)
-        {
-            if (GetChunkEntities(chunkPosX, chunkPosY, out List<Entity> chunkEntities))
-            {
-                foreach (Entity e in chunkEntities)
-                {
+        private void UnloadChunkEntities(string worldFolderPath, int chunkPosX, int chunkPosY) {
+            if (GetChunkEntities(chunkPosX, chunkPosY, out List<Entity> chunkEntities)) {
+                foreach (Entity e in chunkEntities) {
                     LoadedEntityList.Remove(e);
                 }
 
-                if (_config.AllowSaving)
-                {
+                if (_config.AllowSaving) {
                     List<EntitySaveDataObject> entitySaveDataList = new();
 
                     // convert entities to entitysavedata
-                    foreach (Entity e in chunkEntities)
-                    {
+                    foreach (Entity e in chunkEntities) {
                         entitySaveDataList.Add(e.GetSaveData());
                         Console.WriteLine($"Adding entity {e.GetType} to save list");
                     }
 
                     SaveChunkEntities(worldFolderPath, chunkPosX, chunkPosY, entitySaveDataList);
                 }
-            }
-            else
-            {
+            } else {
                 Console.WriteLine($"No Entities to unload in chunk {chunkPosX}, {chunkPosY}"); //debug
             }
         }
         
         // Gets list of Chunk entities. Returns true if list count > 0. Excludes the Player Entity
-        private bool GetChunkEntities(int chunkPosX, int chunkPosY, out List<Entity> chunkEntities)
-        {
+        private bool GetChunkEntities(int chunkPosX, int chunkPosY, out List<Entity> chunkEntities) {
             chunkEntities = new List<Entity>();
-            foreach (Entity e in LoadedEntityList)
-            {
+            foreach (Entity e in LoadedEntityList) {
                 if (GetChunkFromWorldCoordinate((int)e.Position.X) == chunkPosX && 
                     GetChunkFromWorldCoordinate((int)e.Position.Y) == chunkPosY &&
-                    e is not PlayerEntity)
-                {
+                    e is not PlayerEntity) {
                     chunkEntities.Add(e);
                 }
             }
@@ -336,15 +282,12 @@ namespace Isola.World
             return chunkEntities.Count > 0;
         }
 
-        private void SaveChunkEntities(string worldFolderPath, int chunkPosX, int chunkPosY)
-        {
-            if (_config.AllowSaving && GetChunkEntities(chunkPosX, chunkPosY, out List<Entity> chunkEntities))
-            {
+        private void SaveChunkEntities(string worldFolderPath, int chunkPosX, int chunkPosY) {
+            if (_config.AllowSaving && GetChunkEntities(chunkPosX, chunkPosY, out List<Entity> chunkEntities)) {
                 List<EntitySaveDataObject> entitySaveDataList = new();
 
                 // convert entities to entitysavedata
-                foreach (Entity e in chunkEntities)
-                {
+                foreach (Entity e in chunkEntities) {
                     entitySaveDataList.Add(e.GetSaveData());
                     Console.WriteLine($"Adding entity {e.GetType} to save list");
                 }
@@ -355,24 +298,20 @@ namespace Isola.World
             }
         }
 
-        private void SaveChunkEntities(string worldFolderPath, int chunkPosX, int chunkPosY, List<EntitySaveDataObject> entitySaveDataList)
-        {
+        private void SaveChunkEntities(string worldFolderPath, int chunkPosX, int chunkPosY, List<EntitySaveDataObject> entitySaveDataList) {
             Loading.SaveObject(entitySaveDataList, $"{worldFolderPath}/EntityData/x{chunkPosX}y{chunkPosY}.json");
         }
 
         // Removes the specified chunk from the loaded chunk list and saves if enabled
-        private void UnloadChunkTiles(string worldFolderPath, int chunkPosX, int chunkPosY)
-        {
-            if (_config.AllowSaving)
-            {
+        private void UnloadChunkTiles(string worldFolderPath, int chunkPosX, int chunkPosY) {
+            if (_config.AllowSaving) {
                 SaveChunkTiles(worldFolderPath, chunkPosX, chunkPosY);
             }
             LoadedChunks.Remove($"x{chunkPosX}y{chunkPosY}");
         }
 
         // Saves a chunk and its entities in the specified world folder
-        private void SaveChunkTiles(string worldFolderPath, int chunkPosX, int chunkPosY)
-        {
+        private void SaveChunkTiles(string worldFolderPath, int chunkPosX, int chunkPosY) {
             // Todo: add error checking
             Chunk chunk = LoadedChunks[$"x{chunkPosX}y{chunkPosY}"];
             Loading.SaveObject(chunk, $"{worldFolderPath}/ChunkData/x{chunkPosX}y{chunkPosY}.json");
@@ -380,34 +319,27 @@ namespace Isola.World
 
         // Todo: Make this update adjacent tiles
         // Updates a tile at a position in the world.
-        public void SetTile(int worldX, int worldY, string tileName)
-        {
+        public void SetTile(int worldX, int worldY, string tileName) {
             int chunkX = GetChunkFromWorldCoordinate(worldX);
             int chunkY = GetChunkFromWorldCoordinate(worldY);
 
             int x = worldX >= 0 ? worldX % 16 : worldX % 16 == 0 ? 0 : 16 + worldX % 16;
             int y = worldY >= 0 ? worldY % 16 : worldY % 16 == 0 ? 0 : 16 + worldY % 16;
 
-            if (AssetLibrary.GetTileIDFromTileName(tileName, out int tileID))
-            {
-                try
-                {
+            if (_assets.GetTileIDFromTileName(tileName, out int tileID)) {
+                try {
                     LoadedChunks[$"x{chunkX}y{chunkY}"].SetTile(x, y, new ChunkTile(tileID));
-                }
-                catch
-                {
-                    Console.WriteLine($"Error: could not find chunk at world coords ${worldX}, ${worldY} to update");
+                } catch (Exception ex) {
+                    _logger.LogError(ex, "Could not find chunk at {X}, {Y} to update tile.", worldX, worldY);
                 }
             }
         }
 
-        public void SetTile(float worldXf, float worldYf, string tileName)
-        {
+        public void SetTile(float worldXf, float worldYf, string tileName) {
             SetTile((int)Math.Floor(worldXf), (int)Math.Floor(worldYf), tileName);
         }
 
-        private int GetChunkFromWorldCoordinate(int worldCoordinate)
-        {
+        private int GetChunkFromWorldCoordinate(int worldCoordinate) {
             return worldCoordinate >= 0 ? worldCoordinate / 16 : worldCoordinate % 16 == 0 ? worldCoordinate / 16 : worldCoordinate / 16 - 1;
         }
 
@@ -417,8 +349,8 @@ namespace Isola.World
         /// <param name="worldX"></param>
         /// <param name="worldY"></param>
         /// <returns></returns>
-        public ChunkTile GetTile(int worldX, int worldY) //todo: change to bool with data validation and out var
-        {
+        public ChunkTile GetTile(int worldX, int worldY) {
+            //todo: change to bool with data validation and out var 
             int chunkX = worldX >= 0 ? worldX / 16 : worldX % 16 == 0 ? worldX / 16 : worldX / 16 - 1;
             int chunkY = worldY >= 0 ? worldY / 16 : worldY % 16 == 0 ? worldY / 16 : worldY / 16 - 1;
 
@@ -434,8 +366,7 @@ namespace Isola.World
         /// <param name="worldXf"></param>
         /// <param name="worldYf"></param>
         /// <returns></returns>
-        public ChunkTile GetTile(float worldXf, float worldYf)
-        {
+        public ChunkTile GetTile(float worldXf, float worldYf) {
             return GetTile((int)Math.Floor(worldXf), (int)Math.Floor(worldYf));
         }
 
@@ -443,8 +374,7 @@ namespace Isola.World
         /// Adds an entity to the world's entity list
         /// </summary>
         /// <param name="entity"></param>
-        public void AddEntityToWorld(Entity entity)
-        {
+        public void AddEntityToWorld(Entity entity) {
             LoadedEntityList.Add(entity);
         }
     }

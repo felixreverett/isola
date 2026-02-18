@@ -6,10 +6,8 @@ using Isola.Utilities;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using Isola.engine.graphics;
 
-namespace Isola
-{
-    public class PlayerEntity : Entity
-    {
+namespace Isola {
+    public class PlayerEntity : Entity {
         public PlayerInventory Inventory { get; set; }
         public float Reach { get; set; }
         public eFacing Facing { get; set; } = eFacing.South;
@@ -17,24 +15,21 @@ namespace Isola
         protected float Speed { get; set; } = 5.5f; // Todo: move to constructor
         private EntityTextureAtlasManager AtlasManager { get; set; }
 
-        public PlayerEntity(Vector2 startPos, Vector2 size, WorldManager currentWorld)
-            : base (startPos)
-        {
+        public PlayerEntity(Vector2 startPos, Vector2 size, WorldManager currentWorld, AssetLibrary assets)
+            : base (startPos, assets) {
             Inventory = new PlayerInventory(5, 10);
             CurrentWorld = currentWorld;
             Reach = 5f;
             Size = size;
-            AtlasManager = (EntityTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Entity Atlas"];
-            BatchRenderer = AssetLibrary.BatchRendererList["Entity Atlas"];
+            AtlasManager = (EntityTextureAtlasManager)_assets.TextureAtlasManagerList["Entity Atlas"];
+            BatchRenderer = _assets.BatchRendererList["Entity Atlas"];
             TexCoords = AtlasManager.GetAtlasCoords("Player");
         }
 
-        public void UpdatePosition(Vector2 movement, float time)
-        {
+        public void UpdatePosition(Vector2 movement, float time) {
             // Calculate in sub-steps to minimise hovering
             int increments = 5;
-            for (int i = 0; i < increments; i++)
-            {
+            for (int i = 0; i < increments; i++) {
                 Vector2 newPosition = Position + movement * (Speed/increments * time);
                 Vector2 collisionPositionX = new Vector2(newPosition.X, Position.Y);
                 Vector2 collisionPositionY = new Vector2(Position.X, newPosition.Y);
@@ -42,64 +37,49 @@ namespace Isola
                 ChunkTile currentTileX = CurrentWorld.GetTile(collisionPositionX.X, collisionPositionX.Y);
                 ChunkTile currentTileY = CurrentWorld.GetTile(collisionPositionY.X, collisionPositionY.Y);
 
-                bool collisionX = AssetLibrary.TileList
-                    .Where(tile => tile.TileID == currentTileX.TileID)
-                    .Select(tile => tile.IsCollidable)
-                    .FirstOrDefault();
-
-                bool collisionY = AssetLibrary.TileList
-                    .Where(tile => tile.TileID == currentTileY.TileID)
-                    .Select(tile => tile.IsCollidable)
-                    .FirstOrDefault();
+                bool collisionX = _assets.TileLookup[currentTileX.TileID].IsCollidable;
+                bool collisionY = _assets.TileLookup[currentTileY.TileID].IsCollidable;
 
                 // if X but not Y
-                if (collisionX && !collisionY)
-                {
+                if (collisionX && !collisionY) {
                     Position = collisionPositionY;
                 }
                 // if Y but not X
-                else if (!collisionX && collisionY)
-                {
+                else if (!collisionX && collisionY) {
                     Position = collisionPositionX;
                 }
                 // if neither
-                else if (!collisionX && !collisionY)
-                {
+                else if (!collisionX && !collisionY) {
                     Position = newPosition;
                 }
             }
         }
 
-        public void Update(FrameEventArgs args, KeyboardState keyboardInput)
-        {
+        public void Update(FrameEventArgs args, KeyboardState keyboardInput) {
             HandleInput(args, keyboardInput);
 
             ResolveCollision();
         }
 
-        public void HandleInput(FrameEventArgs args, KeyboardState keyboardInput) //todo: rename to OnKeyDown and rework
-        {
+        public void HandleInput(FrameEventArgs args, KeyboardState keyboardInput) {
+            //todo: rename to OnKeyDown and rework 
             // Keyboard movement
 
             Vector2 movement = Vector2.Zero;
 
-            if (keyboardInput.IsKeyDown(Keys.A) | keyboardInput.IsKeyDown(Keys.Left))
-            {
+            if (keyboardInput.IsKeyDown(Keys.A) | keyboardInput.IsKeyDown(Keys.Left)) {
                 movement.X -= 1.0f;
             }
 
-            if (keyboardInput.IsKeyDown(Keys.D) | keyboardInput.IsKeyDown(Keys.Right))
-            {
+            if (keyboardInput.IsKeyDown(Keys.D) | keyboardInput.IsKeyDown(Keys.Right)) {
                 movement.X += 1.0f;
             }
 
-            if (keyboardInput.IsKeyDown(Keys.W) | keyboardInput.IsKeyDown(Keys.Up))
-            {
+            if (keyboardInput.IsKeyDown(Keys.W) | keyboardInput.IsKeyDown(Keys.Up)) {
                 movement.Y += 1.0f;
             }
 
-            if (keyboardInput.IsKeyDown(Keys.S) | keyboardInput.IsKeyDown(Keys.Down))
-            {
+            if (keyboardInput.IsKeyDown(Keys.S) | keyboardInput.IsKeyDown(Keys.Down)) {
                 movement.Y -= 1.0f;
             }
 

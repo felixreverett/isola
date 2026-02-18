@@ -8,10 +8,10 @@ namespace Isola.engine.ui
     /// </summary>
     public class MasterUI : UI
     {
-        public MasterUI(float width, float height, eAnchor anchor, float scale, bool isDrawable = false, bool toggleDraw = true, bool isClickable = false)
-            : base(width, height, anchor, scale, isDrawable, toggleDraw, isClickable)
+        public MasterUI(float width, float height, eAnchor anchor, float scale, AssetLibrary assets, bool isDrawable = false, bool toggleDraw = true, bool isClickable = false)
+            : base(width, height, anchor, scale, assets, isDrawable, toggleDraw, isClickable)
         {
-            BatchRenderer = AssetLibrary.BatchRendererList["Inventory Atlas"];
+            BatchRenderer = _assets.BatchRendererList["Inventory Atlas"];
         }
 
         

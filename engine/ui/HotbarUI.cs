@@ -44,9 +44,9 @@ namespace Isola.ui {
         /// <param name="itemSlotPadding">The amount of padding between item slots</param>
         /// <param name="inventory">The associated inventory of the UI element</param>
         public HotbarUI (
-            float width, float height, eAnchor anchor, float scale, bool isDrawable, bool toggleDraw, bool isClickable,
+            float width, float height, eAnchor anchor, float scale, AssetLibrary assets, bool isDrawable, bool toggleDraw, bool isClickable,
             int rows, int cols, float itemSlotHeight, float itemSlotWidth, float edgePadding, float itemSlotPadding, Inventory inventory, PlayerEntity ownerPlayer, string atlasName
-        ) : base(width, height, anchor, scale, isDrawable, toggleDraw, isClickable) {
+        ) : base(width, height, anchor, scale, assets, isDrawable, toggleDraw, isClickable) {
             _rows = rows;
             _cols = cols;
             _itemSlotHeight = itemSlotHeight;
@@ -55,11 +55,11 @@ namespace Isola.ui {
             _itemSlotPadding = itemSlotPadding;
             Inventory = inventory;
             OwnerPlayer = ownerPlayer;
-            AtlasManager = (PrecisionTextureAtlasManager)AssetLibrary.TextureAtlasManagerList[atlasName];
-            BatchRenderer = AssetLibrary.BatchRendererList[atlasName];
+            AtlasManager = (PrecisionTextureAtlasManager)_assets.TextureAtlasManagerList[atlasName];
+            BatchRenderer = _assets.BatchRendererList[atlasName];
             SetTextureCoords(0, 118, 188, 26);
             GenerateChildren();
-            _countTextHelper = new TextUI(16f, 16f, eAnchor.BottomRight, 1.0f, true, true, false, "0", 12, "Font Atlas");
+            _countTextHelper = new TextUI(16f, 16f, eAnchor.BottomRight, 1.0f, _assets, true, true, false, "0", 12, "Font Atlas");
         }
 
         public override void Draw() {
@@ -122,7 +122,7 @@ namespace Isola.ui {
                     if (row == 0) y = _edgePadding;
                     else y = _edgePadding + row * (_itemSlotHeight + _itemSlotPadding);
 
-                    Children.Add($"{slotIndex}", new SlotUI(_itemSlotWidth, _itemSlotHeight, eAnchor.None, 1f, true, false, false, slotIndex, Inventory, x, y, OwnerPlayer, "Item Atlas"));
+                    Children.Add($"{slotIndex}", new SlotUI(_itemSlotWidth, _itemSlotHeight, eAnchor.None, 1f, _assets, true, false, false, slotIndex, Inventory, x, y, OwnerPlayer, "Item Atlas"));
 
                     slotIndex++;
                 }
@@ -132,7 +132,7 @@ namespace Isola.ui {
             float cursorBaseY = _edgePadding - 1f;
 
             Children.Add("ActiveHotbarSlot", new ActiveHotbarSlotUI(
-                _itemSlotHeight + 2f, _itemSlotWidth + 2f, eAnchor.None, 1f, true, true, false,
+                _itemSlotHeight + 2f, _itemSlotWidth + 2f, eAnchor.None, 1f, _assets, true, true, false,
                 0, 152, 18, 18,
                 cursorBaseX, cursorBaseY,
                 0, (_cols * _rows - 1), 0));
@@ -166,7 +166,7 @@ namespace Isola.ui {
                             Inventory.ItemStackList[index].Amount -= 1;
                         }
 
-                        OwnerPlayer.CurrentWorld.AddEntityToWorld(new ItemEntity(OwnerPlayer.Position, itemStack.ItemName, itemStack.Amount));
+                        OwnerPlayer.CurrentWorld.AddEntityToWorld(new ItemEntity(OwnerPlayer.Position, itemStack.ItemName, itemStack.Amount, _assets));
                     }
                 }
             }
@@ -176,8 +176,8 @@ namespace Isola.ui {
             int index = ((ActiveHotbarSlotUI)Children["ActiveHotbarSlot"]).ActiveIndex;
             
             if (!Inventory.ItemStackList[index].Equals(default(ItemStack))) {
-                if (AssetLibrary.GetItemFromItemName(Inventory.ItemStackList[index].ItemName, out var item)) {
-                    item!.OnRightClick(mouseNDCs, world);
+                if (_assets.GetItemFromItemName(Inventory.ItemStackList[index].ItemName, out var item)) {
+                    item!.OnRightClick(mouseNDCs, world, _assets);
                 }
             }
         }
@@ -186,8 +186,8 @@ namespace Isola.ui {
             int index = ((ActiveHotbarSlotUI)Children["ActiveHotbarSlot"]).ActiveIndex;
 
             if (!Inventory.ItemStackList[index].Equals(default(ItemStack))) {
-                if (AssetLibrary.GetItemFromItemName(Inventory.ItemStackList[index].ItemName, out var item)) {
-                    item!.OnLeftClick(mouseNDCs, world);
+                if (_assets.GetItemFromItemName(Inventory.ItemStackList[index].ItemName, out var item)) {
+                    item!.OnLeftClick(mouseNDCs, world, _assets);
                 }
             }
         }
