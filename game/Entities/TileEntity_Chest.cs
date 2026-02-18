@@ -3,46 +3,39 @@ using Isola.Utilities;
 using OpenTK.Mathematics;
 using System.Text.Json;
 
-namespace Isola.Entities
-{
-    public class TileEntity_Chest : TileEntity
-    {
+namespace Isola.Entities {
+    public class TileEntity_Chest : TileEntity {
         public Inventory Inventory { get; set; }
         public EntityTextureAtlasManager AtlasManager { get; set; }
-        public TileEntity_Chest(Vector2 position, Vector2 drawPositionOffset)
-            : base(position, drawPositionOffset)
-        {
+        public TileEntity_Chest(Vector2 position, Vector2 drawPositionOffset, AssetLibrary assets)
+            : base(position, drawPositionOffset, assets) {
             Inventory = new Inventory(5, 10);
-            AtlasManager = (EntityTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Entity Atlas"];
-            BatchRenderer = AssetLibrary.BatchRendererList["Entity Atlas"];
+            AtlasManager = (EntityTextureAtlasManager)_assets.TextureAtlasManagerList["Entity Atlas"];
+            BatchRenderer = _assets.BatchRendererList["Entity Atlas"];
             SetTexCoords();
         }
 
-        public TileEntity_Chest(TileEntity_Chest_SaveData saveData)
-            : base(saveData)
-        {
+        public TileEntity_Chest(TileEntity_Chest_SaveData saveData, AssetLibrary assets)
+            : base(saveData, assets) {
             Inventory = saveData.Inventory;
-            AtlasManager = (EntityTextureAtlasManager)AssetLibrary.TextureAtlasManagerList["Entity Atlas"];
-            BatchRenderer = AssetLibrary.BatchRendererList["Entity Atlas"];
+            AtlasManager = (EntityTextureAtlasManager)_assets.TextureAtlasManagerList["Entity Atlas"];
+            BatchRenderer = _assets.BatchRendererList["Entity Atlas"];
             SetTexCoords();
         }
 
-        private void SetTexCoords()
-        {
+        private void SetTexCoords() {
             //Items.Item? matchingItem = AssetLibrary.ItemList!.FirstOrDefault(i => i.ItemName == "Wood Chest")!;
             //int index = matchingItem == null ? 0 : matchingItem.TextureIndex;
             TexCoords = AtlasManager.GetAtlasCoords("Wood Chest"); //todo: update per chest
         }
 
-        public override EntitySaveDataObject GetSaveData()
-        {
-            TileEntity_Chest_SaveData data = new
-                (
-                    new float[] { Position.X, Position.Y },                     // 0
-                    new float[] { Size.X, Size.Y },                             // 1
-                    new float[] { DrawPositionOffset.X, DrawPositionOffset.Y }, // 2
-                    Inventory                                                   // 3
-                );
+        public override EntitySaveDataObject GetSaveData() {
+            TileEntity_Chest_SaveData data = new (
+                new float[] { Position.X, Position.Y },                     // 0
+                new float[] { Size.X, Size.Y },                             // 1
+                new float[] { DrawPositionOffset.X, DrawPositionOffset.Y }, // 2
+                Inventory                                                   // 3
+            );
 
             return new EntitySaveDataObject(eEntityType.TileEntity_Chest, JsonSerializer.Serialize(data));
         }
