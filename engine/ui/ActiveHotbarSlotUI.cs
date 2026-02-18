@@ -21,18 +21,18 @@ namespace Isola.ui {
         protected PrecisionTextureAtlasManager AtlasManager;
         
         public ActiveHotbarSlotUI (
-            float width, float height, eAnchor anchor, float scale, bool isDrawable, bool toggleDraw, bool isClickable,
+            float width, float height, eAnchor anchor, float scale, AssetLibrary assets, bool isDrawable, bool toggleDraw, bool isClickable,
             float textureX, float textureY, float textureWidth, float textureHeight,
             float baseX, float baseY, int minIndex, int maxIndex, int activeIndex, string atlasName = "Inventory Atlas"
-        ) : base(width, height, anchor, scale, isDrawable, toggleDraw, isClickable) {
+        ) : base(width, height, anchor, scale, assets, isDrawable, toggleDraw, isClickable) {
             BaseX = baseX;
             BaseY = baseY;
             MinIndex = minIndex;
             MaxIndex = maxIndex;
             ActiveIndex = activeIndex;
 
-            AtlasManager = (PrecisionTextureAtlasManager)AssetLibrary.TextureAtlasManagerList[atlasName];
-            BatchRenderer = AssetLibrary.BatchRendererList[atlasName];
+            AtlasManager = (PrecisionTextureAtlasManager)_assets.TextureAtlasManagerList[atlasName];
+            BatchRenderer = _assets.BatchRendererList[atlasName];
             SetTextureCoords(textureX, textureY, textureWidth, textureHeight);
         }
 
