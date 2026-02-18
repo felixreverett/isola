@@ -9,6 +9,7 @@ using Isola.Inventories;
 using Isola.ui;
 using Isola.Utilities;
 using Isola.World;
+using Microsoft.Extensions.Logging;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
@@ -18,11 +19,18 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 namespace Isola {
     public class Game1 : GameWindow {
         private string _version;
+        private ILogger<Game1> _logger;
+        private readonly AssetLibrary _assets;
+        private readonly ILoggerFactory _loggerFactory;
 
-        public Game1(int width, int height, string version)
+        public Game1(int width, int height, string version, ILoggerFactory loggerFactory)
             : base(GameWindowSettings.Default, new NativeWindowSettings() { ClientSize = (width, height), Title = version, NumberOfSamples = 24 })
         {
             _version = version;
+            _loggerFactory = loggerFactory;
+            _logger = loggerFactory.CreateLogger<Game1>();
+            _logger.LogInformation("Game initialized with version {Version}", version);
+            _assets = new AssetLibrary(loggerFactory);
         }
         
         // Shaders & Camera
@@ -60,19 +68,19 @@ namespace Isola {
             GL.Enable(EnableCap.Blend);
             GL.BlendFuncSeparate(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha, BlendingFactorSrc.One, BlendingFactorDest.OneMinusSrcAlpha);
 
-            AssetLibrary.Initialise();
+            _assets.Initialise();
 
             _config = new GameConfig(true, 10);
-            _world = new WorldManager(1, _config); // World (initialised before player as player will reference it)
-            _player = new PlayerEntity(new Vector2(0, 0), new Vector2(1, 2), _world);
+            _world = new WorldManager(1, _config, _assets, _loggerFactory); // World (initialised before player as player will reference it)
+            _player = new PlayerEntity(new Vector2(0, 0), new Vector2(1, 2), _world, _assets);
             _world.AddEntityToWorld(_player);
 
             // UI systems
-            MasterUI = new MasterUI(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, eAnchor.Middle, 1.0f);
-                MasterUI.Children.Add("Hotbar", new HotbarUI(188f, 26f, eAnchor.Bottom, 1.0f, true, true, false, 1, 10, 16f, 16f, 5f, 2f, _player.Inventory, _player, "Inventory Atlas"));
-                MasterUI.Children.Add("Inventory", new PlayerInvUI(196f, 110f, eAnchor.Middle, 1.0f, true, false, false, _player.Inventory, _player, "Inventory Atlas"));
-                MasterUI.Children.Add("Build Version", new TextUI(VIRTUAL_WIDTH, 12f, eAnchor.BottomLeft, 1f, true, true, false, _version, 12, "Font Atlas"));
-                MasterUI.Children.Add("Chat", new ChatUI(300f, 100f, eAnchor.BottomLeft, 1.0f));
+            MasterUI = new MasterUI(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, eAnchor.Middle, 1.0f, _assets);
+                MasterUI.Children.Add("Hotbar", new HotbarUI(188f, 26f, eAnchor.Bottom, 1.0f, _assets, true, true, false, 1, 10, 16f, 16f, 5f, 2f, _player.Inventory, _player, "Inventory Atlas"));
+                MasterUI.Children.Add("Inventory", new PlayerInvUI(196f, 110f, eAnchor.Middle, 1.0f, _assets, true, false, false, _player.Inventory, _player, "Inventory Atlas"));
+                MasterUI.Children.Add("Build Version", new TextUI(VIRTUAL_WIDTH, 12f, eAnchor.BottomLeft, 1f, _assets, true, true, false, _version, 12, "Font Atlas"));
+                MasterUI.Children.Add("Chat", new ChatUI(300f, 100f, eAnchor.BottomLeft, 1.0f, _assets, _player));
 
             MasterUI.OnResize(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
@@ -102,7 +110,6 @@ namespace Isola {
 
             if (keyboardInput.IsKeyReleased(Keys.Enter) || keyboardInput.IsKeyReleased(Keys.Y)) {
                 if (!chat.IsTyping) chat.ToggleChat();
-                Console.WriteLine("Debug: Detected key press Enter/Y");
             }
 
             if (chat.IsTyping) {
@@ -176,7 +183,7 @@ namespace Isola {
                 }
 
                 // TEST - spawn entity
-                if (keyboardInput.IsKeyPressed(Keys.L)) _world.AddEntityToWorld(new ItemEntity(_player.Position, "Persimmon", 1));
+                if (keyboardInput.IsKeyPressed(Keys.L)) _world.AddEntityToWorld(new ItemEntity(_player.Position, "Persimmon", 1, _assets));
 
                 // TEST - save chunk
                 if (keyboardInput.IsKeyPressed(Keys.K)) {
@@ -199,14 +206,14 @@ namespace Isola {
             GL.Enable(EnableCap.Blend);
 
             // ---------- WORLD & Entities ----------
-            AssetLibrary.ShaderList["World Shader"].Use();
-            AssetLibrary.ShaderList["World Shader"].SetMatrix4("model", Matrix4.Identity);
-            AssetLibrary.ShaderList["World Shader"].SetMatrix4("view", _camera.GetViewMatrix());
-            AssetLibrary.ShaderList["World Shader"].SetMatrix4("projection", _camera.GetProjectionMatrix());
+            _assets.ShaderList["World Shader"].Use();
+            _assets.ShaderList["World Shader"].SetMatrix4("model", Matrix4.Identity);
+            _assets.ShaderList["World Shader"].SetMatrix4("view", _camera.GetViewMatrix());
+            _assets.ShaderList["World Shader"].SetMatrix4("projection", _camera.GetProjectionMatrix());
 
             _world.Draw();
 
-            AssetLibrary.ShaderList["UI Shader"].Use();
+            _assets.ShaderList["UI Shader"].Use();
             MasterUI.Draw();
 
             // --- Render FBO to screen ---
@@ -214,8 +221,8 @@ namespace Isola {
             GL.Viewport(0, 0, ClientSize.X, ClientSize.Y);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.Disable(EnableCap.DepthTest); // no longer depth testing
-            AssetLibrary.ShaderList["Screen Quad Shader"].Use();
-            AssetLibrary.ShaderList["Screen Quad Shader"].SetInt("u_Texture", 0);
+            _assets.ShaderList["Screen Quad Shader"].Use();
+            _assets.ShaderList["Screen Quad Shader"].SetInt("u_Texture", 0);
             _fbo.BindTexture(TextureUnit.Texture0);
             _screenQuad.Draw();
             SwapBuffers();
