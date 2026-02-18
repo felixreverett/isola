@@ -28,19 +28,19 @@ namespace Isola.ui {
         /// <param name="isClickable">Whether the UI element subscribes to Mouse Click events</param>
         /// <param name="inventory">The associated inventory of the UI element</param>
         public PlayerInvUI (
-            float width, float height, eAnchor anchor, float scale, bool isDrawable, bool toggleDraw, bool isClickable,
+            float width, float height, eAnchor anchor, float scale, AssetLibrary assets, bool isDrawable, bool toggleDraw, bool isClickable,
             PlayerInventory playerInventory, PlayerEntity ownerPlayer, string atlasName
         ) : base (
-            width, height, anchor, scale, isDrawable, toggleDraw, isClickable
+            width, height, anchor, scale, assets, isDrawable, toggleDraw, isClickable
         ) {
             Inventory = playerInventory;
             OwnerPlayer = ownerPlayer;
-            AtlasManager = (PrecisionTextureAtlasManager)AssetLibrary.TextureAtlasManagerList[atlasName];
-            BatchRenderer = AssetLibrary.BatchRendererList[atlasName];
+            AtlasManager = (PrecisionTextureAtlasManager)_assets.TextureAtlasManagerList[atlasName];
+            BatchRenderer = _assets.BatchRendererList[atlasName];
             SetTextureCoords(0, 0, 196, 110);
             GenerateUISlots();
 
-            _countTextHelper = new TextUI(16f, 16f, eAnchor.BottomRight, 1.0f, true, true, false, "0", 12, "Font Atlas");
+            _countTextHelper = new TextUI(16f, 16f, eAnchor.BottomRight, 1.0f, _assets, true, true, false, "0", 12, "Font Atlas");
         }
 
         public override void Draw() {
@@ -121,14 +121,14 @@ namespace Isola.ui {
                     }
 
                     Children.Add($"{slotIndex}", new SlotUI(
-                        itemSlotWidth, itemSlotHeight, eAnchor.None, 1f, true, false, true,
+                        itemSlotWidth, itemSlotHeight, eAnchor.None, 1f, _assets, true, false, true,
                         slotIndex, Inventory, x, y, OwnerPlayer, "Item Atlas"));
 
                     slotIndex++;
                 }
             }
 
-            Children.Add("mouseSlot", new MouseSlotUI(itemSlotWidth, itemSlotHeight, eAnchor.None, 1f, true, false, true, OwnerPlayer, "Item Atlas"));
+            Children.Add("mouseSlot", new MouseSlotUI(itemSlotWidth, itemSlotHeight, eAnchor.None, 1f, _assets, true, false, true, OwnerPlayer, "Item Atlas"));
         }
 
         public void SetTextureCoords(float x, float y, float textureWidth, float textureHeight) {
@@ -160,7 +160,7 @@ namespace Isola.ui {
                     // Drop item on mouse slot
                     ItemStack itemStack = Inventory.MouseSlotItemStack;
                     Inventory.MouseSlotItemStack = default(ItemStack);
-                    OwnerPlayer.CurrentWorld.AddEntityToWorld(new ItemEntity(OwnerPlayer.Position, itemStack.ItemName, itemStack.Amount));
+                    OwnerPlayer.CurrentWorld.AddEntityToWorld(new ItemEntity(OwnerPlayer.Position, itemStack.ItemName, itemStack.Amount, _assets));
                 } else {
                     // drop if an item is being hovered over?
                 }
@@ -171,7 +171,7 @@ namespace Isola.ui {
             if (!Inventory.MouseSlotItemStack.Equals(default(ItemStack))) {
                 ItemStack itemStack = Inventory.MouseSlotItemStack;
                 Inventory.MouseSlotItemStack = default(ItemStack);
-                OwnerPlayer.CurrentWorld.AddEntityToWorld(new ItemEntity(OwnerPlayer.Position, itemStack.ItemName, itemStack.Amount));
+                OwnerPlayer.CurrentWorld.AddEntityToWorld(new ItemEntity(OwnerPlayer.Position, itemStack.ItemName, itemStack.Amount, _assets));
             }
         }
     }

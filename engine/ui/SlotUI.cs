@@ -13,16 +13,16 @@ namespace Isola.ui {
         protected IndexedTextureAtlasManager AtlasManager;
 
         public SlotUI (
-            float width, float height, eAnchor anchor, float scale, bool isDrawable, bool toggleDraw, bool isClickable,
+            float width, float height, eAnchor anchor, float scale, AssetLibrary assets, bool isDrawable, bool toggleDraw, bool isClickable,
             int itemSlotID, Inventory inventory, float x, float y, PlayerEntity ownerPlayer, string atlasName
-        ) : base(width, height, anchor, scale, isDrawable, toggleDraw, isClickable) {
+        ) : base(width, height, anchor, scale, assets,isDrawable, toggleDraw, isClickable) {
             ItemSlotID = itemSlotID;
             Inventory = inventory;
             OwnerPlayer = ownerPlayer;
             LocalRect.X = x;
             LocalRect.Y = y;
-            AtlasManager = (IndexedTextureAtlasManager)AssetLibrary.TextureAtlasManagerList[atlasName];
-            BatchRenderer = AssetLibrary.BatchRendererList[atlasName];
+            AtlasManager = (IndexedTextureAtlasManager)_assets.TextureAtlasManagerList[atlasName];
+            BatchRenderer = _assets.BatchRendererList[atlasName];
         }
 
         public override void Update() {
@@ -32,7 +32,7 @@ namespace Isola.ui {
                 ToggleDraw = false;
             } else {
                 int textureIndex = 0;
-                Item matchingItem = AssetLibrary.ItemList.FirstOrDefault(i => i.ItemName == itemStack.ItemName);
+                Item matchingItem = _assets.ItemList.FirstOrDefault(i => i.ItemName == itemStack.ItemName);
                 if (matchingItem != null) {
                     textureIndex = matchingItem.TextureIndex;
                     TexCoords = AtlasManager.GetIndexedAtlasCoords(textureIndex);

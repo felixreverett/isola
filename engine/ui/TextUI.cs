@@ -11,15 +11,15 @@ namespace Isola.game.GUI {
         public int FontSize { get; set; }
 
         public TextUI (
-            float width, float height, eAnchor anchor, float scale, bool isDrawable, bool toggleDraw, bool isClickable,
+            float width, float height, eAnchor anchor, float scale, AssetLibrary assets, bool isDrawable, bool toggleDraw, bool isClickable,
             string text, int fontSize = 12, string atlasName = "Font Atlas"
         ) : base (
-            width, height, anchor, scale, isDrawable, toggleDraw, isClickable
+            width, height, anchor, scale, assets, isDrawable, toggleDraw, isClickable
         ) {
             Text = text;
             FontSize = fontSize;
-            FontAtlasManager = (FontAtlasManager)AssetLibrary.TextureAtlasManagerList[atlasName];
-            BatchRenderer = AssetLibrary.BatchRendererList[atlasName];
+            FontAtlasManager = (FontAtlasManager)_assets.TextureAtlasManagerList[atlasName];
+            BatchRenderer = _assets.BatchRendererList[atlasName];
         }
 
         public override void Draw() {

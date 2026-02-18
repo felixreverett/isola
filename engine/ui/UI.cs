@@ -3,6 +3,7 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using Isola.World;
 using Isola.engine.graphics;
+using Isola.Utilities;
 
 namespace Isola.ui {
     /// <summary>
@@ -30,6 +31,10 @@ namespace Isola.ui {
     }
 
     public abstract class UI : IDrawable {
+        /// <summary>
+        /// Access to game assets
+        /// </summary>
+        protected readonly AssetLibrary _assets;
         public eAnchor Anchor { get; set; }
         public float Width { get; set; }
         public float Height { get; set; }
@@ -51,7 +56,7 @@ namespace Isola.ui {
         public bool ToggleDraw { get; set; }
         protected bool IsClickable { get; set; }
 
-        public UI(float width, float height, eAnchor anchor, float scale, bool isDrawable = false, bool toggleDraw = true, bool isClickable = false) {
+        public UI(float width, float height, eAnchor anchor, float scale, AssetLibrary assets, bool isDrawable = false, bool toggleDraw = true, bool isClickable = false) {
             Width = width;
             Height = height;
             Anchor = anchor;
@@ -63,6 +68,7 @@ namespace Isola.ui {
             IsDrawable = isDrawable;
             ToggleDraw = toggleDraw;
             IsClickable = isClickable;
+            _assets = assets;
         }
 
         public virtual void Draw() {
