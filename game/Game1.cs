@@ -1,7 +1,7 @@
-﻿using Isola.Drawing;
-using Isola.engine.graphics;
+﻿using Isola.engine.graphics;
 using Isola.engine.graphics.Buffers;
 using Isola.engine.ui;
+using Isola.engine.utils;
 using Isola.Entities;
 using Isola.game.GUI;
 using Isola.GameClasses;
@@ -72,6 +72,12 @@ namespace Isola {
                 MasterUI.Children.Add("Hotbar", new HotbarUI(188f, 26f, eAnchor.Bottom, 1.0f, true, true, false, 1, 10, 16f, 16f, 5f, 2f, _player.Inventory, _player, "Inventory Atlas"));
                 MasterUI.Children.Add("Inventory", new PlayerInvUI(196f, 110f, eAnchor.Middle, 1.0f, true, false, false, _player.Inventory, _player, "Inventory Atlas"));
                 MasterUI.Children.Add("Build Version", new TextUI(VIRTUAL_WIDTH, 12f, eAnchor.BottomLeft, 1f, true, true, false, _version, 12, "Font Atlas"));
+                MasterUI.Children.Add("Chat", new ChatUI(300f, 100f, eAnchor.BottomLeft, 1.0f));
+
+            MasterUI.OnResize(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+
+            ChatManager.AddMessage("Welcome to Isola!");
+            ChatManager.AddMessage("Press Y to chat.");
 
             // Camera
             _camera = new GameCamera(new Vector3(0, 0, 0), ClientSize.X / (float)ClientSize.Y);
@@ -88,81 +94,95 @@ namespace Isola {
             KeyboardState keyboardInput = KeyboardState;
 
             _world.Update(_player); // World has to be updated at least once before player is first updated
-            _player.Update(args, keyboardInput);
             MasterUI.Update();
 
-            if (keyboardInput.IsKeyReleased(Keys.E)) {
-                toggleInventory = !toggleInventory; // todo: find where this should belong
-                if (toggleInventory) {
-                    MasterUI.Children["Inventory"].ToggleDraw = true;
-                    ((HotbarUI)MasterUI.Children["Hotbar"]).AllowScrolling = false;
-                } else {
-                    MasterUI.Children["Inventory"].ToggleDraw = false;
-                    ((HotbarUI)MasterUI.Children["Hotbar"]).AllowScrolling = true;
-                }
+            // chat system
+
+            ChatUI chat = (ChatUI)MasterUI.Children["Chat"];
+
+            if (keyboardInput.IsKeyReleased(Keys.Enter) || keyboardInput.IsKeyReleased(Keys.Y)) {
+                if (!chat.IsTyping) chat.ToggleChat();
+                Console.WriteLine("Debug: Detected key press Enter/Y");
             }
 
-            if (keyboardInput.IsKeyPressed(Keys.R)) {
-                // temporary code to ensure Anchors are working. Will leave for now as debug
-                currentAnchor++;
-                if (currentAnchor > 8) { currentAnchor = 0; }
-                switch (currentAnchor) {
-                    case 0:
-                        MasterUI.Children["Inventory"].Anchor = eAnchor.Middle;
-                        break;
-                    case 1:
-                        MasterUI.Children["Inventory"].Anchor = eAnchor.Left;
-                        break;
-                    case 2:
-                        MasterUI.Children["Inventory"].Anchor = eAnchor.Top;
-                        break;
-                    case 3:
-                        MasterUI.Children["Inventory"].Anchor = eAnchor.Right;
-                        break;
-                    case 4:
-                        MasterUI.Children["Inventory"].Anchor = eAnchor.Bottom;
-                        break;
-                    case 5:
-                        MasterUI.Children["Inventory"].Anchor = eAnchor.TopLeft;
-                        break;
-                    case 6:
-                        MasterUI.Children["Inventory"].Anchor = eAnchor.TopRight;
-                        break;
-                    case 7:
-                        MasterUI.Children["Inventory"].Anchor = eAnchor.BottomRight;
-                        break;
-                    case 8:
-                        MasterUI.Children["Inventory"].Anchor = eAnchor.BottomLeft;
-                        break;
+            if (chat.IsTyping) {
+                // block gameplay input if typing
+            } else {
+                _player.Update(args, keyboardInput);
+                
+                if (keyboardInput.IsKeyReleased(Keys.E)) {
+                    toggleInventory = !toggleInventory;
+                    if (toggleInventory) {
+                        MasterUI.Children["Inventory"].ToggleDraw = true;
+                        ((HotbarUI)MasterUI.Children["Hotbar"]).AllowScrolling = false;
+                    } else {
+                        MasterUI.Children["Inventory"].ToggleDraw = false;
+                        ((HotbarUI)MasterUI.Children["Hotbar"]).AllowScrolling = true;
+                    }
                 }
-                MasterUI.OnResize(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
-            }
-            // TEST - add hoe to player inventory
-            if (keyboardInput.IsKeyPressed(Keys.U)) _player.Inventory.AddToSlotIndex(new ItemStack("Stone Hoe", 1), 0);
 
-            // TEST - add persimmon to player inventory
-            if (keyboardInput.IsKeyPressed(Keys.P)) _player.Inventory.AddToSlotIndex(new ItemStack("Persimmon", 1), 0);
-
-            // Test - add rice seeds to player inventory
-            if (keyboardInput.IsKeyPressed(Keys.I)) _player.Inventory.AddToSlotIndex(new ItemStack("Wheat Seeds", 1), 1);
-
-            // Test - add chest to player inventory
-            if (keyboardInput.IsKeyPressed(Keys.RightBracket)) _player.Inventory.AddToSlotIndex(new ItemStack("Wood Chest", 1), 2);
-
-            // TEST - count items in inventory
-            if (keyboardInput.IsKeyPressed(Keys.O)) {
-                foreach (var item in _player.Inventory.ItemStackList) {
-                    if (!item.Equals(default(ItemStack))) Console.WriteLine($"{item.ItemName}: {item.Amount}");
+                if (keyboardInput.IsKeyPressed(Keys.R)) {
+                    // temporary code to ensure Anchors are working. Will leave for now as debug
+                    currentAnchor++;
+                    if (currentAnchor > 8) { currentAnchor = 0; }
+                    switch (currentAnchor) {
+                        case 0:
+                            MasterUI.Children["Inventory"].Anchor = eAnchor.Middle;
+                            break;
+                        case 1:
+                            MasterUI.Children["Inventory"].Anchor = eAnchor.Left;
+                            break;
+                        case 2:
+                            MasterUI.Children["Inventory"].Anchor = eAnchor.Top;
+                            break;
+                        case 3:
+                            MasterUI.Children["Inventory"].Anchor = eAnchor.Right;
+                            break;
+                        case 4:
+                            MasterUI.Children["Inventory"].Anchor = eAnchor.Bottom;
+                            break;
+                        case 5:
+                            MasterUI.Children["Inventory"].Anchor = eAnchor.TopLeft;
+                            break;
+                        case 6:
+                            MasterUI.Children["Inventory"].Anchor = eAnchor.TopRight;
+                            break;
+                        case 7:
+                            MasterUI.Children["Inventory"].Anchor = eAnchor.BottomRight;
+                            break;
+                        case 8:
+                            MasterUI.Children["Inventory"].Anchor = eAnchor.BottomLeft;
+                            break;
+                    }
+                    MasterUI.OnResize(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
                 }
-            }
+                // TEST - add hoe to player inventory
+                if (keyboardInput.IsKeyPressed(Keys.U)) _player.Inventory.AddToSlotIndex(new ItemStack("Stone Hoe", 1), 0);
 
-            // TEST - spawn entity
-            if (keyboardInput.IsKeyPressed(Keys.L)) _world.AddEntityToWorld(new ItemEntity(_player.Position, "Persimmon", 1));
+                // TEST - add persimmon to player inventory
+                if (keyboardInput.IsKeyPressed(Keys.P)) _player.Inventory.AddToSlotIndex(new ItemStack("Persimmon", 1), 0);
 
-            // TEST - save chunk
-            if (keyboardInput.IsKeyPressed(Keys.K)) {
-                _world.Save();
-                Console.WriteLine("Debug: current world saved");
+                // Test - add rice seeds to player inventory
+                if (keyboardInput.IsKeyPressed(Keys.I)) _player.Inventory.AddToSlotIndex(new ItemStack("Wheat Seeds", 1), 1);
+
+                // Test - add chest to player inventory
+                if (keyboardInput.IsKeyPressed(Keys.RightBracket)) _player.Inventory.AddToSlotIndex(new ItemStack("Wood Chest", 1), 2);
+
+                // TEST - count items in inventory
+                if (keyboardInput.IsKeyPressed(Keys.O)) {
+                    foreach (var item in _player.Inventory.ItemStackList) {
+                        if (!item.Equals(default(ItemStack))) Console.WriteLine($"{item.ItemName}: {item.Amount}");
+                    }
+                }
+
+                // TEST - spawn entity
+                if (keyboardInput.IsKeyPressed(Keys.L)) _world.AddEntityToWorld(new ItemEntity(_player.Position, "Persimmon", 1));
+
+                // TEST - save chunk
+                if (keyboardInput.IsKeyPressed(Keys.K)) {
+                    _world.Save();
+                    Console.WriteLine("Debug: current world saved");
+                }
             }
 
             // Track player with camera
@@ -216,6 +236,14 @@ namespace Isola {
         protected override void OnKeyDown(KeyboardKeyEventArgs e) {
             base.OnKeyDown(e);
             MasterUI.OnKeyDown(e);
+        }
+
+        protected override void OnTextInput(TextInputEventArgs e) {
+            base.OnTextInput(e);
+
+            if (MasterUI.Children.ContainsKey("Chat")) ((ChatUI)MasterUI.Children["Chat"]).OnTextInput(e);
+
+            return;
         }
 
         private Vector2 GetVirtualMousePosition() {
