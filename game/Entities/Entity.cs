@@ -6,10 +6,9 @@ using Isola.Utilities;
 using Isola.Saving;
 using Isola.engine.graphics;
 
-namespace Isola
-{
-    public abstract class Entity : IDrawable, ISaveable<EntitySaveDataObject>
-    {
+namespace Isola {
+    public abstract class Entity : IDrawable, ISaveable<EntitySaveDataObject> {
+        protected readonly AssetLibrary _assets;
         public Vector2 Position { get; set; }
         public Vector2 Size { get; set; } = new Vector2(1f, 1f);
 
@@ -18,39 +17,33 @@ namespace Isola
         public TexCoords ?TexCoords { get; protected set; }
                 
         // Initialize Entity from save data
-        public Entity(EntitySaveData saveData)
-        {
+        public Entity(EntitySaveData saveData, AssetLibrary assets) {
             Position = new Vector2(saveData.Position[0], saveData.Position[1]);
             Size = new Vector2(saveData.Size[0], saveData.Size[1]);
+            _assets = assets;
         }
 
         // Default constructor
-        public Entity(Vector2 position)
-        {
+        public Entity(Vector2 position, AssetLibrary assets) {
             Position = position;
+            _assets = assets;
         }
         
-        public virtual void Draw()
-        {
-            if (BatchRenderer == null || TexCoords == null)
-            {
+        public virtual void Draw() {
+            if (BatchRenderer == null || TexCoords == null) {
                 Console.WriteLine($"[W] Warning: Attempted to draw Entity without setting BatchRenderer || TexCoords.");
-            }
-            else
-            {
+            } else {
                 Box2 rect = new Box2(Position.X - Size.X / 2f, Position.Y, Position.X + Size.X / 2f, Position.Y + Size.Y); //todo (Aug 2025): do I always need to update this?
                 BatchRenderer.AddQuadToBatch(rect, TexCoords);
             }
         }
 
         // Export entity save data
-        public virtual EntitySaveDataObject GetSaveData()
-        {
-            EntitySaveData data = new
-                (
-                    new float[] { Position.X, Position.Y },     // 0
-                    new float[] { Size.X, Size.Y }              // 1
-                );
+        public virtual EntitySaveDataObject GetSaveData() {
+            EntitySaveData data = new (
+                new float[] { Position.X, Position.Y },     // 0
+                new float[] { Size.X, Size.Y }              // 1
+            );
 
             return new EntitySaveDataObject(eEntityType.Entity, JsonSerializer.Serialize(data));
         }
