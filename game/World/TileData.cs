@@ -1,5 +1,4 @@
 ﻿using Isola.Drawing;
-using Isola.Utilities;
 
 namespace Isola {
     /// <summary>
