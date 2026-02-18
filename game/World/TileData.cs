@@ -1,8 +1,7 @@
 ﻿using Isola.Drawing;
 using Isola.Utilities;
 
-namespace Isola
-{
+namespace Isola {
     /// <summary>
     /// A class used to store static tile information that doesn't need to be repeated in world data
     /// </summary>
@@ -13,8 +12,7 @@ namespace Isola
         public bool IsCollidable { get; init; }      
         public TexCoords TexCoords;
 
-        public TileData(string name, int tileID, int textureIndex, bool isCollidable)
-        {
+        public TileData(string name, int tileID, int textureIndex, bool isCollidable) {
             Name = name;
             TileID = tileID;
             TextureIndex = textureIndex;
