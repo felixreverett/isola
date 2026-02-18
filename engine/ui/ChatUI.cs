@@ -1,5 +1,6 @@
 ﻿using Isola.engine.utils;
 using Isola.game.GUI;
+using Isola.Inventories;
 using Isola.ui;
 using Isola.Utilities;
 using OpenTK.Windowing.Common;
@@ -11,16 +12,17 @@ namespace Isola.engine.ui {
         public bool IsTyping { get; private set; } = false;
         private TextUI _inputDisplay;
         private List<TextUI> _historyLines = new List<TextUI>();
+        private PlayerEntity OwnerPlayer;
 
-        public ChatUI(float width, float height, eAnchor anchor, float scale)
-            : base(width, height, anchor, scale, isDrawable: false, toggleDraw: true, isClickable: false) {
+        public ChatUI(float width, float height, eAnchor anchor, float scale, AssetLibrary assets, PlayerEntity ownerPlayer)
+            : base(width, height, anchor, scale, assets, isDrawable: false, toggleDraw: true, isClickable: false) {
 
-            BatchRenderer = AssetLibrary.BatchRendererList["Font Atlas"];
+            BatchRenderer = _assets.BatchRendererList["Font Atlas"];
 
             float lineHeight = 12f;
             float inputY = 24f;
 
-            _inputDisplay = new TextUI(width, lineHeight, eAnchor.None, 1.0f, true, false, false, "> ", 12, "Font Atlas");
+            _inputDisplay = new TextUI(width, lineHeight, eAnchor.None, 1.0f, _assets, true, false, false, "> ", 12, "Font Atlas");
             _inputDisplay.LocalRect.X = 4f;
             _inputDisplay.LocalRect.Y = inputY;
             Children.Add("Input", _inputDisplay);
@@ -30,7 +32,7 @@ namespace Isola.engine.ui {
             for (int i = 0; i < _visibleLines; i++) {
                 float y = historyStartY + (i * lineHeight);
 
-                TextUI line = new TextUI(width, lineHeight, eAnchor.None, 1.0f, true, true, false, "", 12, "Font Atlas");
+                TextUI line = new TextUI(width, lineHeight, eAnchor.None, 1.0f, _assets, true, true, false, "", 12, "Font Atlas");
 
                 line.LocalRect.X = 4f;
                 line.LocalRect.Y = y;
@@ -39,6 +41,7 @@ namespace Isola.engine.ui {
                 Children.Add($"Line_{i}", line);
             }
 
+            OwnerPlayer = ownerPlayer;
         }
 
         public override void Update() {
@@ -90,24 +93,45 @@ namespace Isola.engine.ui {
                 }
             } else if (e.Key == OpenTK.Windowing.GraphicsLibraryFramework.Keys.Enter) {
                 SubmitMessage();
+                ToggleChat();
             }
         }
 
         private void SubmitMessage() {
             if (string.IsNullOrWhiteSpace(_currentInput)) {
-                ToggleChat();
                 return;
             }
 
             if (_currentInput.StartsWith("/")) {
-                ChatManager.AddMessage("Command: " + _currentInput);
-                //todo: parsecommand
+                ParseCommand(_currentInput.Substring(1).Split(' '));
             } else {
                 ChatManager.AddMessage("Magnet: " + _currentInput);
             }
 
             _currentInput = "";
             IsTyping = false;
+        }
+
+        private void ParseCommand(string[] command) {
+            switch (command[0].ToLower()) {
+                case "help":
+                    ChatManager.AddMessage("Available commands: /help /clear");
+                    break;
+                case "clear":
+                    ChatManager.History.Clear();
+                    break;
+                case "give":
+                    if (command.Length < 2) {
+                        ChatManager.AddMessage("Usage: /give [item] [amount]");
+                    } else {
+                        string itemName = command[1];
+                        OwnerPlayer.Inventory.AddItemStack(new ItemStack(itemName, 1));
+                    }
+                    break;
+                default:
+                    ChatManager.AddMessage("Unrecognised command: \"" + command[0] + "\"");
+                    break;
+            }
         }
     }
 }
