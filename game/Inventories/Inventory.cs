@@ -1,5 +1,4 @@
 ﻿using Isola.Inventories;
-using Isola.Saving;
 using System.Text.Json.Serialization;
 
 namespace Isola
@@ -20,11 +19,27 @@ namespace Isola
             ItemStackList = new ItemStack[rows * cols];
         }
 
-        [JsonConstructor]
         public Inventory(int rows, int cols, ItemStack[] itemStackList)
             : this(rows, cols)
         {
             ItemStackList = itemStackList;
+        }
+
+        public bool TryAddItem(string itemName, int amount) {
+            for (int i = 0; i < ItemStackList.Length; i++) {
+                if (!string.IsNullOrEmpty(ItemStackList[i].ItemName) &&
+                    ItemStackList[i].ItemName.Equals(itemName, StringComparison.OrdinalIgnoreCase)) {
+                    ItemStackList[i].Amount += amount;
+                    return true;
+                }
+            }
+
+            if (GetFirstFreeIndex(out int freeIndex)) {
+                ItemStackList[freeIndex] = new ItemStack(itemName, amount);
+                return true;
+            }
+
+            return false;
         }
 
         public void AddItemStack(ItemStack itemStack)
