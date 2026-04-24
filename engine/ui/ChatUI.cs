@@ -1,4 +1,5 @@
 ﻿using Isola.engine.utils;
+using Isola.Entities;
 using Isola.game.GUI;
 using Isola.Inventories;
 using Isola.ui;
@@ -115,22 +116,51 @@ namespace Isola.engine.ui {
         private void ParseCommand(string[] command) {
             switch (command[0].ToLower()) {
                 case "help":
-                    ChatManager.AddMessage("Available commands: /help /clear");
-                    break;
+                    ChatManager.AddMessage("Available commands: /help /clear /give");
+                    return;
+
                 case "clear":
                     ChatManager.History.Clear();
-                    break;
+                    return;
+
                 case "give":
-                    if (command.Length < 2) {
-                        ChatManager.AddMessage("Usage: /give [item] [amount]");
-                    } else {
-                        string itemName = command[1];
-                        OwnerPlayer.Inventory.AddItemStack(new ItemStack(itemName, 1));
-                    }
+                    CMD_Give(command);
                     break;
                 default:
                     ChatManager.AddMessage("Unrecognised command: \"" + command[0] + "\"");
                     break;
+            }
+        }
+
+        private void CMD_Give(string[] command) {
+            if (command.Length < 2) {
+                ChatManager.AddMessage("Usage: /give [item] [amount]");
+                return;
+            } else {
+                string rawInputName = command[1].Replace("\"", "");
+
+                int amount = 1;
+
+                if (command.Length > 2) {
+                    if (!int.TryParse(command[2], out amount)) {
+                        ChatManager.AddMessage("Error: Invalid amount entered.");
+                        return;
+                    }
+                }
+
+                var itemDef = _assets.ItemList?.FirstOrDefault(i => i.ItemName.Equals(rawInputName, StringComparison.OrdinalIgnoreCase));
+
+                if (itemDef != null) {
+                    string trueItemName = itemDef.ItemName;
+                    bool added = OwnerPlayer.Inventory.TryAddItem(trueItemName, amount);
+
+                    if (added) {
+                        ChatManager.AddMessage($"Added {amount} {trueItemName}(s) to player.");
+                    } else {
+                        OwnerPlayer.CurrentWorld.AddEntityToWorld(new ItemEntity(OwnerPlayer.Position, trueItemName, 1, _assets));
+                        ChatManager.AddMessage($"Inventory full. Dropped {amount} {trueItemName}(s) on ground.");
+                    }
+                }
             }
         }
     }
