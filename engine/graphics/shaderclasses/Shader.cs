@@ -2,52 +2,53 @@
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
-namespace Isola.Core.Rendering
-{
-    public class Shader
-    {
+namespace Isola.Core.Rendering {
+    public class Shader {
         public int ProgramId { get; private set; } // Shader handle
         private ShaderProgramSource _shaderProgramSource { get; }
         public bool Compiled { get; private set; }
         private readonly IDictionary<string, int> _uniforms = new Dictionary<string, int>();
 
-        public Shader(ShaderProgramSource shaderProgramSource, bool compile  = false)
-        {
+        public Shader(ShaderProgramSource shaderProgramSource, bool compile  = false) {
             _shaderProgramSource = shaderProgramSource;
-            if(compile)
-            {
+
+            if(compile) {
                 CompileShader();
             }
         }
 
-        public void SetTextureArray()
-        {
+        public void SetTextureArray() {
             GL.UseProgram(ProgramId);
-            for (int i = 0; i < 6; i++)
-            {
-                int location = GL.GetUniformLocation(ProgramId, $"u_Texture[{i}]");
-                GL.Uniform1(location, i);
+
+            for (int i = 0; i < 6; i++) {
+                int loc = GL.GetUniformLocation(ProgramId, $"u_Texture[{i}]");
+
+                if (loc != -1) {
+                    GL.Uniform1(loc, i);
+                }
             }
+
+            return;
         }
 
-        public bool CompileShader()
-        {
-            if (_shaderProgramSource == null)
-            {
+        public bool CompileShader() {
+
+            if (_shaderProgramSource == null) {
                 Console.WriteLine("Shader program source is Null");
                 return false;
             }
-            if (Compiled)
-            {
+
+            if (Compiled) {
                 Console.WriteLine("Shader is already compiled");
                 return false;
             }
+
             int vertexShaderId = GL.CreateShader(ShaderType.VertexShader);
             GL.ShaderSource(vertexShaderId, _shaderProgramSource.VertexShaderSource); // Give it the source
             GL.CompileShader(vertexShaderId); // Compile the shader
             GL.GetShader(vertexShaderId, ShaderParameter.CompileStatus, out var vertexShaderCompilationCode);
-            if (vertexShaderCompilationCode != (int)All.True)
-            {
+
+            if (vertexShaderCompilationCode != (int)All.True) {
                 Console.WriteLine(GL.GetShaderInfoLog(vertexShaderId));
                 return false;
             }
@@ -56,8 +57,8 @@ namespace Isola.Core.Rendering
             GL.ShaderSource(fragmentShaderId, _shaderProgramSource.FragmentShaderSource); // Specify source
             GL.CompileShader(fragmentShaderId); // Compile the shader
             GL.GetShader(fragmentShaderId, ShaderParameter.CompileStatus, out var fragmentShaderCompilationCode);
-            if (fragmentShaderCompilationCode != (int)All.True)
-            {
+
+            if (fragmentShaderCompilationCode != (int)All.True) {
                 Console.WriteLine(GL.GetShaderInfoLog(fragmentShaderId));
                 return false;
             }
@@ -75,8 +76,8 @@ namespace Isola.Core.Rendering
             GL.DeleteShader(fragmentShaderId);
 
             GL.GetProgram(ProgramId, GetProgramParameterName.ActiveUniforms, out var totalUniforms);
-            for (int i = 0; i < totalUniforms; i++)
-            {
+
+            for (int i = 0; i < totalUniforms; i++) {
                 string key = GL.GetActiveUniform(ProgramId, i, out _, out _);
                 int location = GL.GetUniformLocation(ProgramId, key);
                 _uniforms.Add(key, location);
@@ -88,64 +89,68 @@ namespace Isola.Core.Rendering
 
         public int GetUniformLocation(string uniformName) => _uniforms[uniformName];
 
-        public void SetMatrix4(string name, Matrix4 data)
-        {
+        public void SetMatrix4(string name, Matrix4 data) {
             GL.UseProgram(ProgramId);
             GL.UniformMatrix4(_uniforms[name], true, ref data);
         }
 
-        public void SetInt(string uniformName, int value)
-        {
+        public void SetInt(string uniformName, int value) {
             GL.UseProgram(ProgramId);
             int location = GetUniformLocation(uniformName);
             GL.Uniform1(location, value);
         }
 
-        public void Debug()
-        {
-            foreach (KeyValuePair<string, int> s in _uniforms)
-            {
+        public void Debug() {
+            foreach (KeyValuePair<string, int> s in _uniforms) {
                 Console.WriteLine($"Uniform: {s.Key}. Value: {s.Value}");
             }
         }
 
-        public void Use()
-        {
-            if (Compiled)
-            {
+        public void Use() {
+
+            if (Compiled) {
                 GL.UseProgram(ProgramId);
-            }
-            else
-            {
+            } else {
                 throw new Exception("Shader has not been compiled!");
             }
         }
 
-        public static ShaderProgramSource ParseShader(string filePath)
-        {
+        /// <summary>
+        /// <c>SetVector4</c>: Updates a uniform of type vec4. Can be used to pass colour data into a shader.
+        /// </summary>
+        /// <param name="uniformName"></param>
+        /// <param name="data"></param>
+        public void SetVector4(string uniformName, Vector4 data) {
+            GL.UseProgram(ProgramId);
+            int location = GetUniformLocation(uniformName);
+            GL.Uniform4(location, data);
+        }
+
+        /// <summary>
+        /// Parses a GLSL shader file into fragment or vertex shaders.
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        public static ShaderProgramSource ParseShader(string filePath) {
+
             string[] shaderSource = new string[2];
             eShaderType shaderType = eShaderType.NONE;
             var allLines = File.ReadAllLines(filePath);
-            for(int i = 0; i < allLines.Length; i++)
-            {
+
+            for(int i = 0; i < allLines.Length; i++) {
+
                 string current = allLines[i];
-                if (current.ToLower().Contains("#shader"))
-                {
-                    if (current.ToLower().Contains("vertex"))
-                    {
+
+                if (current.ToLower().Contains("#shader")) {
+
+                    if (current.ToLower().Contains("vertex")) {
                         shaderType = eShaderType.VERTEX;
-                    }
-                    else if (current.ToLower().Contains("fragment"))
-                    {
+                    } else if (current.ToLower().Contains("fragment")) {
                         shaderType = eShaderType.FRAGMENT;
-                    }
-                    else
-                    {
+                    } else {
                         Console.WriteLine("Error. No shader type has been supplied");
                     }
-                }
-                else
-                {
+                } else {
                     shaderSource[(int)shaderType] += current + Environment.NewLine;
                 }
             }
