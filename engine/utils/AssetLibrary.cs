@@ -25,6 +25,7 @@ namespace Isola.Utilities{
         // Single initialise to ensure assets are loaded in the correct order
         public void Initialise() {
             _logger.LogInformation("Initialising Asset Library...");
+            ResourceManager.Instance.InitialiseLogger(_loggerFactory);
             InitialiseShaders();
             InitialiseTextureAtlasManagerList();
             InitialiseItemList();
@@ -71,7 +72,7 @@ namespace Isola.Utilities{
                 _logger.LogError("Failed to compile world shader.");
             }
 
-            Shader UIShader = new(Shader.ParseShader(@"../../../resources/shaders/UIShader.glsl")); // todo: move to UI Load?
+            Shader UIShader = new(Shader.ParseShader(@"../../../resources/shaders/UIShader.glsl"));
             if (UIShader.CompileShader()) {
                 UIShader.SetTextureArray();
                 ShaderList.Add("UI Shader", UIShader);
@@ -85,6 +86,16 @@ namespace Isola.Utilities{
             } else {
                 _logger.LogError("Failed to compile Screen Quad shader.");
             }
+
+            Shader TextShader = new(Shader.ParseShader(@"../../../resources/shaders/TextShader.glsl"));
+            if (TextShader.CompileShader()) {
+                TextShader.SetTextureArray();
+                ShaderList.Add("Text Shader", TextShader);
+            } else {
+                _logger.LogError($"Failed to compile Text Shader");
+            }
+
+            return;
         }
 
         public void InitialiseTextureAtlasManagerList() {
@@ -100,7 +111,7 @@ namespace Isola.Utilities{
             BatchRendererList.Add("Tile Atlas", new BatchRenderer(ShaderList["World Shader"], 1, "atlases/1024 Tile Atlas x16.png", batchLogger, 0.0f));
             BatchRendererList.Add("Inventory Atlas", new BatchRenderer(ShaderList["UI Shader"], 2, "atlases/1024 UI Atlas x16.png", batchLogger));
             BatchRendererList.Add("Item Atlas", new BatchRenderer(ShaderList["UI Shader"], 3, "atlases/1024 Item Atlas 16x.png", batchLogger));
-            BatchRendererList.Add("Font Atlas", new BatchRenderer(ShaderList["UI Shader"], 4, "fonts/nosutaru.png", batchLogger));
+            BatchRendererList.Add("Font Atlas", new BatchRenderer(ShaderList["Text Shader"], 4, "fonts/nosutaru.png", batchLogger));
             BatchRendererList.Add("Entity Atlas", new BatchRenderer(ShaderList["World Shader"], 5, "atlases/1024 Entity Atlas 16x.png", batchLogger, 0.001f));
 
             _logger.LogInformation("All BatchRenderers initialised.");
