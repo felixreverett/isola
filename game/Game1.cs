@@ -2,10 +2,8 @@
 using Isola.engine.graphics.Buffers;
 using Isola.engine.ui;
 using Isola.engine.utils;
-using Isola.Entities;
 using Isola.game.GUI;
 using Isola.GameClasses;
-using Isola.Inventories;
 using Isola.ui;
 using Isola.Utilities;
 using Isola.World;
@@ -85,7 +83,7 @@ namespace Isola {
             MasterUI.OnResize(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
             ChatManager.AddMessage("Welcome to Isola!");
-            ChatManager.AddMessage("Press Y to chat.");
+            ChatManager.AddMessage("Press Enter to chat.");
 
             // Camera
             _camera = new GameCamera(new Vector3(0, 0, 0), ClientSize.X / (float)ClientSize.Y);
@@ -104,19 +102,27 @@ namespace Isola {
             _world.Update(_player); // World has to be updated at least once before player is first updated
             MasterUI.Update();
 
-            // chat system
-
+            // chat system (shortcut)
             ChatUI chat = (ChatUI)MasterUI.Children["Chat"];
 
-            if (keyboardInput.IsKeyReleased(Keys.Enter) || keyboardInput.IsKeyReleased(Keys.Y)) {
-                if (!chat.IsTyping) chat.ToggleChat();
-            }
+            // Handle non-chat state
+            if (!chat.IsTyping) {
 
-            if (chat.IsTyping) {
-                // block gameplay input if typing
-            } else {
+                // Update player movement
                 _player.Update(args, keyboardInput);
-                
+
+                // Open chat with "/"
+                if (keyboardInput.IsKeyReleased(Keys.Slash)) {
+                    chat.ToggleChat();
+                    ((ChatUI)MasterUI.Children["Chat"]).AddInput("/");
+                }
+
+                // Open chat with Enter
+                if (keyboardInput.IsKeyReleased(Keys.Enter)) {
+                    chat.ToggleChat();
+                }
+
+                // Open inventory with "E"
                 if (keyboardInput.IsKeyReleased(Keys.E)) {
                     toggleInventory = !toggleInventory;
                     if (toggleInventory) {
@@ -128,6 +134,7 @@ namespace Isola {
                     }
                 }
 
+                // Update keyboard anchors
                 if (keyboardInput.IsKeyPressed(Keys.R)) {
                     // temporary code to ensure Anchors are working. Will leave for now as debug
                     currentAnchor++;
@@ -163,32 +170,13 @@ namespace Isola {
                     }
                     MasterUI.OnResize(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
                 }
-                // TEST - add hoe to player inventory
-                if (keyboardInput.IsKeyPressed(Keys.U)) _player.Inventory.AddToSlotIndex(new ItemStack("Stone Hoe", 1), 0);
+            }
 
-                // TEST - add persimmon to player inventory
-                if (keyboardInput.IsKeyPressed(Keys.P)) _player.Inventory.AddToSlotIndex(new ItemStack("Persimmon", 1), 0);
-
-                // Test - add rice seeds to player inventory
-                if (keyboardInput.IsKeyPressed(Keys.I)) _player.Inventory.AddToSlotIndex(new ItemStack("Wheat Seeds", 1), 1);
-
-                // Test - add chest to player inventory
-                if (keyboardInput.IsKeyPressed(Keys.RightBracket)) _player.Inventory.AddToSlotIndex(new ItemStack("Wood Chest", 1), 2);
-
-                // TEST - count items in inventory
-                if (keyboardInput.IsKeyPressed(Keys.O)) {
-                    foreach (var item in _player.Inventory.ItemStackList) {
-                        if (!item.Equals(default(ItemStack))) Console.WriteLine($"{item.ItemName}: {item.Amount}");
-                    }
-                }
-
-                // TEST - spawn entity
-                if (keyboardInput.IsKeyPressed(Keys.L)) _world.AddEntityToWorld(new ItemEntity(_player.Position, "Persimmon", 1, _assets));
-
-                // TEST - save chunk
-                if (keyboardInput.IsKeyPressed(Keys.K)) {
-                    _world.Save();
-                    Console.WriteLine("Debug: current world saved");
+            // Handle chat state
+            else {
+                if (keyboardInput.IsKeyReleased(Keys.Enter)) {
+                    chat.SubmitMessage();
+                    chat.CloseChat();
                 }
             }
 

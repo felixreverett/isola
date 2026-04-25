@@ -1,4 +1,5 @@
 ﻿using Isola.engine.utils;
+using Isola.Entities;
 using Isola.game.GUI;
 using Isola.Inventories;
 using Isola.ui;
@@ -9,6 +10,9 @@ namespace Isola.engine.ui {
     public class ChatUI : UI {
         private int _visibleLines = 5;
         private string _currentInput = "";
+
+        private bool _isSaving = false;
+        private Task<bool> _savingTask;
         public bool IsTyping { get; private set; } = false;
         private TextUI _inputDisplay;
         private List<TextUI> _historyLines = new List<TextUI>();
@@ -46,6 +50,23 @@ namespace Isola.engine.ui {
 
         public override void Update() {
 
+            // Game saving check
+            if (_isSaving && _savingTask != null) {
+                if (!_savingTask.IsCompleted) {
+                    int dotCount = (DateTime.Now.Millisecond / 333) % 3 + 1;
+                    UpdateLastMessage("Saving World" + new string('.', dotCount), eTextColor.Green);
+                } else {
+                    bool success = _savingTask.Result;
+                    if (success) {
+                        UpdateLastMessage("World saved.", eTextColor.Green);
+                    } else {
+                        UpdateLastMessage("Save failed.", eTextColor.Red);
+                    }
+                        _isSaving = false;
+                    _savingTask = null!;
+                }
+            }
+
             List<ChatMessage> recent = ChatManager.GetRecent(_visibleLines);
 
             for (int i = 0; i < _visibleLines; i++) {
@@ -53,6 +74,7 @@ namespace Isola.engine.ui {
 
                 if (msgIndex >= 0 && msgIndex < recent.Count) {
                     _historyLines[i].Text = recent[msgIndex].Text;
+                    _historyLines[i].TextColor = recent[msgIndex].Color;
                 } else {
                     _historyLines[i].Text = "";
                 }
@@ -74,6 +96,11 @@ namespace Isola.engine.ui {
             }
         }
 
+        public void CloseChat() {
+            IsTyping = false;
+            return;
+        }
+
         public void OnTextInput(TextInputEventArgs e) {
             if (!IsTyping) return;
 
@@ -86,18 +113,22 @@ namespace Isola.engine.ui {
             if (!IsTyping) return;
 
             if (e.Key == OpenTK.Windowing.GraphicsLibraryFramework.Keys.Escape) {
-                ToggleChat();
+                CloseChat();
             } else if (e.Key == OpenTK.Windowing.GraphicsLibraryFramework.Keys.Backspace) {
                 if (_currentInput.Length > 0) {
                     _currentInput = _currentInput.Substring(0, _currentInput.Length - 1);
                 }
-            } else if (e.Key == OpenTK.Windowing.GraphicsLibraryFramework.Keys.Enter) {
-                SubmitMessage();
-                ToggleChat();
             }
         }
 
-        private void SubmitMessage() {
+        /// <summary>
+        /// Method <c>AddInput</c>: Adds a text string to the current input
+        /// </summary>
+        public void AddInput(string input) {
+            _currentInput += input;
+        }
+
+        public void SubmitMessage() {
             if (string.IsNullOrWhiteSpace(_currentInput)) {
                 return;
             }
@@ -109,29 +140,131 @@ namespace Isola.engine.ui {
             }
 
             _currentInput = "";
-            IsTyping = false;
+            return;
+        }
+
+        private void UpdateLastMessage(string newText, eTextColor newColor = eTextColor.White) {
+            if (ChatManager.History.Count == 0) return;
+
+            int lastIndex = ChatManager.History.Count - 1;
+            ChatMessage lastMsg = ChatManager.History[lastIndex];
+
+            lastMsg.Text = newText;
+            lastMsg.Color = newColor;
+            ChatManager.History[lastIndex] = lastMsg;
+            return;
         }
 
         private void ParseCommand(string[] command) {
             switch (command[0].ToLower()) {
                 case "help":
-                    ChatManager.AddMessage("Available commands: /help /clear");
-                    break;
+                    ChatManager.AddMessage("Available commands: /help /clear /save /give /debug", eTextColor.LightGrey);
+                    return;
+
                 case "clear":
                     ChatManager.History.Clear();
+                    return;
+
+                case "save":
+                    CMD_Save();
                     break;
+
                 case "give":
-                    if (command.Length < 2) {
-                        ChatManager.AddMessage("Usage: /give [item] [amount]");
-                    } else {
-                        string itemName = command[1];
-                        OwnerPlayer.Inventory.AddItemStack(new ItemStack(itemName, 1));
-                    }
+                    CMD_Give(command);
                     break;
+
+                case "debug": {
+                    CMD_Debug(command);
+                    break;
+                }
                 default:
-                    ChatManager.AddMessage("Unrecognised command: \"" + command[0] + "\"");
+                    ChatManager.AddMessage("Unrecognised command: \"" + command[0] + "\"", eTextColor.LightGrey);
                     break;
             }
+
+            return;
+        }
+
+        private void CMD_Give(string[] command) {
+            if (command.Length < 2) {
+                ChatManager.AddMessage("Usage: /give [item] [amount]", eTextColor.LightGrey);
+                return;
+            } else {
+                string rawInputName = command[1].Replace("\"", "");
+
+                int amount = 1;
+
+                if (command.Length > 2) {
+                    if (!int.TryParse(command[2], out amount)) {
+                        ChatManager.AddMessage("Error: Invalid amount entered.", eTextColor.Red);
+                        return;
+                    }
+                }
+
+                var itemDef = _assets.ItemList?.FirstOrDefault(i => i.ItemName.Equals(rawInputName, StringComparison.OrdinalIgnoreCase));
+
+                if (itemDef != null) {
+                    string trueItemName = itemDef.ItemName;
+                    bool added = OwnerPlayer.Inventory.TryAddItem(trueItemName, amount);
+
+                    if (added) {
+                        ChatManager.AddMessage($"Added {amount} {trueItemName}(s) to player.", eTextColor.LightGrey);
+                    } else {
+                        OwnerPlayer.CurrentWorld.AddEntityToWorld(new ItemEntity(OwnerPlayer.Position, trueItemName, 1, _assets));
+                        ChatManager.AddMessage($"Inventory full. Dropped {amount} {trueItemName}(s) on ground.", eTextColor.LightGrey);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// <c>CMD_Debug</c>: Handles game debugging commands that shouldn't be accessed by the player
+        /// </summary>
+        /// <param name="command"></param>
+        private void CMD_Debug(string[] command) {
+
+            if (command.Length < 2) {
+                ChatManager.AddMessage("Usage: /debug [command] or /debug help", eTextColor.LightGrey);
+                return;
+            }
+
+            string subcommand = command[1].ToLower();
+
+            switch (subcommand) {
+                case "help":
+                    ChatManager.AddMessage("Debug commands: /debug persimmon; /debug count");
+                    break;
+                case "count":
+                    foreach (var item in OwnerPlayer.Inventory.ItemStackList) {
+                        if (!item.Equals(default(ItemStack))) Console.WriteLine($"{item.ItemName}: {item.Amount}");
+                    }
+                    break;
+                case "persimmon":
+                    OwnerPlayer.CurrentWorld.AddEntityToWorld(new ItemEntity(OwnerPlayer.Position, "Persimmon", 1, _assets));
+                    break;
+                default:
+                    break;
+            }
+            return;
+        }
+
+        /// <summary>
+        /// <c>CMD_Save</c>: Saves the current game
+        /// </summary>
+        private async void CMD_Save() {
+            if (_isSaving) {
+                ChatManager.AddMessage("Save already in progress...", eTextColor.Green);
+                return;
+            }
+
+            _isSaving = true;
+            ChatManager.AddMessage("Saving world.", eTextColor.Green);
+
+            _savingTask = Task.Run(() => {
+                return OwnerPlayer.CurrentWorld.Save();
+            });
+            
+            return;
         }
     }
 }

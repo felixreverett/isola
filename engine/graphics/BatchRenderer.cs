@@ -6,11 +6,14 @@ using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
 namespace Isola.engine.graphics {
+
     /// <summary>
-    /// Handles the batching of sprites into a buffer to reduce total draw calls per frame. One per textureUnit.
-    /// Compare "AtlasManager" classes, which are solely responsible for getting the texture coordinates of sprites on an Atlas
-    /// These are separated to facilitate different implementations of Atlas Managers
+    /// Batches sprites into a buffer to reduce draw calls perframe. One BatchRenderer should be used per textureUnit.
     /// </summary>
+    /// <remarks>
+    /// Compare <c>class AtlasManager</c>, which gets texture coordinates of sprites on an Atlas. Separated to
+    /// facilitate different implementations of Atlas Managers.
+    /// </remarks>
     public class BatchRenderer {
         private readonly ILogger<BatchRenderer> _logger;
 
@@ -72,12 +75,18 @@ namespace Isola.engine.graphics {
             _logger.LogDebug("BatchRenderer initialized for {Atlas} on Unit {Unit}", atlasFileName, textureUnit);
         }
 
+        /// <summary>
+        /// Starts a batch to send to the GPU.
+        /// </summary>
         public void StartBatch() {
             _quadCount = 0;
             _vertexCount = 0;
             _indexCount = 0;
         }
 
+        /// <summary>
+        /// Ends a batch and flush it to the GPU.
+        /// </summary>
         public void EndBatch() {
             if (_indexCount == 0) return;
 
@@ -97,7 +106,11 @@ namespace Isola.engine.graphics {
             CheckGLError("After GL.DrawElements");
         }
 
-        // Note Aug 2025: I could pass in the texture unit now if I wanted to to sample different ones within the same batch.
+        /// <summary>
+        /// Adds a quad to a current batch.
+        /// </summary>
+        /// <param name="rect"></param>
+        /// <param name="texCoords"></param>
         public void AddQuadToBatch(Box2 rect, TexCoords texCoords) {
             if (_quadCount >= MaxQuads) {
                 EndBatch();
@@ -152,7 +165,21 @@ namespace Isola.engine.graphics {
             _indexCount += 6;
             _quadCount++;
         }
+        
+        /// <summary>
+        /// Sets a uniform's value in the BatchRenderer's shader.
+        /// </summary>
+        /// <param name="uniformName">The uniform to update.</param>
+        /// <param name="data">The new vec4 to use.</param>
+        public void SetVector4(string uniformName, Vector4 data) {
+            _shader.Use();
+            _shader.SetVector4(uniformName, data);
+        }
 
+        /// <summary>
+        /// Debugger to check for errors
+        /// </summary>
+        /// <param name="location"></param>
         private void CheckGLError(string location) {
             ErrorCode err = GL.GetError();
             if (err != ErrorCode.NoError) {

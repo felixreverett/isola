@@ -1,22 +1,20 @@
 ﻿using Isola.Drawing;
+using Microsoft.Extensions.Logging;
 
 namespace Isola.Utilities
 {
     //Todo: consider removing class if unused? (only used by TextureAtlas)
-    public class ResourceManager
-    {
+    public class ResourceManager {
         private static ResourceManager _instance = null;
         private static readonly object _loc = new();
         private IDictionary<string, Texture2D> _textureCache = new Dictionary<string, Texture2D>(); // Dictionary for texture cache
 
-        public static ResourceManager Instance
-        {
-            get
-            {
-                lock(_loc)
-                {
-                    if (_instance == null)
-                    {
+        private ILogger<ResourceManager>? _logger;
+
+        public static ResourceManager Instance {
+            get {
+                lock(_loc) {
+                    if (_instance == null) {
                         _instance = new ResourceManager();
                     }
                     return _instance;
@@ -24,12 +22,24 @@ namespace Isola.Utilities
             }
         }
 
-        public Texture2D LoadTextureAtlas(string atlasFileName, int textureUnit)
-        {
+        public void InitialiseLogger(ILoggerFactory loggerFactory) {
+            _logger = loggerFactory.CreateLogger<ResourceManager>();
+            _logger.LogInformation("ResourceManager Logger Initialised.");
+        }
+
+        public Texture2D LoadTextureAtlas(string atlasFileName, int textureUnit) {
             string texturePath = @"../../../resources/" + atlasFileName;
+
+            if (!File.Exists(texturePath)) {
+                _logger?.LogError($"[!] Texture Missing: Cannot find file at expected path {texturePath}.");
+                Console.WriteLine($"[CRITICAL] Texture file not found: {texturePath}"); // todo: remove (temp)
+            } else {
+                _logger?.LogDebug($"Found texture at: {texturePath}. Passing to TextureFactory...");
+            }
+
             _textureCache.TryGetValue(texturePath, out var value);
-            if (value is not null)
-            {
+
+            if (value is not null) {
                 return value;
             }
             value = TextureFactory.Load(texturePath, textureUnit);

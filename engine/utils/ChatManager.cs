@@ -1,22 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Isola.game.GUI;
 
 namespace Isola.engine.utils {
 
     public struct ChatMessage {
         public string Text;
-        public ChatMessage(string text) {
+        public eTextColor Color;
+        public ChatMessage(string text, eTextColor color = eTextColor.White) {
             Text = text;
+            Color = color;
         }
     }
     public static class ChatManager {
         public static List<ChatMessage> History = new List<ChatMessage>();
         private static int MaxHistory = 100;
-        public static void AddMessage(string text) {
-            History.Add(new ChatMessage(text));
+        public static void AddMessage(string text, eTextColor color = eTextColor.White) {
+            History.Add(new ChatMessage(text, color));
 
             if (History.Count > MaxHistory) {
                 History.RemoveAt(0);
