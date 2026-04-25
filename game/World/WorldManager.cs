@@ -17,7 +17,7 @@ namespace Isola.World {
     public class WorldManager : IDrawable {
         private readonly AssetLibrary _assets;
         private readonly ILogger<WorldManager> _logger;
-        public string WorldName { get; set; } = "Example";
+        public string WorldName { get; set; } = "Sekai";
         public Dictionary<string, Chunk> LoadedChunks { get; private set; }
         public List<Entity> LoadedEntityList { get; set; }
         private string _worldFolderPath = @"../../../Saves/SampleWorldStructure";
@@ -233,10 +233,23 @@ namespace Isola.World {
 
         // ===== Saving & Unloading =====
 
-        public void Save() {
-            foreach (Chunk c in LoadedChunks.Values) {
-                SaveChunkEntities(_worldFolderPath, c.ChunkPosX, c.ChunkPosY);
-                SaveChunkTiles(_worldFolderPath, c.ChunkPosX, c.ChunkPosY);
+        /// <summary>
+        /// <c>Save</c>: Export the current state of the world to a series of json objects.
+        /// </summary>
+        /// <returns></returns>
+        public bool Save() {
+            try {
+                _logger.LogInformation($"[i] Starting world save for {WorldName}");
+
+                foreach (Chunk c in LoadedChunks.Values) {
+                    SaveChunkEntities(_worldFolderPath, c.ChunkPosX, c.ChunkPosY);
+                    SaveChunkTiles(_worldFolderPath, c.ChunkPosX, c.ChunkPosY);
+                }
+                _logger.LogInformation("[i] World saved successfully.");
+                return true;
+            } catch (Exception e) {
+                _logger.LogError(e, "[ERROR] Failed to save the world.");
+                return false;
             }
         }
 
