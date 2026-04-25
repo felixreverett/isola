@@ -5,14 +5,25 @@ using Isola.Utilities;
 using OpenTK.Mathematics;
 
 namespace Isola.game.GUI {
+
+    public enum eTextColor {
+        Black,
+        White,
+        Green,
+        LightGrey,
+        Red
+    }
+
     public class TextUI : UI {
         public string Text { get; set; }
         public FontAtlasManager FontAtlasManager { get; set; }
         public int FontSize { get; set; }
 
-        public TextUI (
+        public eTextColor TextColor { get; set; }
+
+        public TextUI(
             float width, float height, eAnchor anchor, float scale, AssetLibrary assets, bool isDrawable, bool toggleDraw, bool isClickable,
-            string text, int fontSize = 12, string atlasName = "Font Atlas"
+            string text, int fontSize = 12, string atlasName = "Font Atlas", eTextColor textColor = eTextColor.White
         ) : base (
             width, height, anchor, scale, assets, isDrawable, toggleDraw, isClickable
         ) {
@@ -20,21 +31,21 @@ namespace Isola.game.GUI {
             FontSize = fontSize;
             FontAtlasManager = (FontAtlasManager)_assets.TextureAtlasManagerList[atlasName];
             BatchRenderer = _assets.BatchRendererList[atlasName];
+            TextColor = textColor;
         }
 
         public override void Draw() {
             if (string.IsNullOrEmpty(Text) || BatchRenderer == null || !ToggleDraw) return;
 
-            BatchRenderer.StartBatch();
+            BatchRenderer.SetVector4("u_TextColor", GetColorVector(TextColor));
 
             float ndcWidth = NDCs.MaxX - NDCs.MinX;
             float ndcHeight = NDCs.MaxY - NDCs.MinY;
 
             // Prevent divide by zero if element has zero size
-            if (AbsoluteRect.Width <= 0.001f || AbsoluteRect.Height <= 0.001f) {
-                BatchRenderer.EndBatch();
-                return;
-            }
+            if (AbsoluteRect.Width <= 0.001f || AbsoluteRect.Height <= 0.001f) return;
+
+            BatchRenderer.StartBatch();
 
             float ndcPerPixelX = ndcWidth / AbsoluteRect.Width;
             float ndcPerPixelY = ndcHeight / AbsoluteRect.Height;
@@ -72,6 +83,19 @@ namespace Isola.game.GUI {
                 foreach (UI ui in Children.Values) {
                     ui.Draw();
                 }
+            }
+
+            return;
+        }
+
+        private Vector4 GetColorVector(eTextColor color) {
+            switch (color) {
+                case eTextColor.Black:      return new Vector4(0f, 0f, 0f, 1f);
+                case eTextColor.Green:      return new Vector4(0f, 1f, 0f, 1f);
+                case eTextColor.Red:        return new Vector4(1f, 0f, 0f, 1f);
+                case eTextColor.LightGrey:  return new Vector4(0.9f, 0.9f, 0.9f, 1f);
+                case eTextColor.White:
+                default:                    return new Vector4(1f, 1f, 1f, 1f);
             }
         }
     }
